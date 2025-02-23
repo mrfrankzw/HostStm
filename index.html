@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St. Mary's High School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003366; /* School theme color */
+            --secondary: #FFD700; /* Accent color */
+            --text-color: #333;
+            --bg-light: #f9f9f9;
+            --bg-dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        body.dark-mode {
+            --text-color: #f9f9f9;
+            --bg-light: #1a1a1a;
+            --bg-dark: #333;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--primary);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Hero Section with Dynamic Background */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero .slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            animation: slideshow 15s infinite;
+        }
+
+        .hero .slideshow img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero .slideshow img.active {
+            opacity: 1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            z-index: 2;
+            animation: fadeIn 2s ease;
+        }
+
+        /* About Section */
+        .about {
+            padding: 4rem 5%;
+            background: var(--bg-light);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .about h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .about p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Faculty Section */
+        .faculty {
+            padding: 4rem 5%;
+            background: white;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faculty h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .faculty-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .faculty-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .faculty-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .faculty-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Gallery Section */
+        .gallery {
+            padding: 4rem 5%;
+            background: var(--bg-light);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-grid img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Staff Section */
+        .staff {
+            padding: 4rem 5%;
+            background: white;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .staff h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .staff-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .staff-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .staff-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .staff-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .staff-card p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem 5%;
+            background: var(--bg-light);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .contact p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 2rem 5%;
+            text-align: center;
+        }
+
+        .social-icons {
+            margin-bottom: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--secondary);
+        }
+
+        /* Animations */
+        @keyframes slideshow {
+            0%, 100% { opacity: 0; }
+            25%, 75% { opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scroll Animations */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .scroll-animate.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 0;
+                background: var(--primary);
+                width: 100%;
+                padding: 1rem;
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            .dropdown-content {
+                position: static;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .dropdown-content a {
+                padding: 10px 0;
+            }
+        }
+
+        /* Light/Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
+            St. Mary's High
+        </div>
+        <button class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#faculty">Faculty</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#staff">Staff</a>
+            <a href="#contact">Contact</a>
+            <div class="dropdown">
+                <a href="#">Student Portal <i class="fas fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="/student-login">Login</a>
+                    <a href="/student-signup">Sign Up</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Admin Portal <i class="fas fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="/admin-login">Login</a>
+                    <a href="/admin-signup">Sign Up</a>
+                </div>
+            </div>
+            <a href="/apply" class="btn btn-primary">Apply Now</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="slideshow">
+            <img src="https://i.ibb.co/4g87ZPH1/mrfrankofc.jpg" alt="School Photo 1" class="active">
+            <img src="https://i.ibb.co/WvTYKzmQ/mrfrankofc.jpg" alt="School Photo 2">
+            <img src="https://i.ibb.co/BHGCwr1Q/mrfrankofc.jpg" alt="School Photo 3">
+        </div>
+        <h1 id="hero-text">Welcome to St. Mary's High School</h1>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about scroll-animate">
+        <h2>About Us</h2>
+        <p>St. Mary's High School is a premier institution dedicated to academic excellence, character development, and holistic education. Founded in 1950, we have been nurturing young minds to become leaders of tomorrow.</p>
+    </section>
+
+    <!-- Faculty Section -->
+    <section id="faculty" class="faculty scroll-animate">
+        <h2>Our Faculty</h2>
+        <div class="faculty-cards">
+            <div class="faculty-card">
+                <i class="fas fa-flask"></i>
+                <h3>Sciences</h3>
+                <p>We offer a robust science program with state-of-the-art labs and experienced faculty.</p>
+            </div>
+            <div class="faculty-card">
+                <i class="fas fa-paint-brush"></i>
+                <h3>Arts</h3>
+                <p>Our arts program encourages creativity and self-expression through various mediums.</p>
+            </div>
+            <div class="faculty-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Commercials</h3>
+                <p>Prepare for the business world with our comprehensive commercial studies program.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery scroll-animate">
+        <h2>Gallery</h2>
+        <div class="gallery-grid">
+            <img src="https://i.ibb.co/jvTVhBqp/mrfrankofc.jpg" alt="Gallery Photo 1">
+            <img src="https://i.ibb.co/jPfndvMM/mrfrankofc.jpg" alt="Gallery Photo 2">
+            <img src="https://i.ibb.co/p99PfHQ/mrfrankofc.jpg" alt="Gallery Photo 3">
+            <img src="https://i.ibb.co/8ntJRfhz/mrfrankofc.jpg" alt="Gallery Photo 4">
+            <img src="https://i.ibb.co/60XPdCf7/mrfrankofc.jpg" alt="Gallery Photo 5">
+            <img src="https://i.ibb.co/C3v0YGwC/mrfrankofc.jpg" alt="Gallery Photo 6">
+            <img src="https://i.ibb.co/WvTYKzmQ/mrfrankofc.jpg" alt="Gallery Photo 7">
+            <img src="https://i.ibb.co/N2ZMM7cT/mrfrankofc.jpg" alt="Gallery Photo 8">
+            <img src="https://i.ibb.co/4gfJLqJS/mrfrankofc.jpg" alt="Gallery Photo 9">
+        </div>
+    </section>
+
+    <!-- Staff Section -->
+    <section id="staff" class="staff scroll-animate">
+        <h2>Our Staff</h2>
+        <div class="staff-cards">
+            <div class="staff-card">
+                <img src="https://i.ibb.co/S4smmgP1/mrfrankofc.jpg" alt="Head Teacher">
+                <h3>Mr. John Doe</h3>
+                <p>Head Teacher</p>
+            </div>
+            <div class="staff-card">
+                <img src="https://i.ibb.co/G3f9HzQ0/mrfrankofc.jpg" alt="TIC">
+                <h3>Mrs. Jane Smith</h3>
+                <p>TIC</p>
+            </div>
+            <div class="staff-card">
+                <img src="https://i.ibb.co/5gj2SW4H/mrfrankofc.jpg" alt="Senior Teacher">
+                                <h3>Mr. James Brown</h3>
+                <p>Senior Teacher</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact scroll-animate">
+        <h2>Contact Us</h2>
+        <p>Address: 123 School Road, City, Country</p>
+        <p>Phone: +123 456 7890</p>
+        <p>Email: info@stmaryshigh.com</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    </footer>
+
+    <!-- Light/Dark Mode Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Slideshow Animation
+        const slides = document.querySelectorAll('.slideshow img');
+        const heroText = document.getElementById('hero-text');
+        const texts = [
+            "Welcome to St. Mary's High School",
+            "The Best School in Harare",
+            "Where True Potential is Discovered"
+        ];
+        let currentSlide = 0;
+
+        const updateHeroText = () => {
+            heroText.textContent = texts[currentSlide];
+        };
+
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+            updateHeroText();
+        }, 5000);
+
+        // Scroll Animations
+        const scrollElements = document.querySelectorAll('.scroll-animate');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        scrollElements.forEach(el => observer.observe(el));
+
+        // Hamburger Menu Toggle
+        const menuBtn = document.querySelector('.menu-btn');
+        const nav = document.querySelector('nav');
+
+        menuBtn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
+        // Light/Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    </script>
+</body>
+</html>
