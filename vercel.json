@@ -1,0 +1,40 @@
+{
+  "routes": [
+    {
+      "src": "/faculty",
+      "dest": "/faculty.html"
+    },
+    {
+      "src": "/reportcard",
+      "dest": "/report-card.html"
+    },
+    {
+      "src": "/setreportcard",
+      "dest": "/teacher-set-report-card.html"
+    },
+    {
+      "src": "/studentlogin",
+      "dest": "/pages/student-login.html"
+    },
+    {
+      "src": "/studentsignup",
+      "dest": "/pages/student-signup.html"
+    },
+    {
+      "src": "/teacherlogin",
+      "dest": "/teacher-login.html"
+    },
+    {
+      "src": "/teachersignup",
+      "dest": "/teacher-signup.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/student-dashboard.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
