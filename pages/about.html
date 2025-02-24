@@ -1,3 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - St. Mary's High School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003366; /* School theme color */
+            --secondary: #FFD700; /* Accent color */
+            --text-color: #333;
+            --bg-light: #ffffff; /* Default white theme */
+            --bg-dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        body.dark-mode {
+            --text-color: #f9f9f9;
+            --bg-light: #1a1a1a;
+            --bg-dark: #333;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--primary);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+        }
+
+        section {
+            padding: 4rem 5%;
+            background: var(--bg-light);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Pass Rates Section */
+        .pass-rates {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .pass-rate {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pass-rate h3 {
+            font-size: 1.5rem;
+            width: 120px;
+            color: var(--primary);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0;
+            transition: width 1s ease;
+        }
+
+        .pass-rate p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        /* Previous and Current Heads Section */
+        .heads {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .head {
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .head img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .head h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .head p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Sports and Extracurricular Activities */
+        .activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .activity {
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .activity:hover {
+            transform: translateY(-10px);
+        }
+
+        .activity img {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .activity h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* Location & Address Container */
+        .location {
+            background: var(--primary);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .location h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .location p {
+            font-size: 1.1rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 2rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-links .btn {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links .btn:hover {
+            background: #e6b800;
+        }
+
+        /* Light/Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 0;
+                background: var(--primary);
+                width: 100%;
+                padding: 1rem;
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            .dropdown-content {
+                position: static;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .dropdown-content a {
+                padding: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
+            St. Mary's High
+        </div>
+        <button class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/about"><i class="fas fa-info-circle"></i> About</a>
+            <a href="/gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+            <div class="dropdown">
+                <a href="#"><i class="fas fa-user-graduate"></i> Student Portal <i class="fas fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="/student-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="/student-signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#"><i class="fas fa-user-tie"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="/admin-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="/admin-signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                </div>
+            </div>
+            <a href="/apply" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Apply Now</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- School Overview -->
+        <section id="overview">
+            <h2>About St. Mary's High School</h2>
+            <p>
+                St. Mary's High School is a premier institution dedicated to academic excellence, character development, and holistic education. Founded in 1950, we have been nurturing young minds to become leaders of tomorrow. Our school offers a wide range of academic programs, including Sciences, Arts, and Commercials, as well as a variety of extracurricular activities to ensure the all-round development of our students.
+            </p>
+        </section>
+
+        <!-- Pass Rates -->
+        <section id="pass-rates">
+            <h2>Pass Rates</h2>
+            <div class="pass-rates">
+                <h3>O-Level</h3>
+                <div class="pass-rate">
+                    <h3>2024</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="85"></div>
+                    </div>
+                    <p>85%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2023</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="68"></div>
+                    </div>
+                    <p>68%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2022</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="72"></div>
+                    </div>
+                    <p>72%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2021</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="65"></div>
+                    </div>
+                    <p>65%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2020</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="60"></div>
+                    </div>
+                    <p>60%</p>
+                </div>
+            </div>
+            <h3>A-Level</h3>
+            <div class="pass-rates">
+                <div class="pass-rate">
+                    <h3>2024</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="96"></div>
+                    </div>
+                    <p>96%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2023</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="98"></div>
+                    </div>
+                    <p>98%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2022</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="98"></div>
+                    </div>
+                    <p>98%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2021</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="97"></div>
+                    </div>
+                    <p>97%</p>
+                </div>
+                <div class="pass-rate">
+                    <h3>2020</h3>
+                    <div class="bar-container">
+                        <div class="bar" data-percent="96"></div>
+                    </div>
+                    <p>96%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Previous and Current Heads -->
+        <section id="heads">
+            <h2>Our Leadership</h2>
+            <div class="heads">
+                <div class="head">
+                    <img src="https://i.ibb.co/S4smmgP1/mrfrankofc.jpg" alt="Head 1">
+                    <h3>Mr. John Doe</h3>
+                    <p>Years of Service: 2005 - 2015</p>
+                </div>
+                <div class="head">
+                    <img src="https://i.ibb.co/G3f9HzQ0/mrfrankofc.jpg" alt="Head 2">
+                    <h3>Mrs. Jane Smith</h3>
+                    <p>Years of Service: 2015 - 2020</p>
+                </div>
+                <div class="head">
+                    <img src="https://i.ibb.co/5gj2SW4H/mrfrankofc.jpg" alt="Head 3">
+                    <h3>Mr. James Brown</h3>
+                    <p>Years of Service: 2020 - Present</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sports and Extracurricular Activities -->
+        <section id="activities">
+            <h2>Extracurricular Activities</h2>
+            <div class="activities">
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452057/soccer.svg" alt="Soccer">
+                    <h3>Soccer</h3>
+                </div>
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452059/basketball.svg" alt="Basketball">
+                    <h3>Basketball</h3>
+                </div>
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452058/volleyball.svg" alt="Volleyball">
+                    <h3>Volleyball</h3>
+                </div>
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452060/handball.svg" alt="Handball">
+                    <h3>Handball</h3>
+                </div>
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452061/athletics.svg" alt="Athletics">
+                    <h3>Athletics</h3>
+                </div>
+                <div class="activity">
+                    <img src="https://www.svgrepo.com/show/452062/choir.svg" alt="Choir">
+                    <h3>Choir</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location & Address -->
+        <section id="location">
+            <div class="location">
+                                <h3><i class="fas fa-map-marker-alt"></i> Location & Address</h3>
+                <p>123 School Road, Harare, Zimbabwe</p>
+                <p>Phone: +263 123 456 789</p>
+                <p>Email: info@stmaryshigh.com</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
             <div class="social-icons">
                 <a href="#"><i class="fab fa-facebook"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
@@ -5,7 +572,7 @@
                 <a href="#"><i class="fab fa-tiktok"></i></a>
             </div>
             <div class="footer-links">
-                <a href="/" class="btn">Go Home</a>
+                <a href="/" class="btn"><i class="fas fa-home"></i> Go Home</a>
             </div>
         </div>
         <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
