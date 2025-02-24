@@ -2,7 +2,23 @@
   "routes": [
     {
       "src": "/faculty",
-      "dest": "/faculty.html"
+      "dest": "/pages/faculty.html"
+    },
+    {
+      "src": "/contact",
+      "dest": "/pages/contact.html"
+    },
+    {
+      "src": "/gallery",
+      "dest": "/pages/gallery.html"
+    },
+    {
+      "src": "/studentapply",
+      "dest": "/pages/studentapplication.html"
+    },
+    {
+      "src": "/adminapplication",
+      "dest": "/pages/adminapplication.html"
     },
     {
       "src": "/reportcard",
