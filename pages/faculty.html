@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty - St. Mary's High School</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <style>
+        :root {
+            --primary: #003366; /* School theme color */
+            --secondary: #FFD700; /* Accent color */
+            --text-color: #333;
+            --bg-light: #f9f9f9;
+            --bg-dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        body.dark-mode {
+            --text-color: #f9f9f9;
+            --bg-light: #1a1a1a;
+            --bg-dark: #333;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 0;
+                background: var(--primary);
+                width: 100%;
+                padding: 1rem;
+            }
+
+            nav.active {
+                display: flex;
+            }
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+        }
+
+        section {
+            padding: 4rem 5%;
+            background: var(--bg-light);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            text-align: center;
+        }
+
+        /* Faculty Cards */
+        .faculty-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .faculty-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .faculty-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .faculty-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .faculty-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .faculty-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .faculty-card ul li {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        /* Slide Animation */
+        .slide-in {
+            opacity: 0;
+            transform: translateX(-100%);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 2rem 5%;
+            text-align: center;
+        }
+
+        .social-icons {
+            margin-bottom: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--secondary);
+        }
+
+        /* Light/Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
+            St. Mary's High
+        </div>
+        <button class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/faculty">Faculty</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- STEM Section -->
+        <section class="slide-in">
+            <h2>STEM Subjects</h2>
+            <div class="faculty-cards">
+                <div class="faculty-card">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Mathematics</h3>
+                    <ul>
+                        <li>Algebra</li>
+                        <li>Geometry</li>
+                        <li>Calculus</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-atom"></i>
+                    <h3>Physics</h3>
+                    <ul>
+                        <li>Mechanics</li>
+                        <li>Electromagnetism</li>
+                        <li>Thermodynamics</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-dna"></i>
+                    <h3>Biology</h3>
+                    <ul>
+                        <li>Genetics</li>
+                        <li>Ecology</li>
+                        <li>Human Anatomy</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-flask"></i>
+                    <h3>Chemistry</h3>
+                    <ul>
+                        <li>Organic Chemistry</li>
+                        <li>Inorganic Chemistry</li>
+                        <li>Physical Chemistry</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Computer Science</h3>
+                    <ul>
+                        <li>Programming</li>
+                        <li>Data Structures</li>
+                        <li>Web Development</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Commercials Section -->
+        <section class="slide-in">
+            <h2>Commercial Subjects</h2>
+            <div class="faculty-cards">
+                <div class="faculty-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Business Studies</h3>
+                    <ul>
+                        <li>Entrepreneurship</li>
+                        <li>Marketing</li>
+                        <li>Finance</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-coins"></i>
+                    <h3>Accounting</h3>
+                    <ul>
+                        <li>Financial Accounting</li>
+                        <li>Cost Accounting</li>
+                        <li>Auditing</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Economics</h3>
+                    <ul>
+                        <li>Microeconomics</li>
+                        <li>Macroeconomics</li>
+                        <li>International Trade</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arts Section -->
+        <section class="slide-in">
+            <h2>Arts Subjects</h2>
+            <div class="faculty-cards">
+                <div class="faculty-card">
+                    <i class="fas fa-landmark"></i>
+                    <h3>History</h3>
+                    <ul>
+                        <li>World History</li>
+                        <li>African History</li>
+                        <li>Modern History</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-book"></i>
+                    <h3>Literature in English</h3>
+                    <ul>
+                        <li>Poetry</li>
+                        <li>Prose</li>
+                        <li>Drama</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-book-open"></i>
+                    <h3>Literature in Shona</h3>
+                    <ul>
+                        <li>Novels</li>
+                        <li>Poetry</li>
+                        <li>Folklore</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clubs Section -->
+        <section class="slide-in">
+            <h2>Clubs and Extracurriculars</h2>
+            <div class="faculty-cards">
+                <div class="faculty-card">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Quiz Club</h3>
+                    <ul>
+                        <li>General Knowledge</li>
+                        <li>Science Quizzes</li>
+                        <li>Competitions</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-hands-helping"></i>
+                    <h3>Leo Club</h3>
+                    <ul>
+                        <li>Community Service</li>
+                        <li>Leadership</li>
+                        <li>Teamwork</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-microphone"></i>
+                    <h3>Toastmasters</h3>
+                    <ul>
+                        <li>Public Speaking</li>
+                        <li>Debate Skills</li>
+                        <li>Confidence Building</li>
+                    </ul>
+                </div>
+                <div class="faculty-card">
+                    <i class="fas fa-comments"></i>
+                    <h3>Debate Club</h3>
+                    <ul>
+                        <li>Argumentation</li>
+                        <li>Critical Thinking</li>
+                        <li>Competitions</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    </footer>
+
+    <!-- Light/Dark Mode Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Slide Animation
+        const slideElements = document.querySelectorAll('.slide-in');
+
+        const slideObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        slideElements.forEach(el => slideObserver.observe(el));
+
+        // Hamburger Menu Toggle
+        const menuBtn = document.querySelector('.menu-btn');
+        const nav = document.querySelector('nav');
+
+        menuBtn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
+        // Light/Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    </script>
+</body>
+</html>
