@@ -22,7 +22,7 @@
     },
     {
       "src": "/reportcard",
-      "dest": "/report-card.html"
+      "dest": "/reportcard.html"
     },
     {
       "src": "/setreportcard",
@@ -30,7 +30,7 @@
     },
     {
       "src": "/studentlogin",
-      "dest": "/pages/student-login.html"
+      "dest": "/pages/studentlogin.html"
     },
     {
       "src": "/studentsignup",
@@ -38,15 +38,15 @@
     },
     {
       "src": "/teacherlogin",
-      "dest": "/teacher-login.html"
+      "dest": "/teacherlogin.html"
     },
     {
       "src": "/teachersignup",
-      "dest": "/teacher-signup.html"
+      "dest": "/teachersignup.html"
     },
     {
       "src": "/dashboard",
-      "dest": "/student-dashboard.html"
+      "dest": "/studentdashboard.html"
     },
     {
       "src": "/(.*)",
