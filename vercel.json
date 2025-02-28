@@ -2,7 +2,7 @@
   "routes": [
    {
       "src": "/about",
-      "dest": "/about.html"
+      "dest": "/pages/about.html"
     },
     {
       "src": "/faculty",
