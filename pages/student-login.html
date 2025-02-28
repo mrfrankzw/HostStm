@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
     <style>
-        /* CSS from your previous UI */
+        /* Same CSS as before */
+               /* CSS from your previous UI */
         :root {
             --primary: #003366;
             --secondary: #FFD700;
@@ -271,13 +272,14 @@
                 padding: 10px 0;
             }
         }
+ 
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="logo">
-            <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo">
+            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
             St. Mary's High
         </div>
         <button class="menu-btn">
@@ -291,15 +293,15 @@
             <div class="dropdown">
                 <a href="#"><i class="fas fa-user-graduate"></i> Student Portal <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
-                    <a href="/student-login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    <a href="/student-signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                    <a href="/studentlogin"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="/studentsignup"><i class="fas fa-user-plus"></i> Sign Up</a>
                 </div>
             </div>
             <div class="dropdown">
                 <a href="#"><i class="fas fa-user-tie"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
-                    <a href="/admin-login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    <a href="/admin-signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                    <a href="/adminlogin"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="/adminsignup"><i class="fas fa-user-plus"></i> Sign Up</a>
                 </div>
             </div>
             <a href="/apply" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Apply Now</a>
@@ -320,7 +322,7 @@
             </form>
             <div class="error" id="error-message"></div>
             <div class="signup-link">
-                Don't have an account? <a href="/student-signup">Sign Up</a>
+                Don't have an account? <a href="/studentsignup">Sign Up</a>
             </div>
         </div>
     </div>
@@ -341,20 +343,26 @@
         <i class="fas fa-moon"></i>
     </div>
 
-    <script>
-        // Firebase Configuration
+    <!-- Firebase SDK v9 -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
+            apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+            authDomain: "deee-9ab53.firebaseapp.com",
+            projectId: "deee-9ab53",
+            storageBucket: "deee-9ab53.firebasestorage.app",
+            messagingSenderId: "399732664479",
+            appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+            measurementId: "G-524ZPBX42B"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
 
         // Login Logic
         const loginForm = document.getElementById('login-form');
@@ -365,7 +373,7 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            auth.signInWithEmailAndPassword(email, password)
+            signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Redirect to dashboard
                     window.location.href = '/student-dashboard';
