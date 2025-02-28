@@ -14,11 +14,11 @@
     },
     {
       "src": "/studentapply",
-      "dest": "/pages/studentapplication.html"
+      "dest": "/pages/student-application.html"
     },
     {
       "src": "/adminapplication",
-      "dest": "/pages/adminapplication.html"
+      "dest": "/pages/admin-application.html"
     },
     {
       "src": "/reportcard",
@@ -29,24 +29,24 @@
       "dest": "/teacher-set-report-card.html"
     },
     {
-      "src": "/studentlogin",
-      "dest": "/pages/studentlogin.html"
+      "src": "/login",
+      "dest": "/pages/student-login.html"
     },
     {
-      "src": "/studentsignup",
+      "src": "/signup",
       "dest": "/pages/student-signup.html"
     },
     {
       "src": "/teacherlogin",
-      "dest": "/teacherlogin.html"
+      "dest": "/teacher-login.html"
     },
     {
       "src": "/teachersignup",
-      "dest": "/teachersignup.html"
+      "dest": "/teacher-signup.html"
     },
     {
       "src": "/dashboard",
-      "dest": "/studentdashboard.html"
+      "dest": "/student-dashboard.html"
     },
     {
       "src": "/(.*)",
