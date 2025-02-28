@@ -13,7 +13,7 @@
       "dest": "/pages/gallery.html"
     },
     {
-      "src": "/studentapply",
+      "src": "/apply",
       "dest": "/pages/student-application.html"
     },
     {
