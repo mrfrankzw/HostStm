@@ -26,7 +26,7 @@
     },
     {
       "src": "/setreportcard",
-      "dest": "/teacher-set-report-card.html"
+      "dest": "/teacher-set-report.html"
     },
     {
       "src": "/login",
