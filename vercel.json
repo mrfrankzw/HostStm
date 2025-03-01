@@ -42,11 +42,15 @@
     },
     {
       "src": "/teacherlogin",
-      "dest": "/teacher-login.html"
+      "dest": "/admin/admin-login.html"
     },
     {
       "src": "/teachersignup",
-      "dest": "/teacher-signup.html"
+      "dest": "/admin/admin-signup.html"
+    },
+    {
+      "src": "/teachersdasboard",
+      "dest": "/admin/dashboard.html"
     },
     {
       "src": "/dashboard",
