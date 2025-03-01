@@ -10,7 +10,6 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
     <style>
         /* Same CSS as before */
-               /* CSS from your previous UI */
         :root {
             --primary: #003366;
             --secondary: #FFD700;
@@ -272,7 +271,6 @@
                 padding: 10px 0;
             }
         }
- 
     </style>
 </head>
 <body>
@@ -364,7 +362,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-       /* // Login Logic
+        // Login Logic
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
@@ -375,30 +373,16 @@
 
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
+                    // Store email in localStorage
+                    localStorage.setItem('studentEmail', email);
                     // Redirect to dashboard
-                    window.location.href = '/student-dashboard';
+                    window.location.href = '/dashboard';
                 })
                 .catch((error) => {
                     errorMessage.textContent = error.message;
                 });
         });
-*/
 
-        // In login.js
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            localStorage.setItem('studentEmail', email);
-            window.location.href = '/dashboard';
-        })
-        .catch((error) => {
-            errorMessage.textContent = error.message;
-        });
-});
         // Toggle Password Visibility
         const togglePassword = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
