@@ -894,7 +894,7 @@
       async function loadNotices() {
         try {
           const noticesQuery = query(
-            collection(db, "notices"),
+            collection(db, "updates"),
             orderBy("timestamp", "desc")
           );
           const querySnapshot = await getDocs(noticesQuery);
