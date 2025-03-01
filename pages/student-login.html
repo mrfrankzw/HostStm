@@ -366,7 +366,7 @@
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
-        loginForm.addEventListener('submit', (e) => {
+      /*  loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -381,8 +381,25 @@
                 .catch((error) => {
                     errorMessage.textContent = error.message;
                 });
-        });
+        });*/
+//#####
+      loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Store email in localStorage
+            localStorage.setItem('studentEmail', email);
+            // Redirect to dashboard
+            window.location.href = '/dashboard';
+        })
+        .catch((error) => {
+            errorMessage.textContent = error.message;
+        });
+});
+        
         // Toggle Password Visibility
         const togglePassword = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
