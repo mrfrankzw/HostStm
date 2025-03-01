@@ -368,7 +368,7 @@
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
-        loginForm.addEventListener('submit', (e) => {
+     /*   loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -376,11 +376,26 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Redirect to dashboard
-                    window.location.href = '/student-dashboard';
+                    window.location.href = '/dashboard';
                 })
                 .catch((error) => {
                     errorMessage.textContent = error.message;
-                });
+                });*/
+                    // In login.js
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            localStorage.setItem('studentEmail', email);
+            window.location.href = '/dashboard';
+        })
+        .catch((error) => {
+            errorMessage.textContent = error.message;
+        });
+});
         });
 
         // Toggle Password Visibility
@@ -425,21 +440,7 @@
                 nav.classList.remove('active');
             }
         });
-        // In login.js
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            localStorage.setItem('studentEmail', email);
-            window.location.href = '/dashboard';
-        })
-        .catch((error) => {
-            errorMessage.textContent = error.message;
-        });
-});
     </script>
 </body>
 </html>
