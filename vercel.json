@@ -30,7 +30,7 @@
     },
     {
       "src": "/setreportcard",
-      "dest": "/teacher-set-report.html"
+      "dest": "/pages/teacher-set-report.html"
     },
     {
       "src": "/login",
