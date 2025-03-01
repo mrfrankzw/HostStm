@@ -177,7 +177,7 @@
       color: var(--primary);
       margin-bottom: 1.5rem;
     }
-    /* Dashboard Cards */
+    /* Dashboard Cards (for Dashboard Home) */
     .dashboard-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -502,10 +502,8 @@
     // Check authentication state
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // User is not logged in, redirect to login page
         window.location.href = '/login';
       } else {
-        // User is logged in, fetch and display data
         fetchStudentData(user.email);
       }
     });
@@ -518,7 +516,6 @@
 
         if (docSnap.exists()) {
           const studentData = docSnap.data();
-          // Populate form fields
           document.getElementById('name').value = studentData.firstname || '';
           document.getElementById('surname').value = studentData.surname || '';
           document.getElementById('phone').value = studentData.phone || '';
@@ -528,16 +525,11 @@
           document.getElementById('dob').value = studentData.dob || '';
           document.getElementById('gender').value = studentData.gender || 'male';
           document.getElementById('address').value = studentData.address || '';
-          // Set profile picture and display student name below it
           document.getElementById('profilePic').src = studentData.profilePic || "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
           document.getElementById('studentDisplayName').textContent = studentData.firstname || '';
-          // Update welcome message
-          const welcomeMessage = document.getElementById('welcomeMessage');
-          welcomeMessage.textContent = `Hello, ${studentData.firstname}`;
+          document.getElementById('welcomeMessage').textContent = `Hello, ${studentData.firstname}`;
         } else {
-          // New user - show empty form and a welcome message
-          const welcomeMessage = document.getElementById('welcomeMessage');
-          welcomeMessage.textContent = `Welcome, ${email.split('@')[0]}`;
+          document.getElementById('welcomeMessage').textContent = `Welcome, ${email.split('@')[0]}`;
         }
       } catch (error) {
         console.error("Error fetching student data:", error);
@@ -545,11 +537,10 @@
       }
     };
 
-    // Save/Update student data to Firestore
+    // Save/Update student data to Firestore (using auth.currentUser.email)
     const saveStudentData = async () => {
       try {
-        // Retrieve the student's email from local storage (or use auth.currentUser.email)
-        const email = localStorage.getItem('studentEmail');
+        const email = auth.currentUser.email;
         const studentRef = doc(db, "students", email);
 
         const studentData = {
@@ -589,20 +580,17 @@
     const logout = async () => {
       try {
         await signOut(auth);
-        localStorage.removeItem('studentEmail');
         window.location.href = '/login';
       } catch (error) {
         console.error("Logout error:", error);
       }
     };
 
-    // Event Listeners for Save and Logout buttons
     document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
     document.getElementById('logoutBtn').addEventListener('click', logout);
-    // Event Listener for Reset Password button
     document.getElementById('changePasswordBtn').addEventListener('click', resetPassword);
 
-    // Upload new profile picture and update the default immediately
+    // Upload new profile picture and update immediately
     document.getElementById('profilePicInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -612,10 +600,8 @@
       try {
         await uploadBytes(storageRef, file);
         const photoURL = await getDownloadURL(storageRef);
-        // Update Firestore with new photoURL
         const studentRef = doc(db, "students", user.email);
         await updateDoc(studentRef, { profilePic: photoURL });
-        // Update UI: Immediately update the profile picture
         document.getElementById('profilePic').src = photoURL;
         showMessage("Profile picture updated!", "success");
       } catch (error) {
@@ -624,28 +610,11 @@
       }
     });
 
-    // Hamburger menu close on click (if there are sidebar links)
-    const sidebarLinks = document.querySelectorAll('.sidebar a');
-    sidebarLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        document.getElementById('sidebar')?.classList.remove('active');
-      });
-    });
-
-    // Toggle password visibility (if implemented on login page)
-    const togglePassword = () => {
-      const passwordInput = document.getElementById('password');
-      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordInput.setAttribute('type', type);
-      document.getElementById('toggle-password').classList.toggle('fa-eye-slash');
-    };
-
-    // Side Menu Control
+    // Side Menu Controls
     const menuBtn = document.getElementById('menuBtn');
     const sideMenu = document.getElementById('sideMenu');
     const closeBtn = document.getElementById('closeBtn');
 
-    // Toggle side menu on hamburger tap
     menuBtn.addEventListener('click', () => {
       sideMenu.classList.toggle('active');
     });
@@ -654,35 +623,27 @@
       sideMenu.classList.remove('active');
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
         sideMenu.classList.remove('active');
       }
     });
 
-    // Menu Links functionality with section switching and welcome text drop animation
+    // Menu Links functionality (section switching with animation)
     const menuLinks = document.querySelectorAll('.menu-links a');
     menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('href').substring(1);
-
-        // Animate the welcome text (if visible)
         const welcomeMessage = document.getElementById('welcomeMessage');
         if (welcomeMessage) {
           welcomeMessage.classList.remove('drop-animation');
-          // Force reflow to restart the animation
           void welcomeMessage.offsetWidth;
           welcomeMessage.classList.add('drop-animation');
         }
-
-        // Section switching: Show target section and hide the others
         document.querySelectorAll('section').forEach(sec => {
           sec.style.display = sec.id === targetId ? "block" : "none";
         });
-
-        // Close the side menu
         sideMenu.classList.remove('active');
       });
     });
@@ -698,11 +659,9 @@
         ? '<i class="fas fa-moon"></i>' 
         : '<i class="fas fa-sun"></i>';
       themeToggle.style.transform = `rotate(${isDark ? 0 : 180}deg)`;
-
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
 
-    // Load saved theme if available
     if (localStorage.getItem('theme')) {
       const savedTheme = localStorage.getItem('theme');
       document.body.setAttribute('data-theme', savedTheme);
