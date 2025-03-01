@@ -279,7 +279,7 @@
     <!-- Header -->
     <header>
         <div class="logo">
-            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
+            <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo">
             St. Mary's High
         </div>
         <button class="menu-btn">
@@ -322,7 +322,7 @@
             </form>
             <div class="error" id="error-message"></div>
             <div class="login-link">
-                Already have an account? <a href="/studentlogin">Login</a>
+                Already have an account? <a href="/login">Login</a>
             </div>
         </div>
     </div>
@@ -376,7 +376,7 @@
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Redirect to dashboard
-                    window.location.href = '/student-dashboard';
+                    window.location.href = '/dashboard';
                 })
                 .catch((error) => {
                     errorMessage.textContent = error.message;
