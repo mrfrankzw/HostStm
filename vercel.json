@@ -55,7 +55,7 @@
     {
       "src": "/studentusers",
       "dest": "/pages/student-users.html"
-    }
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
