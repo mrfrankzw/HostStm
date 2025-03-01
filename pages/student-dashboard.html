@@ -95,6 +95,15 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: logoFloat 4s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+    }
+
+    /* New: Logo styling */
+    .header-logo {
+      height: 40px;
+      margin-right: 10px;
+      vertical-align: middle;
     }
 
     /* Side Menu Styles */
@@ -163,6 +172,24 @@
     .container {
       padding: 180px 5% 100px;
       margin-top: 80px;
+    }
+
+    /* Message Box Styling */
+    #messageBox {
+      position: fixed;
+      top: 100px;
+      right: 5%;
+      z-index: 1101;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      display: none;
+    }
+    #messageBox.success {
+      background-color: #28a745;
+    }
+    #messageBox.error {
+      background-color: #dc3545;
     }
 
     h2 {
@@ -340,7 +367,10 @@
 <body>
   <!-- Header -->
   <header>
-    <div class="logo">St. Mary's High</div>
+    <div class="logo">
+      <img src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg" alt="Logo" class="header-logo" />
+      St. Mary's High
+    </div>
     <button class="menu-btn" id="menuBtn">
       <i class="fas fa-bars"></i>
     </button>
@@ -364,6 +394,9 @@
 
   <!-- Main Content -->
   <div class="container">
+    <!-- Message Box for Success/Error Feedback -->
+    <div id="messageBox"></div>
+
     <!-- Dashboard Home -->
     <section id="dashboard-home">
       <h2 id="welcomeMessage">Hello, Student</h2>
@@ -406,12 +439,7 @@
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-          readonly
-        />
+        <input type="email" id="email" placeholder="Enter your email" readonly />
       </div>
       <div class="form-group">
         <label for="parent-name">Parent Name</label>
@@ -492,6 +520,18 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Utility: Show message in the message box (for success/error feedback)
+    function showMessage(message, type) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = message;
+      messageBox.className = "";
+      messageBox.classList.add(type);
+      messageBox.style.display = "block";
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 3000);
+    }
+
     // Check authentication state
     onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -503,7 +543,7 @@
       }
     });
 
-    // Fetch student data
+    // Fetch student data from Firestore
     const fetchStudentData = async (email) => {
       try {
         const studentRef = doc(db, "students", email);
@@ -526,18 +566,20 @@
           const welcomeMessage = document.getElementById('welcomeMessage');
           welcomeMessage.textContent = `Hello, ${studentData.firstname}`;
         } else {
-          // New user - show empty form
+          // New user - show empty form and a welcome message
           const welcomeMessage = document.getElementById('welcomeMessage');
           welcomeMessage.textContent = `Welcome, ${email.split('@')[0]}`;
         }
       } catch (error) {
         console.error("Error fetching student data:", error);
+        showMessage("Error fetching student data: " + error.message, "error");
       }
     };
 
-    // Save/Update student data
+    // Save/Update student data to Firestore
     const saveStudentData = async () => {
       try {
+        // Retrieve the student's email from local storage (or use auth.currentUser.email)
         const email = localStorage.getItem('studentEmail');
         const studentRef = doc(db, "students", email);
 
@@ -555,13 +597,14 @@
         };
 
         await setDoc(studentRef, studentData, { merge: true });
-        alert("Profile updated successfully!");
+        showMessage("Profile updated successfully!", "success");
       } catch (error) {
         console.error("Error saving student data:", error);
+        showMessage("Error saving student data: " + error.message, "error");
       }
     };
 
-    // Logout
+    // Logout function
     const logout = async () => {
       try {
         await signOut(auth);
@@ -572,11 +615,11 @@
       }
     };
 
-    // Event Listeners
+    // Event Listeners for Save and Logout buttons
     document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
     document.getElementById('logoutBtn')?.addEventListener('click', logout);
 
-    // Hamburger menu close on click (for any links inside a sidebar, if applicable)
+    // Hamburger menu close on click (if there are sidebar links)
     const sidebarLinks = document.querySelectorAll('.sidebar a');
     sidebarLinks.forEach(link => {
       link.addEventListener('click', () => {
@@ -584,7 +627,7 @@
       });
     });
 
-    // Toggle password visibility (add to login page)
+    // Toggle password visibility (if implemented on login page)
     const togglePassword = () => {
       const passwordInput = document.getElementById('password');
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -613,7 +656,7 @@
       }
     });
 
-    // New: Menu Links functionality with section switching and welcome text drop animation
+    // Menu Links functionality with section switching and welcome text drop animation
     const menuLinks = document.querySelectorAll('.menu-links a');
     menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -639,7 +682,7 @@
       });
     });
 
-    // Theme Toggle
+    // Theme Toggle functionality
     const themeToggle = document.getElementById('themeToggle');
     let isDark = true;
 
@@ -654,7 +697,7 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
 
-    // Load saved theme
+    // Load saved theme if available
     if (localStorage.getItem('theme')) {
       const savedTheme = localStorage.getItem('theme');
       document.body.setAttribute('data-theme', savedTheme);
