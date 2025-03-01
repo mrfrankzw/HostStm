@@ -80,10 +80,8 @@
     }
     .container {
       padding: 180px 5% 100px;
-      margin-top: 80px;
       max-width: 1000px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: auto;
     }
     input, select, button {
       font-family: inherit;
@@ -185,6 +183,9 @@
       color: var(--primary);
       margin-bottom: 1rem;
     }
+    .report-header p {
+      margin: 0.3rem 0;
+    }
     .report-card table {
       width: 100%;
       border-collapse: collapse;
@@ -264,14 +265,37 @@
     <!-- Marks Entry Form -->
     <form id="marksForm">
       <h2>Enter Marks for <span id="selectedStudent"></span></h2>
+      <!-- New Year and Term fields -->
+      <div class="form-group">
+        <label for="yearInput">Year</label>
+        <input type="text" id="yearInput" placeholder="Enter academic year (e.g., 2025)" />
+      </div>
+      <div class="form-group">
+        <label for="termInput">Term</label>
+        <select id="termInput">
+          <option value="">Select Term</option>
+          <option value="Term 1">Term 1</option>
+          <option value="Term 2">Term 2</option>
+          <option value="Term 3">Term 3</option>
+        </select>
+      </div>
+      <!-- Subject Fields (up to 10) -->
       <div id="subjectFields">
-        <!-- Dynamically generated subject fields (10 max) -->
+        <!-- Dynamically generated subject fields -->
       </div>
       <button type="submit">Save Marks</button>
     </form>
 
     <!-- Report Card -->
     <div id="reportCard" class="report-card" style="display: none;">
+      <!-- Report header with student info -->
+      <div class="report-header" style="margin-bottom: 1rem;">
+        <p>Name: <span id="reportName"></span></p>
+        <p>Surname: <span id="reportSurname"></span></p>
+        <p>Email: <span id="reportEmail"></span></p>
+        <p>Year: <span id="reportYear"></span></p>
+        <p>Term: <span id="reportTerm"></span></p>
+      </div>
       <h3>Report Card</h3>
       <table>
         <thead>
@@ -370,8 +394,25 @@
       });
     };
 
-    // Open marks entry form with (prefilled) subjects if available
-    window.openMarksForm = async (student) => {
+    // Extract name and surname from email (expects format: firstname.lastname@domain)
+    function extractNameSurname(email) {
+      let name = "";
+      let surname = "";
+      if (email) {
+        let local = email.split("@")[0];
+        let parts = local.split(".");
+        if (parts.length >= 2) {
+          name = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+          surname = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+        } else {
+          name = local;
+        }
+      }
+      return { name, surname };
+    }
+
+    // Open marks entry form with (prefilled) subjects and year/term if available
+    window.openMarksForm = (student) => {
       document.getElementById("selectedStudent").textContent =
         student.firstname + " " + student.surname;
       marksForm.style.display = "block";
@@ -400,6 +441,9 @@
           </div>
         `;
       }
+      // Prepopulate year and term if available
+      document.getElementById("yearInput").value = student.year || "";
+      document.getElementById("termInput").value = student.term || "";
     };
 
     // Auto-grade calculation on marks input
@@ -418,7 +462,7 @@
       gradeSelect.value = grade;
     };
 
-    // Save marks and display report card on form submission
+    // Save marks (plus year and term) and display report card on form submission
     marksForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const studentId = marksForm.dataset.studentId;
@@ -431,9 +475,11 @@
           marksData[subject] = { marks: Number(marks), grade };
         }
       }
+      const yearVal = document.getElementById("yearInput").value.trim();
+      const termVal = document.getElementById("termInput").value;
       try {
         const studentRef = doc(db, "students", studentId);
-        await setDoc(studentRef, { marks: marksData }, { merge: true });
+        await setDoc(studentRef, { marks: marksData, year: yearVal, term: termVal }, { merge: true });
         alert("Marks saved successfully!");
         marksForm.reset();
         marksForm.style.display = "none";
@@ -451,6 +497,14 @@
         const studentSnap = await getDoc(studentRef);
         if (studentSnap.exists()) {
           const studentData = studentSnap.data();
+          // Update report header details using email extraction
+          const { name, surname } = extractNameSurname(studentData.email || "");
+          document.getElementById("reportName").textContent = name;
+          document.getElementById("reportSurname").textContent = surname;
+          document.getElementById("reportEmail").textContent = studentData.email || "";
+          document.getElementById("reportYear").textContent = studentData.year || "";
+          document.getElementById("reportTerm").textContent = studentData.term || "";
+          
           if (studentData.marks) {
             reportCard.style.display = "block";
             reportCardBody.innerHTML = "";
@@ -547,7 +601,7 @@
           const studentData = studentSnap.data();
           studentData.id = studentId;
           openMarksForm(studentData);
-          // Optional: scroll to and highlight the field for the subject
+          // Highlight the field for the subject after a short delay
           setTimeout(() => {
             for (let i = 0; i < 10; i++) {
               const subInput = document.getElementById(`subject${i}`);
@@ -571,11 +625,21 @@
     window.exportPDF = () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.text("Report Card", 14, 20);
+      // Retrieve header details
+      const name = document.getElementById("reportName").textContent;
+      const surname = document.getElementById("reportSurname").textContent;
+      const email = document.getElementById("reportEmail").textContent;
+      const year = document.getElementById("reportYear").textContent;
+      const term = document.getElementById("reportTerm").textContent;
+      // Add header to PDF
+      doc.text(`Name: ${name}`, 14, 10);
+      doc.text(`Surname: ${surname}`, 14, 20);
+      doc.text(`Email: ${email}`, 14, 30);
+      doc.text(`Year: ${year}`, 14, 40);
+      doc.text(`Term: ${term}`, 14, 50);
       // Prepare table rows from reportCardBody
       let rows = [];
       document.querySelectorAll("#reportCardBody tr").forEach((tr) => {
-        // Exclude average row if needed (here we include all)
         const cells = Array.from(tr.querySelectorAll("td")).map(
           (td) => td.textContent
         );
@@ -584,7 +648,7 @@
       doc.autoTable({
         head: [["Subject", "Marks", "Grade", "Actions"]],
         body: rows,
-        startY: 30,
+        startY: 60,
       });
       doc.save("report_card.pdf");
     };
