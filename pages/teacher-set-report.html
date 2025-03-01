@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Dashboard - St. Mary's High School</title>
+  <title>Teacher Dashboard - St. Mary's High School</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
     rel="stylesheet"
@@ -50,22 +50,6 @@
       min-height: 100vh;
       transition: background 0.6s ease, color 0.6s ease;
     }
-    body::after {
-      content: "";
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 200px;
-      background: linear-gradient(transparent, var(--overlay));
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      z-index: 100;
-    }
-    body.scrolled::after {
-      opacity: 1;
-    }
     /* Header */
     header {
       background: var(--glass);
@@ -91,127 +75,56 @@
       display: flex;
       align-items: center;
     }
-    /* New: Logo styling */
     .header-logo {
       height: 40px;
       margin-right: 10px;
       vertical-align: middle;
-    }
-    /* Side Menu Styles */
-    .menu-btn {
-      font-size: 1.5rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-      padding: 10px;
-    }
-    .side-menu {
-      position: fixed;
-      top: 0;
-      right: -300px;
-      width: 300px;
-      height: 100%;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      padding: 2rem;
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 2000;
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .side-menu.active {
-      right: 0;
-    }
-    .menu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-    .close-btn {
-      font-size: 1.8rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-    }
-    .menu-links {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .menu-links a {
-      color: var(--text-color);
-      text-decoration: none;
-      font-size: 1.1rem;
-      padding: 10px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-    .menu-links a:hover {
-      background: rgba(255, 255, 255, 0.1);
     }
     /* Main Content */
     .container {
       padding: 180px 5% 100px;
       margin-top: 80px;
     }
-    /* Message Box Styling */
-    #messageBox {
-      position: fixed;
-      top: 100px;
-      right: 5%;
-      z-index: 1101;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 1rem;
-      display: none;
-    }
-    #messageBox.success {
-      background-color: #28a745;
-    }
-    #messageBox.error {
-      background-color: #dc3545;
-    }
     h2 {
       color: var(--primary);
       margin-bottom: 1.5rem;
     }
-    /* Dashboard Cards (for Dashboard Home) */
-    .dashboard-cards {
+    /* Student List */
+    .student-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
-      margin-top: 20px;
+      margin-bottom: 2rem;
     }
-    .card {
+    .student-card {
       background: var(--glass);
       padding: 1.5rem;
       border-radius: 10px;
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
-    .card:hover {
+    .student-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     }
-    .card h3 {
+    .student-card h3 {
       color: var(--primary);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
-    .card p {
-      font-size: 1.2rem;
+    .student-card p {
       color: var(--text-color);
     }
-    /* Personal Info Form */
-    .profile-pic {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 1rem;
-      border: 3px solid var(--primary);
+    /* Marks Entry Form */
+    #marksForm {
+      display: none;
+      background: var(--glass);
+      padding: 1.5rem;
+      border-radius: 10px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 2rem;
     }
     .form-group {
       margin-bottom: 1rem;
@@ -261,15 +174,6 @@
       width: 100%;
       bottom: 0;
     }
-    .social-icons a {
-      color: white;
-      font-size: 1.5rem;
-      margin: 0 0.5rem;
-      transition: color 0.3s ease;
-    }
-    .social-icons a:hover {
-      color: var(--secondary);
-    }
     /* Theme Toggle */
     .theme-toggle {
       position: fixed;
@@ -301,26 +205,6 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
     }
-    /* Drop animation for the welcome text */
-    @keyframes dropIn {
-      0% {
-        transform: translateY(-20px);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    .drop-animation {
-      animation: dropIn 0.5s ease-out;
-    }
-    @media (max-width: 768px) {
-      .side-menu {
-        width: 100%;
-        right: -100%;
-      }
-    }
   </style>
 </head>
 <body>
@@ -328,135 +212,46 @@
   <header>
     <div class="logo">
       <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
-      St. Mary's High
+      St. Mary's High - Teacher Dashboard
     </div>
-    <button class="menu-btn" id="menuBtn">
-      <i class="fas fa-bars"></i>
-    </button>
   </header>
-
-  <!-- Side Menu -->
-  <div class="side-menu" id="sideMenu">
-    <div class="menu-header">
-      <h3>Menu</h3>
-      <button class="close-btn" id="closeBtn">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="menu-links">
-      <a href="#dashboard-home"><i class="fas fa-home"></i> Dashboard</a>
-      <a href="#personal-info"><i class="fas fa-user"></i> Personal Info</a>
-      <a href="#results"><i class="fas fa-chart-bar"></i> View Results</a>
-      <a href="#updates"><i class="fas fa-bell"></i> Current Updates</a>
-      <!-- Logout option added to the hamburger menu -->
-      <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-  </div>
 
   <!-- Main Content -->
   <div class="container">
-    <!-- Message Box for Success/Error Feedback -->
-    <div id="messageBox"></div>
+    <h2>Student List</h2>
+    <div class="student-list" id="studentList">
+      <!-- Student cards will be dynamically inserted here -->
+    </div>
 
-    <!-- Dashboard Home -->
-    <section id="dashboard-home">
-      <h2 id="welcomeMessage">Hello, Student</h2>
-      <div class="dashboard-cards">
-        <div class="card">
-          <h3>Current Grade</h3>
-          <p id="currentGrade">Loading...</p>
-        </div>
-        <div class="card">
-          <h3>Attendance</h3>
-          <p id="attendance">Loading...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Personal Info Page -->
-    <section id="personal-info" style="display: none;">
-      <h2>Personal Information</h2>
+    <!-- Marks Entry Form -->
+    <form id="marksForm">
+      <h2>Enter Marks for <span id="selectedStudent"></span></h2>
       <div class="form-group">
-        <label for="profile-pic">Profile Picture</label>
-        <!-- Default profile pic is set here -->
-        <img
-          src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg"
-          alt="Profile Picture"
-          class="profile-pic"
-          id="profilePic"
-        />
-        <input type="file" id="profilePicInput" accept="image/*" />
-        <!-- Student name will be displayed below the profile pic -->
-        <p id="studentDisplayName"></p>
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="Enter subject name" required />
       </div>
       <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" placeholder="Enter your name" />
+        <label for="marks">Marks</label>
+        <input type="number" id="marks" placeholder="Enter marks" required />
       </div>
       <div class="form-group">
-        <label for="surname">Surname</label>
-        <input type="text" id="surname" placeholder="Enter your surname" />
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone</label>
-        <input type="text" id="phone" placeholder="Enter your phone number" />
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="Enter your email" readonly />
-      </div>
-      <div class="form-group">
-        <label for="parent-name">Parent Name</label>
-        <input type="text" id="parent-name" placeholder="Enter parent's name" />
-      </div>
-      <div class="form-group">
-        <label for="parent-phone">Parent Phone</label>
-        <input type="text" id="parent-phone" placeholder="Enter parent's phone" />
-      </div>
-      <div class="form-group">
-        <label for="dob">Date of Birth</label>
-        <input type="date" id="dob" />
-      </div>
-      <div class="form-group">
-        <label for="gender">Gender</label>
-        <select id="gender">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
+        <label for="grade">Grade</label>
+        <select id="grade" required>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="F">F</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="address">Address</label>
-        <input type="text" id="address" placeholder="Enter your address" />
+        <button type="submit">Save Marks</button>
       </div>
-      <div class="form-group">
-        <button id="saveChangesBtn">Save Changes</button>
-        <!-- Reset Password button uses Firebase's password reset email functionality -->
-        <button id="changePasswordBtn">Reset Password</button>
-      </div>
-    </section>
-
-    <!-- View Results Page -->
-    <section id="results" style="display: none;">
-      <h2>View Results</h2>
-      <p>Your results will be displayed here.</p>
-    </section>
-
-    <!-- Current Updates Page -->
-    <section id="updates" style="display: none;">
-      <h2>Current Updates</h2>
-      <p>Important updates and announcements will be displayed here.</p>
-    </section>
+    </form>
   </div>
 
   <!-- Footer -->
   <footer>
-    <div class="social-icons">
-      <a href="#"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-tiktok"></i></a>
-    </div>
     <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
   </footer>
 
@@ -468,9 +263,7 @@
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
@@ -483,170 +276,74 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
-    // Utility: Show message in the message box (for success/error feedback)
-    function showMessage(message, type) {
-      const messageBox = document.getElementById('messageBox');
-      messageBox.textContent = message;
-      messageBox.className = "";
-      messageBox.classList.add(type);
-      messageBox.style.display = "block";
-      setTimeout(() => {
-        messageBox.style.display = "none";
-      }, 3000);
-    }
-
-    // Check authentication state
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = '/login';
-      } else {
-        fetchStudentData(user.email);
-      }
-    });
-
-    // Fetch student data from Firestore
-    const fetchStudentData = async (email) => {
+    // Fetch and display all students
+    const studentList = document.getElementById('studentList');
+    const fetchStudents = async () => {
       try {
-        const studentRef = doc(db, "students", email);
-        const docSnap = await getDoc(studentRef);
-
-        if (docSnap.exists()) {
-          const studentData = docSnap.data();
-          document.getElementById('name').value = studentData.firstname || '';
-          document.getElementById('surname').value = studentData.surname || '';
-          document.getElementById('phone').value = studentData.phone || '';
-          document.getElementById('email').value = studentData.email || '';
-          document.getElementById('parent-name').value = studentData.parentName || '';
-          document.getElementById('parent-phone').value = studentData.parentPhone || '';
-          document.getElementById('dob').value = studentData.dob || '';
-          document.getElementById('gender').value = studentData.gender || 'male';
-          document.getElementById('address').value = studentData.address || '';
-          document.getElementById('profilePic').src = studentData.profilePic || "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
-          document.getElementById('studentDisplayName').textContent = studentData.firstname || '';
-          document.getElementById('welcomeMessage').textContent = `Hello, ${studentData.firstname}`;
-        } else {
-          document.getElementById('welcomeMessage').textContent = `Welcome, ${email.split('@')[0]}`;
-        }
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-        showMessage("Error fetching student data: " + error.message, "error");
-      }
-    };
-
-    // Save/Update student data to Firestore (using auth.currentUser.email)
-    const saveStudentData = async () => {
-      try {
-        const email = auth.currentUser.email;
-        const studentRef = doc(db, "students", email);
-
-        const studentData = {
-          firstname: document.getElementById('name').value,
-          surname: document.getElementById('surname').value,
-          phone: document.getElementById('phone').value,
-          email: email,
-          parentName: document.getElementById('parent-name').value,
-          parentPhone: document.getElementById('parent-phone').value,
-          dob: document.getElementById('dob').value,
-          gender: document.getElementById('gender').value,
-          address: document.getElementById('address').value,
-          lastUpdated: new Date()
-        };
-
-        await setDoc(studentRef, studentData, { merge: true });
-        showMessage("Profile updated successfully!", "success");
-      } catch (error) {
-        console.error("Error saving student data:", error);
-        showMessage("Error saving student data: " + error.message, "error");
-      }
-    };
-
-    // Reset Password using Firebase Email Reset
-    const resetPassword = async () => {
-      const userEmail = auth.currentUser.email;
-      try {
-        await sendPasswordResetEmail(auth, userEmail);
-        showMessage("Password reset email sent! Check your inbox.", "success");
-      } catch (error) {
-        console.error("Error resetting password:", error);
-        showMessage("Error resetting password: " + error.message, "error");
-      }
-    };
-
-    // Logout function
-    const logout = async () => {
-      try {
-        await signOut(auth);
-        window.location.href = '/login';
-      } catch (error) {
-        console.error("Logout error:", error);
-      }
-    };
-
-    document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('changePasswordBtn').addEventListener('click', resetPassword);
-
-    // Upload new profile picture and update immediately
-    document.getElementById('profilePicInput').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const user = auth.currentUser;
-      if (!user) return;
-      const storageRef = ref(storage, `profilePics/${user.email}`);
-      try {
-        await uploadBytes(storageRef, file);
-        const photoURL = await getDownloadURL(storageRef);
-        const studentRef = doc(db, "students", user.email);
-        await updateDoc(studentRef, { profilePic: photoURL });
-        document.getElementById('profilePic').src = photoURL;
-        showMessage("Profile picture updated!", "success");
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-        showMessage("Error uploading profile picture: " + error.message, "error");
-      }
-    });
-
-    // Side Menu Controls
-    const menuBtn = document.getElementById('menuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const closeBtn = document.getElementById('closeBtn');
-
-    menuBtn.addEventListener('click', () => {
-      sideMenu.classList.toggle('active');
-    });
-
-    closeBtn.addEventListener('click', () => {
-      sideMenu.classList.remove('active');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        sideMenu.classList.remove('active');
-      }
-    });
-
-    // Menu Links functionality (section switching with animation)
-    const menuLinks = document.querySelectorAll('.menu-links a');
-    menuLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href').substring(1);
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        if (welcomeMessage) {
-          welcomeMessage.classList.remove('drop-animation');
-          void welcomeMessage.offsetWidth;
-          welcomeMessage.classList.add('drop-animation');
-        }
-        document.querySelectorAll('section').forEach(sec => {
-          sec.style.display = sec.id === targetId ? "block" : "none";
+        const querySnapshot = await getDocs(collection(db, 'students'));
+        const students = [];
+        querySnapshot.forEach((doc) => {
+          const student = doc.data();
+          student.id = doc.id;
+          students.push(student);
         });
-        sideMenu.classList.remove('active');
-      });
+
+        // Sort students alphabetically by surname
+        students.sort((a, b) => a.surname.localeCompare(b.surname));
+
+        // Clear existing data
+        studentList.innerHTML = '';
+
+        // Add sorted student data to the list
+        students.forEach((student) => {
+          const card = document.createElement('div');
+          card.className = 'student-card';
+          card.innerHTML = `
+            <h3>${student.firstname} ${student.surname}</h3>
+            <p>${student.email}</p>
+          `;
+          card.addEventListener('click', () => openMarksForm(student));
+          studentList.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
+
+    // Open marks entry form for a selected student
+    const openMarksForm = (student) => {
+      document.getElementById('selectedStudent').textContent = `${student.firstname} ${student.surname}`;
+      document.getElementById('marksForm').style.display = 'block';
+      document.getElementById('marksForm').dataset.studentEmail = student.email;
+    };
+
+    // Save marks and grades for a student
+    const marksForm = document.getElementById('marksForm');
+    marksForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentEmail = marksForm.dataset.studentEmail;
+      const subject = document.getElementById('subject').value;
+      const marks = document.getElementById('marks').value;
+      const grade = document.getElementById('grade').value;
+
+      try {
+        const studentRef = doc(db, 'students', studentEmail);
+        await updateDoc(studentRef, {
+          marks: { [subject]: { marks, grade } }
+        });
+        alert('Marks saved successfully!');
+        marksForm.reset();
+        marksForm.style.display = 'none';
+      } catch (error) {
+        console.error("Error saving marks:", error);
+        alert('Error saving marks. Please try again.');
+      }
     });
+
+    // Load student data on page load
+    fetchStudents();
 
     // Theme Toggle functionality
     const themeToggle = document.getElementById('themeToggle');
