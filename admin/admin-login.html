@@ -366,55 +366,51 @@
     </div>
 
     <!-- Firebase and JavaScript -->
-   <!-- Add this script to the admin login page -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
-        authDomain: "deee-9ab53.firebaseapp.com",
-        projectId: "deee-9ab53",
-        storageBucket: "deee-9ab53.firebasestorage.app",
-        messagingSenderId: "399732664479",
-        appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
-        measurementId: "G-524ZPBX42B"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+            authDomain: "deee-9ab53.firebaseapp.com",
+            projectId: "deee-9ab53",
+            storageBucket: "deee-9ab53.firebasestorage.app",
+            messagingSenderId: "399732664479",
+            appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+            measurementId: "G-524ZPBX42B"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    document.getElementById('admin-login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
 
-                // Check the user's role in Firestore
-                return getDoc(doc(db, "users", user.uid));
-            })
-            .then((docSnap) => {
-                if (docSnap.exists() && docSnap.data().role === "admin") {
-                    alert('Login successful!');
-                    window.location.href = '/teachersdashboard';
-                } else {
-                    // If the user is not an admin, log them out and show an error
-                    auth.signOut();
-                    document.getElementById('error-message').textContent = "You do not have access to the admin panel.";
-                }
-            })
-            .catch((error) => {
-                document.getElementById('error-message').textContent = error.message;
-            });
-    });
-
-
-       
+                    // Check the user's role in Firestore
+                    return getDoc(doc(db, "users", user.uid));
+                })
+                .then((docSnap) => {
+                    if (docSnap.exists() && docSnap.data().role === "admin") {
+                        alert('Login successful!');
+                        window.location.href = '/teachersdashboard'; // Redirect to admin dashboard
+                    } else {
+                        // If the user is not an admin, log them out and show an error
+                        auth.signOut();
+                        document.getElementById('error-message').textContent = "You do not have access to the admin panel.";
+                    }
+                })
+                .catch((error) => {
+                    document.getElementById('error-message').textContent = error.message;
+                });
+        });
 
         // Toggle Password Visibility
         const togglePassword = document.getElementById('toggle-password');
