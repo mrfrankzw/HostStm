@@ -5,19 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher Dashboard - St. Mary's High School</title>
+  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
     rel="stylesheet"
   />
+  <!-- Font Awesome -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
-  <link
-    rel="icon"
-    type="image/png"
-    href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg"
-  />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF and autoTable plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <style>
     /* General Styles */
     :root {
@@ -43,27 +45,24 @@
       font-family: "Poppins", sans-serif;
     }
     body {
-      overflow: auto;
-      user-select: none;
       background: var(--bg-gradient);
       color: var(--text-color);
       min-height: 100vh;
+      overflow-x: hidden;
       transition: background 0.6s ease, color 0.6s ease;
     }
-    /* Header */
     header {
       background: var(--glass);
       backdrop-filter: blur(12px);
       padding: 1.2rem 5%;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       position: fixed;
       width: 100%;
       top: 0;
       z-index: 1000;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.4s ease;
     }
     .logo {
       font-size: 1.8rem;
@@ -71,7 +70,6 @@
       background: linear-gradient(to right, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: logoFloat 4s ease-in-out infinite;
       display: flex;
       align-items: center;
     }
@@ -80,14 +78,23 @@
       margin-right: 10px;
       vertical-align: middle;
     }
-    /* Main Content */
     .container {
       padding: 180px 5% 100px;
       margin-top: 80px;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    h2 {
-      color: var(--primary);
-      margin-bottom: 1.5rem;
+    input, select, button {
+      font-family: inherit;
+    }
+    /* Search Bar */
+    #searchStudent {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 5px;
     }
     /* Student List */
     .student-list {
@@ -124,7 +131,7 @@
       border-radius: 10px;
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
     .form-group {
       margin-bottom: 1rem;
@@ -150,7 +157,8 @@
       border-color: var(--primary);
       outline: none;
     }
-    .form-group button {
+    .form-group button,
+    #marksForm button {
       padding: 0.75rem 1.5rem;
       background: var(--primary);
       color: white;
@@ -160,7 +168,8 @@
       font-size: 1rem;
       transition: background 0.3s ease;
     }
-    .form-group button:hover {
+    .form-group button:hover,
+    #marksForm button:hover {
       background: #002244;
     }
     /* Report Card */
@@ -170,7 +179,7 @@
       border-radius: 10px;
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
     .report-card h3 {
       color: var(--primary);
@@ -179,6 +188,7 @@
     .report-card table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 1rem;
     }
     .report-card th,
     .report-card td {
@@ -190,6 +200,34 @@
       background: var(--primary);
       color: white;
     }
+    .report-card td button {
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .report-card td button:hover {
+      opacity: 0.9;
+    }
+    .edit-btn {
+      background: var(--secondary);
+      color: var(--primary);
+    }
+    .delete-btn {
+      background: #ff4d4d;
+      color: white;
+    }
+    .pdf-btn {
+      background: var(--primary);
+      color: white;
+      margin-bottom: 1rem;
+    }
+    /* Chart Container */
+    .chart-container {
+      width: 100%;
+      height: 300px;
+    }
     /* Footer */
     footer {
       background: var(--glass);
@@ -200,37 +238,6 @@
       position: fixed;
       width: 100%;
       bottom: 0;
-    }
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--glass);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(180deg);
-    }
-    .theme-toggle i {
-      font-size: 1.4rem;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
     }
   </style>
 </head>
@@ -245,37 +252,44 @@
 
   <!-- Main Content -->
   <div class="container">
+    <!-- Search Field -->
+    <input type="text" id="searchStudent" placeholder="Search student by name..." onkeyup="filterStudents()" />
+
+    <!-- Student List -->
     <h2>Student List</h2>
-    <div class="student-list" id="studentList">
-      <!-- Student cards will be dynamically inserted here -->
+    <div id="studentList" class="student-list">
+      <!-- Dynamically populated student cards -->
     </div>
 
     <!-- Marks Entry Form -->
     <form id="marksForm">
       <h2>Enter Marks for <span id="selectedStudent"></span></h2>
       <div id="subjectFields">
-        <!-- Subject fields will be dynamically inserted here -->
+        <!-- Dynamically generated subject fields (10 max) -->
       </div>
-      <div class="form-group">
-        <button type="submit">Save Marks</button>
-      </div>
+      <button type="submit">Save Marks</button>
     </form>
 
     <!-- Report Card -->
-    <div class="report-card" id="reportCard" style="display: none;">
-      <h3>Sample Report Card</h3>
+    <div id="reportCard" class="report-card" style="display: none;">
+      <h3>Report Card</h3>
       <table>
         <thead>
           <tr>
             <th>Subject</th>
             <th>Marks</th>
             <th>Grade</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="reportCardBody">
-          <!-- Report card data will be dynamically inserted here -->
+          <!-- Dynamically generated report card rows -->
         </tbody>
       </table>
+      <button class="pdf-btn" onclick="exportPDF()">Download PDF</button>
+      <div class="chart-container">
+        <canvas id="performanceChart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -284,11 +298,19 @@
     <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
   </footer>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase and App Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      getDoc,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Firebase config (using your original project settings)
     const firebaseConfig = {
       apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
       authDomain: "deee-9ab53.firebaseapp.com",
@@ -299,115 +321,275 @@
       measurementId: "G-524ZPBX42B"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    const appFirebase = initializeApp(firebaseConfig);
+    const db = getFirestore(appFirebase);
+
+    // Global variables
+    const studentList = document.getElementById("studentList");
+    const marksForm = document.getElementById("marksForm");
+    const reportCard = document.getElementById("reportCard");
+    const reportCardBody = document.getElementById("reportCardBody");
+    let performanceChart; // for Chart.js
 
     // Fetch and display all students
-    const studentList = document.getElementById('studentList');
-    const fetchStudents = async () => {
+    async function fetchStudents() {
       try {
-        const querySnapshot = await getDocs(collection(db, 'students'));
-        const students = [];
-        querySnapshot.forEach((doc) => {
-          const student = doc.data();
-          student.id = doc.id;
-          students.push(student);
+        const querySnapshot = await getDocs(collection(db, "students"));
+        let students = [];
+        querySnapshot.forEach((docSnap) => {
+          let data = docSnap.data();
+          data.id = docSnap.id;
+          students.push(data);
         });
-
         // Sort students alphabetically by surname
         students.sort((a, b) => a.surname.localeCompare(b.surname));
-
-        // Clear existing data
-        studentList.innerHTML = '';
-
-        // Add sorted student data to the list
+        studentList.innerHTML = "";
         students.forEach((student) => {
-          const card = document.createElement('div');
-          card.className = 'student-card';
+          const card = document.createElement("div");
+          card.className = "student-card";
           card.innerHTML = `
             <h3>${student.firstname} ${student.surname}</h3>
-            <p>${student.email}</p>
+            <p>${student.email || ""}</p>
           `;
-          card.addEventListener('click', () => openMarksForm(student));
+          card.addEventListener("click", () => openMarksForm(student));
           studentList.appendChild(card);
         });
       } catch (error) {
         console.error("Error fetching students:", error);
       }
+    }
+
+    // Filter students by search term
+    window.filterStudents = () => {
+      const search = document.getElementById("searchStudent").value.toLowerCase();
+      document.querySelectorAll(".student-card").forEach((card) => {
+        card.style.display = card.textContent.toLowerCase().includes(search)
+          ? ""
+          : "none";
+      });
     };
 
-    // Open marks entry form for a selected student
-    const openMarksForm = (student) => {
-      document.getElementById('selectedStudent').textContent = `${student.firstname} ${student.surname}`;
-      document.getElementById('marksForm').style.display = 'block';
-      document.getElementById('marksForm').dataset.studentEmail = student.email;
-
-      // Add up to 10 subject fields
-      const subjectFields = document.getElementById('subjectFields');
-      subjectFields.innerHTML = '';
-      for (let i = 1; i <= 10; i++) {
+    // Open marks entry form with (prefilled) subjects if available
+    window.openMarksForm = async (student) => {
+      document.getElementById("selectedStudent").textContent =
+        student.firstname + " " + student.surname;
+      marksForm.style.display = "block";
+      marksForm.dataset.studentId = student.id;
+      const subjectFields = document.getElementById("subjectFields");
+      subjectFields.innerHTML = "";
+      // Prepopulate with existing marks if any
+      const subjects = student.marks || {};
+      const keys = Object.keys(subjects);
+      for (let i = 0; i < 10; i++) {
+        const subjectName = keys[i] || "";
+        const marksVal = keys[i] ? subjects[keys[i]].marks : "";
+        const gradeVal = keys[i] ? subjects[keys[i]].grade : "";
         subjectFields.innerHTML += `
           <div class="form-group">
-            <label for="subject${i}">Subject ${i}</label>
-            <input type="text" id="subject${i}" placeholder="Enter subject name" />
-            <input type="number" id="marks${i}" placeholder="Enter marks" />
+            <label>Subject ${i + 1}</label>
+            <input type="text" id="subject${i}" value="${subjectName}" placeholder="Enter subject name" />
+            <input type="number" id="marks${i}" value="${marksVal}" placeholder="Enter marks" oninput="updateGrade(${i})"/>
             <select id="grade${i}">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="F">F</option>
+              <option value="A" ${gradeVal === "A" ? "selected" : ""}>A</option>
+              <option value="B" ${gradeVal === "B" ? "selected" : ""}>B</option>
+              <option value="C" ${gradeVal === "C" ? "selected" : ""}>C</option>
+              <option value="D" ${gradeVal === "D" ? "selected" : ""}>D</option>
+              <option value="F" ${gradeVal === "F" ? "selected" : ""}>F</option>
             </select>
           </div>
         `;
       }
     };
 
-    // Save marks and grades for a student
-    const marksForm = document.getElementById('marksForm');
-    marksForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const studentEmail = marksForm.dataset.studentEmail;
-      const marksData = {};
+    // Auto-grade calculation on marks input
+    window.updateGrade = (index) => {
+      const marksInput = document.getElementById(`marks${index}`);
+      const gradeSelect = document.getElementById(`grade${index}`);
+      const marks = Number(marksInput.value);
+      let grade = "F";
+      if (!isNaN(marks)) {
+        if (marks >= 90) grade = "A";
+        else if (marks >= 80) grade = "B";
+        else if (marks >= 70) grade = "C";
+        else if (marks >= 60) grade = "D";
+        else grade = "F";
+      }
+      gradeSelect.value = grade;
+    };
 
-      // Collect all subject data
-      for (let i = 1; i <= 10; i++) {
-        const subject = document.getElementById(`subject${i}`).value;
+    // Save marks and display report card on form submission
+    marksForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const studentId = marksForm.dataset.studentId;
+      let marksData = {};
+      for (let i = 0; i < 10; i++) {
+        const subject = document.getElementById(`subject${i}`).value.trim();
         const marks = document.getElementById(`marks${i}`).value;
         const grade = document.getElementById(`grade${i}`).value;
-
-        if (subject && marks && grade) {
-          marksData[subject] = { marks, grade };
+        if (subject !== "" && marks !== "") {
+          marksData[subject] = { marks: Number(marks), grade };
         }
       }
-
       try {
-        const studentRef = doc(db, 'students', studentEmail);
+        const studentRef = doc(db, "students", studentId);
         await setDoc(studentRef, { marks: marksData }, { merge: true });
-        alert('Marks saved successfully!');
+        alert("Marks saved successfully!");
         marksForm.reset();
-        marksForm.style.display = 'none';
-
-        // Display sample report card
-        const reportCardBody = document.getElementById('reportCardBody');
-        reportCardBody.innerHTML = '';
-        for (const [subject, data] of Object.entries(marksData)) {
-          reportCardBody.innerHTML += `
-            <tr>
-              <td>${subject}</td>
-              <td>${data.marks}</td>
-              <td>${data.grade}</td>
-            </tr>
-          `;
-        }
-        document.getElementById('reportCard').style.display = 'block';
+        marksForm.style.display = "none";
+        displayReportCard(studentId);
       } catch (error) {
-        console.error("Error saving marks:", error.message);
-        alert('Error saving marks. Please try again.');
+        console.error("Error saving marks:", error);
+        alert("Error saving marks. Please try again.");
       }
     });
 
-    // Load student data on page load
+    // Display report card with marks, actions, and analytics
+    async function displayReportCard(studentId) {
+      try {
+        const studentRef = doc(db, "students", studentId);
+        const studentSnap = await getDoc(studentRef);
+        if (studentSnap.exists()) {
+          const studentData = studentSnap.data();
+          if (studentData.marks) {
+            reportCard.style.display = "block";
+            reportCardBody.innerHTML = "";
+            let totalMarks = 0,
+              count = 0;
+            for (const [subject, data] of Object.entries(studentData.marks)) {
+              reportCardBody.innerHTML += `
+                <tr>
+                  <td>${subject}</td>
+                  <td>${data.marks}</td>
+                  <td>${data.grade}</td>
+                  <td>
+                    <button class="edit-btn" onclick="editSubject('${studentId}', '${subject}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteSubject('${studentId}', '${subject}')">Delete</button>
+                  </td>
+                </tr>
+              `;
+              totalMarks += Number(data.marks);
+              count++;
+            }
+            const avgMarks = count ? (totalMarks / count).toFixed(2) : 0;
+            reportCardBody.innerHTML += `
+              <tr>
+                <td colspan="4">Average Marks: ${avgMarks}</td>
+              </tr>
+            `;
+            updateChart(studentData.marks);
+          } else {
+            reportCard.style.display = "none";
+          }
+        }
+      } catch (error) {
+        console.error("Error displaying report card:", error);
+      }
+    }
+
+    // Update performance chart using Chart.js
+    function updateChart(marksData) {
+      const ctx = document.getElementById("performanceChart").getContext("2d");
+      const subjects = Object.keys(marksData);
+      const marks = subjects.map((sub) => marksData[sub].marks);
+      if (performanceChart) {
+        performanceChart.destroy();
+      }
+      performanceChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: subjects,
+          datasets: [
+            {
+              label: "Marks",
+              data: marks,
+              backgroundColor: "rgba(0, 179, 219, 0.5)",
+              borderColor: "rgba(0, 179, 219, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true },
+          },
+        },
+      });
+    }
+
+    // Delete a subject from the student's marks
+    window.deleteSubject = async (studentId, subject) => {
+      if (confirm(`Are you sure you want to delete ${subject}?`)) {
+        try {
+          const studentRef = doc(db, "students", studentId);
+          const studentSnap = await getDoc(studentRef);
+          if (studentSnap.exists()) {
+            const studentData = studentSnap.data();
+            if (studentData.marks && studentData.marks[subject]) {
+              delete studentData.marks[subject];
+              await setDoc(studentRef, { marks: studentData.marks }, { merge: true });
+              alert(`${subject} deleted successfully!`);
+              displayReportCard(studentId);
+            }
+          }
+        } catch (error) {
+          console.error("Error deleting subject:", error);
+        }
+      }
+    };
+
+    // Edit a subject by reopening the marks form and highlighting the subject field
+    window.editSubject = async (studentId, subject) => {
+      try {
+        const studentRef = doc(db, "students", studentId);
+        const studentSnap = await getDoc(studentRef);
+        if (studentSnap.exists()) {
+          const studentData = studentSnap.data();
+          studentData.id = studentId;
+          openMarksForm(studentData);
+          // Optional: scroll to and highlight the field for the subject
+          setTimeout(() => {
+            for (let i = 0; i < 10; i++) {
+              const subInput = document.getElementById(`subject${i}`);
+              if (subInput && subInput.value === subject) {
+                subInput.focus();
+                subInput.style.border = "2px solid red";
+                setTimeout(() => {
+                  subInput.style.border = "";
+                }, 2000);
+                break;
+              }
+            }
+          }, 100);
+        }
+      } catch (error) {
+        console.error("Error editing subject:", error);
+      }
+    };
+
+    // Export report card to PDF using jsPDF and autoTable
+    window.exportPDF = () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Report Card", 14, 20);
+      // Prepare table rows from reportCardBody
+      let rows = [];
+      document.querySelectorAll("#reportCardBody tr").forEach((tr) => {
+        // Exclude average row if needed (here we include all)
+        const cells = Array.from(tr.querySelectorAll("td")).map(
+          (td) => td.textContent
+        );
+        rows.push(cells);
+      });
+      doc.autoTable({
+        head: [["Subject", "Marks", "Grade", "Actions"]],
+        body: rows,
+        startY: 30,
+      });
+      doc.save("report_card.pdf");
+    };
+
+    // Load students on page load
     fetchStudents();
   </script>
 </body>
