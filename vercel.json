@@ -49,8 +49,8 @@
       "dest": "/admin/admin-signup.html"
     },
     {
-      "src": "/teachersdasboard",
-      "dest": "/admin/dashboard.html"
+      "src": "/teachersdashboard",
+      "dest": "/admin/teachers-dashboard.html"
     },
     {
       "src": "/dashboard",
