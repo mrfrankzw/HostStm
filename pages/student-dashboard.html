@@ -598,6 +598,109 @@
           showMessage("Error fetching student data: " + error.message, "error");
         }
       };
+      // Load results for the "View Results" section
+      const loadResults = async () => {
+        try {
+          const studentEmail = auth.currentUser.email;
+          const studentRef = doc(db, "students", studentEmail);
+          const studentSnap = await getDoc(studentRef);
+
+          if (studentSnap.exists()) {
+            const studentData = studentSnap.data();
+            const marks = studentData.marks || {};
+
+            // Update report header
+            document.getElementById("reportName").textContent =
+              `${studentData.firstname || ""} ${studentData.surname || ""}`;
+            document.getElementById("reportEmail").textContent =
+              studentData.email || "";
+            document.getElementById("reportYear").textContent =
+              studentData.year || "Not set";
+            document.getElementById("reportTerm").textContent =
+              studentData.term || "Not set";
+
+            // Clear existing rows
+            const reportCardBody = document.getElementById("reportCardBody");
+            reportCardBody.innerHTML = "";
+
+            // Add rows for each subject
+            let totalMarks = 0;
+            let subjectCount = 0;
+            for (const [subject, data] of Object.entries(marks)) {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${subject}</td>
+                <td>${data.marks}</td>
+                <td>${data.grade}</td>
+              `;
+              reportCardBody.appendChild(row);
+
+              totalMarks += Number(data.marks);
+              subjectCount++;
+            }
+
+            // Add average marks row
+            if (subjectCount > 0) {
+              const averageMarks = (totalMarks / subjectCount).toFixed(2);
+              const averageRow = document.createElement("tr");
+              averageRow.innerHTML = `
+                <td colspan="3"><strong>Average Marks: ${averageMarks}</strong></td>
+              `;
+              reportCardBody.appendChild(averageRow);
+            } else {
+              reportCardBody.innerHTML =
+                "<tr><td colspan='3'>No marks available.</td></tr>";
+            }
+          } else {
+            document.getElementById("reportCardBody").innerHTML =
+              "<tr><td colspan='3'>No data found.</td></tr>";
+          }
+        } catch (error) {
+          console.error("Error loading results:", error);
+          showMessage("Error loading results: " + error.message, "error");
+        }
+      };
+
+      // Export report card as PDF
+      window.exportPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add header details
+        const name = document.getElementById("reportName").textContent;
+        const email = document.getElementById("reportEmail").textContent;
+        const year = document.getElementById("reportYear").textContent;
+        const term = document.getElementById("reportTerm").textContent;
+
+        doc.text(`Name: ${name}`, 14, 10);
+        doc.text(`Email: ${email}`, 14, 20);
+        doc.text(`Year: ${year}`, 14, 30);
+        doc.text(`Term: ${term}`, 14, 40);
+
+        // Prepare table rows
+        let rows = [];
+        document.querySelectorAll("#reportCardBody tr").forEach((tr) => {
+          const cells = Array.from(tr.querySelectorAll("td")).map(
+            (td) => td.textContent
+          );
+          rows.push(cells);
+        });
+
+        // Add table to PDF
+        doc.autoTable({
+          head: [["Subject", "Marks", "Grade"]],
+          body: rows,
+          startY: 50,
+        });
+
+        // Save PDF
+        doc.save("report_card.pdf");
+      };
+
+      // Call loadResults when the "View Results" section is opened
+      document
+        .querySelector('a[href="#results"]')
+        .addEventListener("click", loadResults);
 
       // Save/Update student data from Personal Info page
       const saveStudentData = async () => {
