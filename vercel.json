@@ -53,6 +53,10 @@
       "dest": "/student-dashboard.html"
     },
     {
+      "src": "/studentusers",
+      "dest": "/pages/student-users.html"
+    }
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
