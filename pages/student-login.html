@@ -364,11 +364,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Login Logic
+       /* // Login Logic
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
-     /*   loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -376,12 +376,15 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Redirect to dashboard
-                    window.location.href = '/dashboard';
+                    window.location.href = '/student-dashboard';
                 })
                 .catch((error) => {
                     errorMessage.textContent = error.message;
-                });*/
-                    // In login.js
+                });
+        });
+*/
+
+        // In login.js
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
@@ -396,8 +399,6 @@ loginForm.addEventListener('submit', (e) => {
             errorMessage.textContent = error.message;
         });
 });
-        });
-
         // Toggle Password Visibility
         const togglePassword = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
@@ -440,7 +441,6 @@ loginForm.addEventListener('submit', (e) => {
                 nav.classList.remove('active');
             }
         });
-
     </script>
 </body>
 </html>
