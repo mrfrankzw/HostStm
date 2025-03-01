@@ -510,7 +510,7 @@
                     surname: document.getElementById('surname').value,
                     phone: document.getElementById('phone').value,
                     email: email,
-                                        parentName: document.getElementById('parent-name').value,
+                    parentName: document.getElementById('parent-name').value,
                     parentPhone: document.getElementById('parent-phone').value,
                     dob: document.getElementById('dob').value,
                     gender: document.getElementById('gender').value,
@@ -538,13 +538,13 @@
 
         // Event Listeners
         document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('logoutBtn')?.addEventListener('click', logout);
 
-        // Hamburger menu close on click
+        // Hamburger menu close on click (for any links inside a sidebar, if applicable)
         const sidebarLinks = document.querySelectorAll('.sidebar a');
         sidebarLinks.forEach(link => {
             link.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebar')?.classList.remove('active');
             });
         });
 
@@ -561,8 +561,9 @@
         const sideMenu = document.getElementById('sideMenu');
         const closeBtn = document.getElementById('closeBtn');
 
+        // Updated: Toggle side menu on hamburger tap
         menuBtn.addEventListener('click', () => {
-            sideMenu.classList.add('active');
+            sideMenu.classList.toggle('active');
         });
 
         closeBtn.addEventListener('click', () => {
