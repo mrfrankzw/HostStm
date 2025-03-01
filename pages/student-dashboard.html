@@ -348,6 +348,8 @@
       <a href="#personal-info"><i class="fas fa-user"></i> Personal Info</a>
       <a href="#results"><i class="fas fa-chart-bar"></i> View Results</a>
       <a href="#updates"><i class="fas fa-bell"></i> Current Updates</a>
+      <!-- Logout option added to the hamburger menu -->
+      <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
   </div>
 
@@ -596,11 +598,11 @@
 
     // Event Listeners for Save and Logout buttons
     document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
-    document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    document.getElementById('logoutBtn').addEventListener('click', logout);
     // Event Listener for Reset Password button
     document.getElementById('changePasswordBtn').addEventListener('click', resetPassword);
 
-    // Upload new profile picture
+    // Upload new profile picture and update the default immediately
     document.getElementById('profilePicInput').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -613,7 +615,7 @@
         // Update Firestore with new photoURL
         const studentRef = doc(db, "students", user.email);
         await updateDoc(studentRef, { profilePic: photoURL });
-        // Update UI
+        // Update UI: Immediately update the profile picture
         document.getElementById('profilePic').src = photoURL;
         showMessage("Profile picture updated!", "success");
       } catch (error) {
