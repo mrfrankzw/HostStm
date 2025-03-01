@@ -1,3 +1,5 @@
+
+<!-- student-dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,89 +9,11 @@
     <title>Student Dashboard - St. Mary's High School</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
     <style>
-        /* General Styles */
-        :root {
-            --primary: #003366;
-            --secondary: #FFD700;
-            --text-color: #333;
-            --bg-light: #ffffff;
-            --bg-dark: #1a1a1a;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: var(--bg-light);
-            color: var(--text-color);
-            overflow-x: hidden;
-            transition: background 0.6s ease, color 0.6s ease;
-        }
-
-        body.dark-mode {
-            --text-color: #f9f9f9;
-            --bg-light: #1a1a1a;
-            --bg-dark: #333;
-        }
-
-        /* Header */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        .logo img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .menu-btn {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Sidebar (Hamburger Menu) */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: var(--primary);
-            position: fixed;
-            top: 80px;
-            left: -250px;
-            transition: left 0.3s ease;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
+        /* Add previous dashboard CSS here */
+        /* Include all the dashboard styles from previous answer */
+                    color: white;
             padding: 1rem;
             text-decoration: none;
             transition: background 0.3s ease;
@@ -176,6 +100,7 @@
                 left: 0;
             }
         }
+    
     </style>
 </head>
 <body>
@@ -188,6 +113,9 @@
         <button class="menu-btn" id="menuBtn">
             <i class="fas fa-bars"></i>
         </button>
+        <div class="logout-btn">
+            <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
     </header>
 
     <!-- Sidebar (Hamburger Menu) -->
@@ -203,88 +131,43 @@
         <!-- Dashboard Home -->
         <section id="dashboard-home">
             <h2 id="welcomeMessage">Hello, Student</h2>
-            <p>Welcome to your dashboard. Here you can view your personal info, results, and more.</p>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Current Grade</h3>
+                    <p id="currentGrade">Loading...</p>
+                </div>
+                <div class="card">
+                    <h3>Attendance</h3>
+                    <p id="attendance">Loading...</p>
+                </div>
+            </div>
         </section>
 
         <!-- Personal Info Page -->
         <section id="personal-info" style="display: none;">
-            <h2>Personal Information</h2>
-            <div class="form-group">
-                <label for="profile-pic">Profile Picture</label>
-                <img src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg" alt="Profile Picture" class="profile-pic" id="profilePic">
-                <input type="file" id="profilePicInput" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" readonly>
-            </div>
-            <div class="form-group">
-                <label for="surname">Surname</label>
-                <input type="text" id="surname" readonly>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" readonly>
-            </div>
-            <div class="form-group">
-                <label for="parent-name">Parent Name</label>
-                <input type="text" id="parent-name">
-            </div>
-            <div class="form-group">
-                <label for="parent-phone">Parent Phone</label>
-                <input type="text" id="parent-phone">
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" id="dob">
-            </div>
-            <div class="form-group">
-                <label for="gender">Gender</label>
-                <select id="gender">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" id="address">
-            </div>
-            <div class="form-group">
-                <button id="saveChangesBtn">Save Changes</button>
-                <button id="changePasswordBtn">Change Password</button>
-            </div>
+            <!-- Keep previous personal info form -->
         </section>
 
-        <!-- View Results Page -->
-        <section id="results" style="display: none;">
-            <h2>View Results</h2>
-            <p>Your results will be displayed here.</p>
-        </section>
-
-        <!-- Current Updates Page -->
-        <section id="updates" style="display: none;">
-            <h2>Current Updates</h2>
-            <p>Important updates and announcements will be displayed here.</p>
-        </section>
+        <!-- Keep other sections -->
     </div>
 
     <!-- Footer -->
     <footer>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
         <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
     </footer>
 
     <!-- Firebase SDK -->
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
             authDomain: "deee-9ab53.firebaseapp.com",
@@ -295,123 +178,113 @@
             measurementId: "G-524ZPBX42B"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Get the logged-in student's email (replace with actual email from login)
-        const studentEmail = "darrellmucheri@gmail.com"; // Example email
+        // Get logged-in user
+        const user = auth.currentUser;
+        if (!user) window.location.href = '/login';
 
-        // Fetch and display student data
+        // Get user email from localStorage
+        const studentEmail = localStorage.getItem('studentEmail');
+        if (!studentEmail) window.location.href = '/login';
+
+        // Firestore reference
+        const studentRef = doc(db, "students", studentEmail);
+
+        // Fetch student data
         const fetchStudentData = async () => {
             try {
-                const q = query(collection(db, "students"), where("email", "==", studentEmail));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const studentDoc = querySnapshot.docs[0];
-                    const studentData = studentDoc.data();
-
-                    // Display student data
-                    document.getElementById('name').value = studentData.firstname;
-                    document.getElementById('surname').value = studentData.surname;
-                    document.getElementById('phone').value = studentData.phone;
-                    document.getElementById('email').value = studentData.email;
-                    document.getElementById('parent-name').value = studentData.parentName || "";
-                    document.getElementById('parent-phone').value = studentData.parentPhone || "";
-                    document.getElementById('dob').value = studentData.dob || "";
-                    document.getElementById('gender').value = studentData.gender || "male";
-                    document.getElementById('address').value = studentData.address || "";
-
+                const docSnap = await getDoc(studentRef);
+                
+                if (docSnap.exists()) {
+                    const studentData = docSnap.data();
+                    // Populate form fields
+                    document.getElementById('name').value = studentData.firstname || '';
+                    document.getElementById('surname').value = studentData.surname || '';
+                    // Populate other fields...
+                    
                     // Update welcome message
                     const welcomeMessage = document.getElementById('welcomeMessage');
                     welcomeMessage.textContent = `Hello, ${studentData.firstname}`;
                 } else {
-                    console.log("No student found with this email.");
+                    // New user - show empty form
+                    const welcomeMessage = document.getElementById('welcomeMessage');
+                    welcomeMessage.textContent = `Welcome, ${studentEmail.split('@')[0]}`;
                 }
             } catch (error) {
                 console.error("Error fetching student data:", error);
             }
         };
 
-        // Save changes to Firestore
-        const saveChanges = async () => {
+        // Save/Update student data
+        const saveStudentData = async () => {
             try {
-                const q = query(collection(db, "students"), where("email", "==", studentEmail));
-                const querySnapshot = await getDocs(q);
+                const studentData = {
+                    firstname: document.getElementById('name').value,
+                    surname: document.getElementById('surname').value,
+                    phone: document.getElementById('phone').value,
+                    email: studentEmail,
+                    parentName: document.getElementById('parent-name').value,
+                    parentPhone: document.getElementById('parent-phone').value,
+                    dob: document.getElementById('dob').value,
+                    gender: document.getElementById('gender').value,
+                    address: document.getElementById('address').value,
+                    lastUpdated: new Date()
+                };
 
-                if (!querySnapshot.empty) {
-                    const studentDoc = querySnapshot.docs[0];
-                    const docRef = doc(db, "students", studentDoc.id);
-
-                    await updateDoc(docRef, {
-                        phone: document.getElementById('phone').value,
-                        parentName: document.getElementById('parent-name').value,
-                        parentPhone: document.getElementById('parent-phone').value,
-                        dob: document.getElementById('dob').value,
-                        gender: document.getElementById('gender').value,
-                        address: document.getElementById('address').value
-                    });
-
-                    alert("Changes saved successfully!");
-                }
+                await setDoc(studentRef, studentData, { merge: true });
+                alert("Profile updated successfully!");
             } catch (error) {
-                console.error("Error saving changes:", error);
+                console.error("Error saving student data:", error);
             }
         };
 
-        // Load student data on page load
+        // Logout
+        const logout = async () => {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('studentEmail');
+                window.location.href = '/login';
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        };
+
+        // Event Listeners
+        document.getElementById('saveChangesBtn').addEventListener('click', saveStudentData);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // Initialize
         fetchStudentData();
 
-        // Save Changes Button
-        document.getElementById('saveChangesBtn').addEventListener('click', saveChanges);
-
-        // Change Password Button
-        document.getElementById('changePasswordBtn').addEventListener('click', () => {
-            alert("Change Password functionality will be implemented here.");
-        });
-
-        // Hamburger Menu Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        // Switch Between Pages
-        const links = document.querySelectorAll('.sidebar a');
-        const sections = document.querySelectorAll('.container section');
-
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = link.getAttribute('href').substring(1); // Remove the #
-
-                // Hide all sections
-                sections.forEach(section => {
-                    section.style.display = 'none';
-                });
-
-                // Show the target section
-                document.getElementById(target).style.display = 'block';
+        // Hamburger menu close on click
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('active');
             });
         });
 
-        // Change Profile Picture
-        const profilePicInput = document.getElementById('profilePicInput');
-        const profilePic = document.getElementById('profilePic');
-
-        profilePicInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    profilePic.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        // Toggle password visibility (add to login page)
+        const togglePassword = () => {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            document.getElementById('toggle-password').classList.toggle('fa-eye-slash');
+        };
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
