@@ -50,7 +50,7 @@
     },
     {
       "src": "/dashboard",
-      "dest": "/student-dashboard.html"
+      "dest": "/pages/student-dashboard.html"
     },
     {
       "src": "/studentusers",
