@@ -274,7 +274,7 @@
 
   <!-- Main Content -->
   <div class="container">
-    <!-- Dashboard Section (optional home screen) -->
+    <!-- Dashboard Section -->
     <section id="dashboard">
       <h2>Dashboard</h2>
       <p>Welcome to the Teacher Dashboard.</p>
@@ -333,17 +333,8 @@
               <th>Fri</th>
             </tr>
           </thead>
-          <tbody>
-            ${[1, 2, 3, 4].map(week => `
-              <tr>
-                <td>Week ${week}</td>
-                <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Monday" /></td>
-                <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Tuesday" /></td>
-                <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Wednesday" /></td>
-                <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Thursday" /></td>
-                <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Friday" /></td>
-              </tr>
-            `).join('')}
+          <tbody id="attendanceTableBody">
+            <!-- Rows will be populated dynamically -->
           </tbody>
         </table>
         <div class="form-group">
@@ -430,7 +421,7 @@
       <div id="noticeResult"></div>
     </section>
 
-    <!-- Updates Section (Optional for student notices display) -->
+    <!-- Updates Section -->
     <section id="updates" style="display: none;">
       <h2>Current Updates</h2>
       <div id="updatesList"></div>
@@ -457,7 +448,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
@@ -473,177 +464,195 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Check authentication
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = '/login';
-      } else {
-        populateStudentDropdowns();
+    // Wait for DOM content to be loaded
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // Dynamically generate attendance table rows
+      const attendanceTableBody = document.getElementById("attendanceTableBody");
+      let tableRows = "";
+      for (let week = 1; week <= 4; week++) {
+        tableRows += `<tr>
+          <td>Week ${week}</td>
+          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Monday" /></td>
+          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Tuesday" /></td>
+          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Wednesday" /></td>
+          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Thursday" /></td>
+          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Friday" /></td>
+        </tr>`;
       }
-    });
+      attendanceTableBody.innerHTML = tableRows;
 
-    // Logout functionality
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "/login";
-      } catch (error) {
-        console.error("Logout error:", error);
-      }
-    });
-
-    // Populate student dropdowns for Attendance and Grades forms
-    async function populateStudentDropdowns() {
-      try {
-        const querySnapshot = await getDocs(collection(db, "students"));
-        let options = '<option value="">Select Student</option>';
-        querySnapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          options += `<option value="${data.email}">${data.firstname || ''} ${data.surname || ''} (${data.email})</option>`;
-        });
-        document.getElementById("attendanceStudent").innerHTML = options;
-        document.getElementById("gradeStudent").innerHTML = options;
-      } catch (error) {
-        console.error("Error populating student dropdowns:", error);
-      }
-    }
-
-    // Attendance Form Submission
-    document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const studentEmail = document.getElementById("attendanceStudent").value;
-      const year = document.getElementById("attendanceYear").value;
-      const term = document.getElementById("attendanceTerm").value;
-      const month = document.getElementById("attendanceMonth").value;
-      const checkboxes = document.querySelectorAll(".attendanceCheckbox");
-      let presentCount = 0;
-      checkboxes.forEach(checkbox => {
-        if (checkbox.checked) presentCount++;
-      });
-      const totalDays = checkboxes.length; // 20 days (4 weeks x 5 days)
-      const percentage = ((presentCount / totalDays) * 100).toFixed(2);
-
-      // Build attendance grid data
-      let attendanceData = {};
-      [1, 2, 3, 4].forEach(week => {
-        attendanceData["week" + week] = {};
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach(day => {
-          const checkbox = document.querySelector(`.attendanceCheckbox[data-week="${week}"][data-day="${day}"]`);
-          attendanceData["week" + week][day] = checkbox.checked;
-        });
+      // Check authentication
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = '/login';
+        } else {
+          populateStudentDropdowns();
+        }
       });
 
-      // Save to Firestore under collection "attendance"
-      const docId = `${studentEmail}_${year}_${term}_${month}`;
-      try {
-        await setDoc(doc(db, "attendance", docId), {
-          studentEmail,
-          year,
-          term,
-          month,
-          attendance: attendanceData,
-          percentage: Number(percentage)
-        });
-        const resultDiv = document.getElementById("attendanceResult");
-        resultDiv.innerHTML = `<p>Attendance saved! Attendance Percentage: <span class="${percentage < 75 ? 'low-attendance' : ''}">${percentage}%</span></p>`;
-      } catch (error) {
-        console.error("Error saving attendance:", error);
-      }
-    });
+      // Logout functionality
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = "/login";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      });
 
-    // Grade Form Submission
-    document.getElementById("gradeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const studentEmail = document.getElementById("gradeStudent").value;
-      const studentClass = document.getElementById("studentClass").value;
-      const year = document.getElementById("gradeYear").value;
-      const term = document.getElementById("gradeTerm").value;
-      const finalGrade = document.getElementById("finalGrade").value;
-      const docId = `${studentEmail}_${year}_${term}`;
-      try {
-        await setDoc(doc(db, "grades", docId), {
-          studentEmail,
-          studentClass,
-          year,
-          term,
-          finalGrade
-        });
-        document.getElementById("gradeResult").innerHTML = "<p>Grade saved successfully!</p>";
-      } catch (error) {
-        console.error("Error saving grade:", error);
+      // Populate student dropdowns for Attendance and Grades forms
+      async function populateStudentDropdowns() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "students"));
+          let options = '<option value="">Select Student</option>';
+          querySnapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            options += `<option value="${data.email}">${data.firstname || ''} ${data.surname || ''} (${data.email})</option>`;
+          });
+          document.getElementById("attendanceStudent").innerHTML = options;
+          document.getElementById("gradeStudent").innerHTML = options;
+        } catch (error) {
+          console.error("Error populating student dropdowns:", error);
+        }
       }
-    });
 
-    // Notice Form Submission
-    document.getElementById("noticeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const noticeTitle = document.getElementById("noticeTitle").value;
-      const noticeContent = document.getElementById("noticeContent").value;
-      const noticeYear = document.getElementById("noticeYear").value;
-      const noticeTerm = document.getElementById("noticeTerm").value;
-      try {
-        // Firestore will auto-generate a document ID
-        await setDoc(doc(collection(db, "notices")), {
-          noticeTitle,
-          noticeContent,
-          noticeYear,
-          noticeTerm,
-          timestamp: new Date()
-        });
-        document.getElementById("noticeResult").innerHTML = "<p>Notice posted successfully!</p>";
-      } catch (error) {
-        console.error("Error posting notice:", error);
-      }
-    });
-
-    // Side Menu Controls
-    const menuBtn = document.getElementById("menuBtn");
-    const sideMenu = document.getElementById("sideMenu");
-    const closeBtn = document.getElementById("closeBtn");
-    menuBtn.addEventListener("click", () => {
-      sideMenu.classList.toggle("active");
-    });
-    closeBtn.addEventListener("click", () => {
-      sideMenu.classList.remove("active");
-    });
-    document.addEventListener("click", (e) => {
-      if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        sideMenu.classList.remove("active");
-      }
-    });
-
-    // Menu Links - Section Switching
-    const menuLinks = document.querySelectorAll(".menu-links a");
-    menuLinks.forEach(link => {
-      link.addEventListener("click", (e) => {
+      // Attendance Form Submission
+      document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
         e.preventDefault();
-        const targetId = link.getAttribute("href").substring(1);
-        document.querySelectorAll("section").forEach(sec => {
-          sec.style.display = (sec.id === targetId) ? "block" : "none";
+        const studentEmail = document.getElementById("attendanceStudent").value;
+        const year = document.getElementById("attendanceYear").value;
+        const term = document.getElementById("attendanceTerm").value;
+        const month = document.getElementById("attendanceMonth").value;
+        const checkboxes = document.querySelectorAll(".attendanceCheckbox");
+        let presentCount = 0;
+        checkboxes.forEach(checkbox => {
+          if (checkbox.checked) presentCount++;
         });
+        const totalDays = checkboxes.length; // 20 days (4 weeks x 5 days)
+        const percentage = ((presentCount / totalDays) * 100).toFixed(2);
+
+        // Build attendance grid data
+        let attendanceData = {};
+        for (let week = 1; week <= 4; week++) {
+          attendanceData["week" + week] = {};
+          ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach(day => {
+            const checkbox = document.querySelector(`.attendanceCheckbox[data-week="${week}"][data-day="${day}"]`);
+            attendanceData["week" + week][day] = checkbox.checked;
+          });
+        }
+
+        // Save to Firestore under collection "attendance"
+        const docId = `${studentEmail}_${year}_${term}_${month}`;
+        try {
+          await setDoc(doc(db, "attendance", docId), {
+            studentEmail,
+            year,
+            term,
+            month,
+            attendance: attendanceData,
+            percentage: Number(percentage)
+          });
+          const resultDiv = document.getElementById("attendanceResult");
+          resultDiv.innerHTML = `<p>Attendance saved! Attendance Percentage: <span class="${percentage < 75 ? 'low-attendance' : ''}">${percentage}%</span></p>`;
+        } catch (error) {
+          console.error("Error saving attendance:", error);
+        }
+      });
+
+      // Grade Form Submission
+      document.getElementById("gradeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const studentEmail = document.getElementById("gradeStudent").value;
+        const studentClass = document.getElementById("studentClass").value;
+        const year = document.getElementById("gradeYear").value;
+        const term = document.getElementById("gradeTerm").value;
+        const finalGrade = document.getElementById("finalGrade").value;
+        const docId = `${studentEmail}_${year}_${term}`;
+        try {
+          await setDoc(doc(db, "grades", docId), {
+            studentEmail,
+            studentClass,
+            year,
+            term,
+            finalGrade
+          });
+          document.getElementById("gradeResult").innerHTML = "<p>Grade saved successfully!</p>";
+        } catch (error) {
+          console.error("Error saving grade:", error);
+        }
+      });
+
+      // Notice Form Submission using addDoc for auto-generated ID
+      document.getElementById("noticeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const noticeTitle = document.getElementById("noticeTitle").value;
+        const noticeContent = document.getElementById("noticeContent").value;
+        const noticeYear = document.getElementById("noticeYear").value;
+        const noticeTerm = document.getElementById("noticeTerm").value;
+        try {
+          await addDoc(collection(db, "notices"), {
+            noticeTitle,
+            noticeContent,
+            noticeYear,
+            noticeTerm,
+            timestamp: new Date()
+          });
+          document.getElementById("noticeResult").innerHTML = "<p>Notice posted successfully!</p>";
+        } catch (error) {
+          console.error("Error posting notice:", error);
+        }
+      });
+
+      // Side Menu Controls
+      const menuBtn = document.getElementById("menuBtn");
+      const sideMenu = document.getElementById("sideMenu");
+      const closeBtn = document.getElementById("closeBtn");
+      menuBtn.addEventListener("click", () => {
+        sideMenu.classList.toggle("active");
+      });
+      closeBtn.addEventListener("click", () => {
         sideMenu.classList.remove("active");
       });
-    });
+      document.addEventListener("click", (e) => {
+        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          sideMenu.classList.remove("active");
+        }
+      });
 
-    // Theme Toggle
-    const themeToggle = document.getElementById("themeToggle");
-    let isDark = true;
-    themeToggle.addEventListener("click", () => {
-      isDark = !isDark;
-      document.body.setAttribute("data-theme", isDark ? "dark" : "light");
-      themeToggle.innerHTML = isDark
-        ? '<i class="fas fa-moon"></i>'
-        : '<i class="fas fa-sun"></i>';
-      localStorage.setItem("theme", isDark ? "dark" : "light");
+      // Menu Links - Section Switching
+      const menuLinks = document.querySelectorAll(".menu-links a");
+      menuLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("href").substring(1);
+          document.querySelectorAll("section").forEach(sec => {
+            sec.style.display = (sec.id === targetId) ? "block" : "none";
+          });
+          sideMenu.classList.remove("active");
+        });
+      });
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      let isDark = true;
+      themeToggle.addEventListener("click", () => {
+        isDark = !isDark;
+        document.body.setAttribute("data-theme", isDark ? "dark" : "light");
+        themeToggle.innerHTML = isDark
+          ? '<i class="fas fa-moon"></i>'
+          : '<i class="fas fa-sun"></i>';
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      });
+      if (localStorage.getItem("theme")) {
+        const savedTheme = localStorage.getItem("theme");
+        document.body.setAttribute("data-theme", savedTheme);
+        isDark = savedTheme === "dark";
+        themeToggle.innerHTML = isDark
+          ? '<i class="fas fa-moon"></i>'
+          : '<i class="fas fa-sun"></i>';
+      }
     });
-    if (localStorage.getItem("theme")) {
-      const savedTheme = localStorage.getItem("theme");
-      document.body.setAttribute("data-theme", savedTheme);
-      isDark = savedTheme === "dark";
-      themeToggle.innerHTML = isDark
-        ? '<i class="fas fa-moon"></i>'
-        : '<i class="fas fa-sun"></i>';
-    }
   </script>
 </body>
 </html>
