@@ -414,7 +414,7 @@
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Redirect to dashboard
-                    window.location.href = '/student-dashboard';
+                    window.location.href = '/login';
                 })
                 .catch((error) => {
                     errorMessage.textContent = error.message;
