@@ -486,8 +486,30 @@
       <!-- View Results Page -->
       <section id="results" style="display: none;">
         <h2>View Results</h2>
-        <p>Your report card will be displayed here.</p>
+        <div class="report-card">
+          <div class="report-header">
+            <p>Name: <span id="reportName"></span></p>
+                      <p>Email: <span id="reportEmail"></span></p>
+            <p>Year: <span id="reportYear"></span></p>
+            <p>Term: <span id="reportTerm"></span></p>
+          </div>
+          <h3>Report Card</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Marks</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody id="reportCardBody">
+              <!-- Dynamically populated report card rows -->
+            </tbody>
+          </table>
+          <button class="pdf-btn" onclick="exportPDF()">Download PDF</button>
+        </div>
       </section>
+
 
       <!-- Current Updates / Notices Section -->
       <section id="updates" style="display: none;">
