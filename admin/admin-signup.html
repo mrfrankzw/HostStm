@@ -394,7 +394,7 @@
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     alert('Admin account created successfully!');
-                    window.location.href = '/admin/dashboard';
+                    window.location.href = '/teacherlogin';
                 })
                 .catch((error) => {
                     document.getElementById('error-message').textContent = error.message;
