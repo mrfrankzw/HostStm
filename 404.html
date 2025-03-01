@@ -90,6 +90,19 @@
             background: var(--secondary);
         }
 
+        /* Finger Emoji Animation */
+        .finger-emoji {
+            font-size: 4rem;
+            animation: noNoNo 1.5s infinite;
+        }
+
+        @keyframes noNoNo {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+        }
+
         /* Light/Dark Mode Toggle */
         .theme-toggle {
             position: fixed;
@@ -106,6 +119,11 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--secondary);
         }
 
         .theme-toggle i {
@@ -122,6 +140,11 @@
         <div class="error-message">404 - Page Not Found</div>
         <div class="error-description">
             Oops! The page you're looking for doesn't exist.
+        </div>
+        <!-- Finger Emoji -->
+        <div class="finger-emoji">👆</div>
+        <div class="error-description">
+            No no no! You seem to be lost.
         </div>
         <a href="/" class="home-button">Go Back Home</a>
     </div>
