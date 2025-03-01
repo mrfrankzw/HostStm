@@ -163,6 +163,33 @@
     .form-group button:hover {
       background: #002244;
     }
+    /* Report Card */
+    .report-card {
+      background: var(--glass);
+      padding: 1.5rem;
+      border-radius: 10px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 2rem;
+    }
+    .report-card h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .report-card table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .report-card th,
+    .report-card td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .report-card th {
+      background: var(--primary);
+      color: white;
+    }
     /* Footer */
     footer {
       background: var(--glass);
@@ -226,28 +253,30 @@
     <!-- Marks Entry Form -->
     <form id="marksForm">
       <h2>Enter Marks for <span id="selectedStudent"></span></h2>
-      <div class="form-group">
-        <label for="subject">Subject</label>
-        <input type="text" id="subject" placeholder="Enter subject name" required />
-      </div>
-      <div class="form-group">
-        <label for="marks">Marks</label>
-        <input type="number" id="marks" placeholder="Enter marks" required />
-      </div>
-      <div class="form-group">
-        <label for="grade">Grade</label>
-        <select id="grade" required>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-          <option value="F">F</option>
-        </select>
+      <div id="subjectFields">
+        <!-- Subject fields will be dynamically inserted here -->
       </div>
       <div class="form-group">
         <button type="submit">Save Marks</button>
       </div>
     </form>
+
+    <!-- Report Card -->
+    <div class="report-card" id="reportCard" style="display: none;">
+      <h3>Sample Report Card</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="reportCardBody">
+          <!-- Report card data will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Footer -->
@@ -255,15 +284,10 @@
     <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
   </footer>
 
-  <!-- Theme Toggle -->
-  <div class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-  </div>
-
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
@@ -317,6 +341,26 @@
       document.getElementById('selectedStudent').textContent = `${student.firstname} ${student.surname}`;
       document.getElementById('marksForm').style.display = 'block';
       document.getElementById('marksForm').dataset.studentEmail = student.email;
+
+      // Add up to 10 subject fields
+      const subjectFields = document.getElementById('subjectFields');
+      subjectFields.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        subjectFields.innerHTML += `
+          <div class="form-group">
+            <label for="subject${i}">Subject ${i}</label>
+            <input type="text" id="subject${i}" placeholder="Enter subject name" />
+            <input type="number" id="marks${i}" placeholder="Enter marks" />
+            <select id="grade${i}">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+        `;
+      }
     };
 
     // Save marks and grades for a student
@@ -324,49 +368,47 @@
     marksForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const studentEmail = marksForm.dataset.studentEmail;
-      const subject = document.getElementById('subject').value;
-      const marks = document.getElementById('marks').value;
-      const grade = document.getElementById('grade').value;
+      const marksData = {};
+
+      // Collect all subject data
+      for (let i = 1; i <= 10; i++) {
+        const subject = document.getElementById(`subject${i}`).value;
+        const marks = document.getElementById(`marks${i}`).value;
+        const grade = document.getElementById(`grade${i}`).value;
+
+        if (subject && marks && grade) {
+          marksData[subject] = { marks, grade };
+        }
+      }
 
       try {
         const studentRef = doc(db, 'students', studentEmail);
-        await updateDoc(studentRef, {
-          marks: { [subject]: { marks, grade } }
-        });
+        await setDoc(studentRef, { marks: marksData }, { merge: true });
         alert('Marks saved successfully!');
         marksForm.reset();
         marksForm.style.display = 'none';
+
+        // Display sample report card
+        const reportCardBody = document.getElementById('reportCardBody');
+        reportCardBody.innerHTML = '';
+        for (const [subject, data] of Object.entries(marksData)) {
+          reportCardBody.innerHTML += `
+            <tr>
+              <td>${subject}</td>
+              <td>${data.marks}</td>
+              <td>${data.grade}</td>
+            </tr>
+          `;
+        }
+        document.getElementById('reportCard').style.display = 'block';
       } catch (error) {
-        console.error("Error saving marks:", error);
+        console.error("Error saving marks:", error.message);
         alert('Error saving marks. Please try again.');
       }
     });
 
     // Load student data on page load
     fetchStudents();
-
-    // Theme Toggle functionality
-    const themeToggle = document.getElementById('themeToggle');
-    let isDark = true;
-
-    themeToggle.addEventListener('click', () => {
-      isDark = !isDark;
-      document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      themeToggle.innerHTML = isDark 
-        ? '<i class="fas fa-moon"></i>' 
-        : '<i class="fas fa-sun"></i>';
-      themeToggle.style.transform = `rotate(${isDark ? 0 : 180}deg)`;
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    });
-
-    if (localStorage.getItem('theme')) {
-      const savedTheme = localStorage.getItem('theme');
-      document.body.setAttribute('data-theme', savedTheme);
-      isDark = savedTheme === 'dark';
-      themeToggle.innerHTML = isDark 
-        ? '<i class="fas fa-moon"></i>' 
-        : '<i class="fas fa-sun"></i>';
-    }
   </script>
 </body>
 </html>
