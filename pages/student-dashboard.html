@@ -15,11 +15,15 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <!-- Favicon -->
     <link
       rel="icon"
       type="image/png"
       href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg"
     />
+    <!-- jsPDF Library and AutoTable Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
       /* General Styles */
       :root {
@@ -51,6 +55,7 @@
         color: var(--text-color);
         min-height: 100vh;
         transition: background 0.6s ease, color 0.6s ease;
+        padding-bottom: 80px; /* space for fixed footer */
       }
       body::after {
         content: "";
@@ -96,7 +101,6 @@
       .header-logo {
         height: 40px;
         margin-right: 10px;
-        vertical-align: middle;
       }
       /* Side Menu Styles */
       .menu-btn {
@@ -251,7 +255,7 @@
       .form-group button:hover {
         background: #002244;
       }
-      /* Report Card & Chart (for results, if any) */
+      /* Report Card & PDF Button */
       .report-card {
         background: var(--glass);
         padding: 1.5rem;
@@ -279,23 +283,23 @@
         background: var(--primary);
         color: white;
       }
-      /* Attendance Table */
-      .attendance-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 1rem;
+      .pdf-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
-      .attendance-table th,
-      .attendance-table td {
-        border: 1px solid rgba(255,255,255,0.1);
-        padding: 0.5rem;
-        text-align: center;
+      .pdf-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       }
-      .low-attendance {
-        color: red;
-        font-weight: bold;
-      }
-      /* Updates/Notices */
+      /* Updates/Notices Section */
       .notice-card {
         background: var(--glass);
         padding: 1rem;
@@ -323,7 +327,7 @@
       .social-icons a:hover {
         color: var(--secondary);
       }
-      /* Theme Toggle */
+      /* Theme Toggle (Circular) */
       .theme-toggle {
         position: fixed;
         bottom: 30px;
@@ -354,14 +358,7 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-5px); }
       }
-      /* Drop Animation for Welcome Text */
-      @keyframes dropIn {
-        0% { transform: translateY(-20px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-      }
-      .drop-animation {
-        animation: dropIn 0.5s ease-out;
-      }
+      /* Responsive for Side Menu */
       @media (max-width: 768px) {
         .side-menu {
           width: 100%;
@@ -374,11 +371,7 @@
     <!-- Header -->
     <header>
       <div class="logo">
-        <img
-          src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
-          alt="Logo"
-          class="header-logo"
-        />
+        <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
         St. Mary's High
       </div>
       <button class="menu-btn" id="menuBtn">
@@ -413,12 +406,12 @@
         <h2 id="welcomeMessage">Hello, Student</h2>
         <div class="dashboard-cards">
           <div class="card">
-            <h3>Current Grade</h3>
+            <h3>Grade &amp; Class</h3>
             <p id="currentGrade">Loading...</p>
           </div>
           <div class="card">
-            <h3>Attendance</h3>
-            <p id="attendance">Loading...</p>
+            <h3>Notices</h3>
+            <p id="notices">Loading...</p>
           </div>
         </div>
       </section>
@@ -428,12 +421,7 @@
         <h2>Personal Information</h2>
         <div class="form-group">
           <label for="profile-pic">Profile Picture</label>
-          <img
-            src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg"
-            alt="Profile Picture"
-            class="profile-pic"
-            id="profilePic"
-          />
+          <img src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg" alt="Profile Picture" class="profile-pic" id="profilePic" />
           <input type="file" id="profilePicInput" accept="image/*" />
           <p id="studentDisplayName"></p>
         </div>
@@ -557,7 +545,7 @@
       <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
     </footer>
 
-    <!-- Theme Toggle -->
+    <!-- Theme Toggle (Circular) -->
     <div class="theme-toggle" id="themeToggle">
       <i class="fas fa-moon"></i>
     </div>
@@ -580,7 +568,8 @@
         collection,
         query,
         orderBy,
-        getDocs
+        getDocs,
+        limit
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
       import {
         getStorage,
@@ -616,7 +605,7 @@
         }, 3000);
       }
 
-      // Fetch student data for Personal Info
+      // Fetch student data for Personal Info and update dashboard grade card
       const fetchStudentData = async (email) => {
         try {
           const studentRef = doc(db, "students", email);
@@ -632,7 +621,6 @@
             document.getElementById("dob").value = studentData.dob || "";
             document.getElementById("gender").value = studentData.gender || "male";
             document.getElementById("address").value = studentData.address || "";
-            // Set new fields: Form and Stream/Class
             document.getElementById("form").value = studentData.form || "";
             document.getElementById("stream").value = studentData.stream || "";
             document.getElementById("profilePic").src =
@@ -640,6 +628,12 @@
               "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
             document.getElementById("studentDisplayName").textContent = studentData.firstname || "";
             document.getElementById("welcomeMessage").textContent = `Hello, ${studentData.firstname}`;
+            // Update current grade card using form and stream
+            if (studentData.form && studentData.stream) {
+              document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
+            } else {
+              document.getElementById("currentGrade").textContent = "Not set";
+            }
           } else {
             document.getElementById("welcomeMessage").textContent = `Welcome, ${auth.currentUser.email.split('@')[0]}`;
           }
@@ -649,7 +643,7 @@
         }
       };
 
-      // Load results for the "View Results" section
+      // Load results for the "View Results" section and append average row if needed
       const loadResults = async () => {
         try {
           const studentEmail = auth.currentUser.email;
@@ -685,12 +679,11 @@
                 <td>${data.grade}</td>
               `;
               reportCardBody.appendChild(row);
-
               totalMarks += Number(data.marks);
               subjectCount++;
             }
 
-            // Add average marks row
+            // Compute and add average marks row
             if (subjectCount > 0) {
               const averageMarks = (totalMarks / subjectCount).toFixed(2);
               const averageRow = document.createElement("tr");
@@ -712,7 +705,7 @@
         }
       };
 
-      // Export report card as PDF
+      // Export report card as PDF with comment based on average marks
       window.exportPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -728,7 +721,7 @@
         doc.text(`Year: ${year}`, 14, 30);
         doc.text(`Term: ${term}`, 14, 40);
 
-        // Prepare table rows
+        // Prepare table rows from reportCardBody
         let rows = [];
         document.querySelectorAll("#reportCardBody tr").forEach((tr) => {
           const cells = Array.from(tr.querySelectorAll("td")).map(
@@ -737,21 +730,81 @@
           rows.push(cells);
         });
 
-        // Add table to PDF
+        // Add table using autoTable
         doc.autoTable({
           head: [["Subject", "Marks", "Grade"]],
           body: rows,
           startY: 50,
         });
 
+        // Extract average from the last row (if exists)
+        let avg = 0;
+        if (rows.length > 0) {
+          const avgRowText = rows[rows.length - 1][0]; // Expecting "Average Marks: X"
+          const parts = avgRowText.split("Average Marks: ");
+          if (parts.length === 2) {
+            avg = parseFloat(parts[1]);
+          }
+        }
+
+        // Add comment based on average marks below table
+        const commentY = doc.lastAutoTable.finalY + 10;
+        if (avg < 50) {
+          doc.text("Work hard to improve this grade", 14, commentY);
+        } else {
+          doc.text("Good mark!", 14, commentY);
+        }
+
         // Save PDF
         doc.save("stmarys_student_report_card.pdf");
       };
 
-      // Call loadResults when the "View Results" section is opened
-      document
-        .querySelector('a[href="#results"]')
-        .addEventListener("click", loadResults);
+      // Load latest notice for homepage "Notices" card
+      const loadNotices = async () => {
+        try {
+          const updatesQuery = query(
+            collection(db, "updates"),
+            orderBy("timestamp", "desc"),
+            limit(1)
+          );
+          const querySnapshot = await getDocs(updatesQuery);
+          let noticeText = "No notices available.";
+          querySnapshot.forEach((docSnap) => {
+            const update = docSnap.data();
+            noticeText = update.updateTitle || "No title provided.";
+          });
+          document.getElementById("notices").textContent = noticeText;
+        } catch (error) {
+          console.error("Error loading notices:", error);
+          document.getElementById("notices").textContent = "Error loading notices.";
+        }
+      };
+
+      // Call loadUpdates when the "Current Updates" section is opened
+      const loadUpdates = async () => {
+        try {
+          const updatesQuery = query(
+            collection(db, "updates"),
+            orderBy("timestamp", "desc")
+          );
+          const querySnapshot = await getDocs(updatesQuery);
+          let updatesHtml = "";
+          querySnapshot.forEach((docSnap) => {
+            const update = docSnap.data();
+            updatesHtml += `
+              <div class="notice-card">
+                <h3>${update.updateTitle}</h3>
+                <p>${update.updateContent}</p>
+                <small>Year: ${update.updateYear} | ${update.updateTerm}</small>
+              </div>
+            `;
+          });
+          document.getElementById("updatesList").innerHTML = updatesHtml || "<p>No updates available.</p>";
+        } catch (error) {
+          console.error("Error loading updates:", error);
+          document.getElementById("updatesList").innerHTML = "<p>Error loading updates.</p>";
+        }
+      };
 
       // Save/Update student data from Personal Info page
       const saveStudentData = async () => {
@@ -774,6 +827,10 @@
           };
           await setDoc(studentRef, studentData, { merge: true });
           showMessage("Profile updated successfully!", "success");
+          // Also update current grade card if available
+          if (studentData.form && studentData.stream) {
+            document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
+          }
         } catch (error) {
           console.error("Error saving student data:", error);
           showMessage("Error saving student data: " + error.message, "error");
@@ -826,43 +883,12 @@
         }
       });
 
-      // Load updates from the "updates" collection
-      const loadUpdates = async () => {
-        try {
-          const updatesQuery = query(
-            collection(db, "updates"),
-            orderBy("timestamp", "desc")
-          );
-          const querySnapshot = await getDocs(updatesQuery);
-          let updatesHtml = "";
-          querySnapshot.forEach((docSnap) => {
-            const update = docSnap.data();
-            updatesHtml += `
-              <div class="notice-card">
-                <h3>${update.updateTitle}</h3>
-                <p>${update.updateContent}</p>
-                <small>Year: ${update.updateYear} | ${update.updateTerm}</small>
-              </div>
-            `;
-          });
-          document.getElementById("updatesList").innerHTML = updatesHtml || "<p>No updates available.</p>";
-        } catch (error) {
-          console.error("Error loading updates:", error);
-          document.getElementById("updatesList").innerHTML = "<p>Error loading updates.</p>";
-        }
-      };
-
-      // Call loadUpdates when the "Updates" section is opened
-      document
-        .querySelector('a[href="#updates"]')
-        .addEventListener("click", loadUpdates);
-
-      // ---------- Side Menu Controls ----------
+      // Side Menu Controls
       const menuBtn = document.getElementById("menuBtn");
       const sideMenu = document.getElementById("sideMenu");
       const closeBtn = document.getElementById("closeBtn");
       menuBtn.addEventListener("click", () => {
-        sideMenu.classList.toggle("active");
+        sideMenu.classList.add("active");
       });
       closeBtn.addEventListener("click", () => {
         sideMenu.classList.remove("active");
@@ -883,10 +909,18 @@
             sec.style.display = sec.id === targetId ? "block" : "none";
           });
           sideMenu.classList.remove("active");
+          // If switching to updates section, load updates
+          if (targetId === "updates") {
+            loadUpdates();
+          }
+          // If switching to results, load results
+          if (targetId === "results") {
+            loadResults();
+          }
         });
       });
 
-      // Theme Toggle
+      // Theme Toggle (Circular)
       const themeToggle = document.getElementById("themeToggle");
       let isDark = true;
       themeToggle.addEventListener("click", () => {
@@ -906,13 +940,14 @@
           : '<i class="fas fa-sun"></i>';
       }
 
-      // ---------- On Auth State Change ----------
+      // On Auth State Change
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           window.location.href = "/login";
         } else {
           fetchStudentData(user.email);
           loadResults();
+          loadNotices();
         }
       });
     </script>
