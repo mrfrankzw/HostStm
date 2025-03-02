@@ -716,7 +716,7 @@
         });
 
         // Save PDF
-        doc.save("report_card.pdf");
+        doc.save("stmarys_student_report_card.pdf");
       };
 
       // Call loadResults when the "View Results" section is opened
@@ -810,7 +810,7 @@
               <div class="notice-card">
                 <h3>${update.updateTitle}</h3>
                 <p>${update.updateContent}</p>
-                <small>Year: ${update.updateYear} | Term: ${update.updateTerm}</small>
+                <small>Year: ${update.updateYear} | ${update.updateTerm}</small>
               </div>
             `;
           });
