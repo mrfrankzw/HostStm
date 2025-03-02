@@ -75,6 +75,10 @@
       "dest": "/pages/student-dashboard.html"
     },
     {
+      "src": "/teacherusers",
+      "dest": "/pages/teacher-users.html"
+    },
+    {
       "src": "/studentusers",
       "dest": "/pages/student-users.html"
     },
