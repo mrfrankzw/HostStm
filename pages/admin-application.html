@@ -1,315 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - Application Review</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - St. Mary's High School</title>
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <!-- Favicon -->
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
+  />
+  <!-- jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
+    /* Subzero-inspired Theme Styles */
     :root {
-      --primary: #003366;
-      --secondary: #FFD700;
-      --bg-light: #ffffff;
-      --text-color: #333;
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+      --primary: #00B4DB;
+      --secondary: #0083B0;
+      --glass: rgba(255, 255, 255, 0.08);
+      --bg-gradient: linear-gradient(45deg, #003D4D, #005F73);
+      --text-color: #ffffff;
+      --overlay: rgba(0, 0, 0, 0.4);
     }
     body {
-      background: var(--bg-light);
+      background: var(--bg-gradient);
       color: var(--text-color);
-      overflow-x: hidden;
+      min-height: 100vh;
+      padding: 2rem;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
     }
-    header {
-      background: var(--primary);
-      color: white;
-      padding: 1rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-size: 2.5rem;
     }
     .logo {
-      display: flex;
-      align-items: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--secondary);
+      text-align: center;
+      margin-bottom: 1.5rem;
     }
     .logo img {
-      width: 50px;
-      height: 50px;
-      margin-right: 10px;
+      height: 60px;
     }
-    .menu-btn {
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: none;
-    }
-    nav {
+    /* Controls Section */
+    .controls {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
+      margin-bottom: 2rem;
     }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 1rem;
-      font-weight: 500;
-    }
-    .container {
-      padding: 100px 5% 100px;
-      min-height: 80vh;
-    }
-    h2 {
-      text-align: center;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      border-radius: 5px;
-      overflow: hidden;
-      animation: fadeIn 0.5s ease-in;
-    }
-    th, td {
-      padding: 15px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background: var(--primary);
-      color: white;
-      cursor: pointer;
-    }
-    th:hover {
-      background: #002244;
-    }
-    .actions {
+    .filter-buttons {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
     }
-    .action-btn {
-      padding: 5px 10px;
+    .filter-buttons button {
+      padding: 10px 20px;
       border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-weight: 600;
       cursor: pointer;
-      border-radius: 3px;
-      transition: 0.3s ease;
-      font-size: 0.9rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .accept-btn {
-      background: #4CAF50;
-      color: white;
+    .filter-buttons button:hover,
+    .filter-buttons button.active {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
-    .decline-btn {
-      background: #d9534f;
-      color: white;
+    .action-buttons {
+      display: flex;
+      gap: 0.75rem;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .action-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    footer {
-      background: var(--primary);
-      color: white;
-      padding: 2rem 5%;
-      text-align: center;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
+    .action-buttons button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
-    .social-icons a {
-      color: white;
+    /* Applications List */
+    .applications-list {
+      display: grid;
+      gap: 1.5rem;
+    }
+    .application-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .application-card h3 {
+      margin-bottom: 0.75rem;
+      color: var(--primary);
       font-size: 1.5rem;
+    }
+    .application-card p {
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+    .application-card .actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .application-card button.accept,
+    .application-card button.decline,
+    .application-card button.delete {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .application-card button.accept {
+      background: #28a745;
+      color: #fff;
+    }
+    .application-card button.decline {
+      background: #dc3545;
+      color: #fff;
+    }
+    .application-card button.delete {
+      background: #ff4d4d;
+      color: #fff;
+    }
+    .application-card button:hover {
+      transform: scale(1.05);
+    }
+    /* Footer */
+    footer {
+      margin-top: 2rem;
+      padding: 1rem;
+      text-align: center;
+      background: #1A1A1A;
+      color: #bbb;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    footer .social-icons {
+      margin-top: 0.5rem;
+    }
+    footer .social-icons a {
+      color: #1e90ff;
       margin: 0 0.5rem;
+      font-size: 1.2rem;
       transition: color 0.3s ease;
     }
-    .social-icons a:hover {
-      color: var(--secondary);
+    footer .social-icons a:hover {
+      color: var(--primary);
+    }
+    /* Light Theme Overrides */
+    .light-theme {
+      --primary: #00B4DB;
+      --secondary: #0083B0;
+      --glass: rgba(0, 0, 0, 0.05);
+      --bg-gradient: linear-gradient(45deg, #E0F7FA, #B2EBF2);
+      --text-color: #1c1917;
+      --overlay: rgba(255, 255, 255, 0.4);
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-      <div class="logo">
-          <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo">
-          Admin Dashboard
-      </div>
-      <nav>
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/gallery">Gallery</a>
-          <a href="/contact">Contact</a>
-          <a href="/admin-applications.html">Applications</a>
-          <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </nav>
-  </header>
-  
-  <!-- Main Content -->
-  <div class="container">
-      <h2>Submitted Applications</h2>
-      <!-- Optional Filter Dropdown -->
-      <div style="text-align:center; margin-bottom: 1rem;">
-          <label for="filterStatus">Filter by Status: </label>
-          <select id="filterStatus">
-              <option value="all">All</option>
-              <option value="pending">Pending</option>
-              <option value="accepted">Accepted</option>
-              <option value="declined">Declined</option>
-          </select>
-      </div>
-      <table id="applicationTable">
-          <thead>
-              <tr>
-                  <th onclick="sortTable()">Surname</th>
-                  <th>First Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>DOB</th>
-                  <th>School</th>
-                  <th>Grades</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-              </tr>
-          </thead>
-          <tbody id="tableBody">
-              <!-- Rows will be added dynamically -->
-          </tbody>
-      </table>
+  <div class="logo">
+    <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="St. Mary's Logo" />
   </div>
-  
-  <!-- Footer -->
-  <footer>
-      <div class="social-icons">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-tiktok"></i></a>
-      </div>
-      <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
-  </footer>
-  
-  <!-- Firebase SDK v9.6.10 -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
-  
-  <script>
-    // Firebase configuration (using your provided config)
+  <h1 id="statusTitle">Pending Applications</h1>
+  <!-- Controls: Filter, PDF & Theme Toggle -->
+  <div class="controls">
+    <div class="filter-buttons">
+      <button data-status="all">All</button>
+      <button data-status="pending" class="active">Pending</button>
+      <button data-status="accepted">Accepted</button>
+      <button data-status="declined">Declined</button>
+    </div>
+    <div class="action-buttons">
+      <button id="downloadPDF">Download PDF</button>
+      <button id="themeToggle">Toggle Light/Dark</button>
+    </div>
+  </div>
+  <!-- Applications List -->
+  <div class="applications-list" id="applicationsList">
+    <p>Loading applications...</p>
+  </div>
+
+  <!-- Firebase SDK and App Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
       authDomain: "deee-9ab53.firebaseapp.com",
       projectId: "deee-9ab53",
-      storageBucket: "deee-9ab53.appspot.com",
+      storageBucket: "deee-9ab53.firebasestorage.app",
       messagingSenderId: "399732664479",
       appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
       measurementId: "G-524ZPBX42B"
     };
-  
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-  
-    // Fetch and display applications
-    async function loadApplications() {
-      const tableBody = document.getElementById('tableBody');
-      tableBody.innerHTML = "";
-  
-      let querySnapshot = await db.collection('applications').orderBy('timestamp', 'desc').get();
-  
-      querySnapshot.forEach(doc => {
-        const appData = doc.data();
-  
-        // Only display if filter matches (handled later)
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${appData.fullName.split(" ")[1] || ""}</td>
-          <td>${appData.fullName.split(" ")[0] || ""}</td>
-          <td>${appData.email}</td>
-          <td>${appData.phone}</td>
-          <td>${appData.dob}</td>
-          <td>${appData.school}</td>
-          <td>${appData.grades}</td>
-          <td>${appData.status}</td>
-          <td class="actions">
-              <button class="action-btn accept-btn" onclick="updateStatus('${doc.id}', 'accepted')">Accept</button>
-              <button class="action-btn decline-btn" onclick="updateStatus('${doc.id}', 'declined')">Decline</button>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-  
-    // Update application status (accept or decline)
-    async function updateStatus(docId, newStatus) {
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let currentFilter = "pending";
+
+    // Load applications based on status filter
+    const loadApplications = async (statusFilter = currentFilter) => {
+      const applicationsList = document.getElementById("applicationsList");
+      const statusTitle = document.getElementById("statusTitle");
+      statusTitle.textContent =
+        statusFilter.charAt(0).toUpperCase() +
+        statusFilter.slice(1) +
+        " Applications";
+      applicationsList.innerHTML = "<p>Loading applications...</p>";
+
       try {
-        await db.collection('applications').doc(docId).update({
-          status: newStatus
+        let q;
+        if (statusFilter !== "all") {
+          q = query(collection(db, "applications"), where("status", "==", statusFilter));
+        } else {
+          q = query(collection(db, "applications"));
+        }
+        const querySnapshot = await getDocs(q);
+        let html = "";
+
+        querySnapshot.forEach((docSnap) => {
+          const application = docSnap.data();
+          html += `
+            <div class="application-card">
+              <h3>${application.name}</h3>
+              <p>Email: ${application.email || "N/A"}</p>
+              <p>Phone: ${application.phone}</p>
+              <p>Level: ${application.level}</p>
+              <p>Form: ${application.form}</p>
+              <p>Previous School: ${application.previousSchool}</p>
+              <p>Previous Results: ${application.previousResults}</p>
+              <p>Parent Name: ${application.parentName}</p>
+              <p>Parent Phone: ${application.parentPhone}</p>
+              <p>Parent Email: ${application.parentEmail || "N/A"}</p>
+              <p>Date of Birth: ${application.dob || "N/A"}</p>
+              <p>Nationality: ${application.nationality || "N/A"}</p>
+              <p>Gender: ${application.gender || "N/A"}</p>
+              <p>Birth Number: ${application.birthNumber || "N/A"}</p>
+              <div class="actions">
+                <button class="accept" onclick="updateStatus('${docSnap.id}', 'accepted')">Accept</button>
+                <button class="decline" onclick="updateStatus('${docSnap.id}', 'declined')">Decline</button>
+                <button class="delete" onclick="deleteApplication('${docSnap.id}')">Delete</button>
+              </div>
+            </div>
+          `;
         });
-        alert("Application status updated to " + newStatus + "!");
-        loadApplications();
+
+        applicationsList.innerHTML = html || "<p>No applications found.</p>";
+      } catch (error) {
+        applicationsList.innerHTML = "<p>Error loading applications.</p>";
+        console.error("Error loading applications:", error);
+      }
+    };
+
+    // Update application status (Firebase code untouched)
+    window.updateStatus = async (id, status) => {
+      try {
+        await updateDoc(doc(db, "applications", id), { status });
+        loadApplications(); // Refresh the list
       } catch (error) {
         console.error("Error updating status:", error);
-        alert("Error updating status: " + error.message);
       }
-    }
-  
-    // Sort table by surname (column 0)
-    function sortTable() {
-      let table = document.getElementById("applicationTable");
-      let rows = Array.from(table.tBodies[0].rows);
-      rows.sort((a, b) => a.cells[0].innerText.localeCompare(b.cells[0].innerText));
-      let tbody = table.tBodies[0];
-      tbody.innerHTML = "";
-      rows.forEach(row => tbody.appendChild(row));
-    }
-  
-    // Filter applications based on status
-    document.getElementById("filterStatus").addEventListener("change", function() {
-      let filterValue = this.value;
-      let rows = document.getElementById("tableBody").rows;
-      for (let i = 0; i < rows.length; i++) {
-        let statusCell = rows[i].cells[7].innerText.toLowerCase();
-        if (filterValue === "all" || statusCell === filterValue) {
-          rows[i].style.display = "";
-        } else {
-          rows[i].style.display = "none";
+    };
+
+    // Delete application permanently
+    window.deleteApplication = async (id) => {
+      if (confirm("Are you sure you want to permanently delete this application? This action cannot be undone.")) {
+        try {
+          await deleteDoc(doc(db, "applications", id));
+          loadApplications();
+        } catch (error) {
+          console.error("Error deleting application:", error);
         }
       }
+    };
+
+    // Event listeners for filter buttons
+    const filterButtons = document.querySelectorAll(".filter-buttons button");
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        // Remove active class from all buttons
+        filterButtons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+        currentFilter = button.getAttribute("data-status");
+        loadApplications(currentFilter);
+      });
     });
-  
-    // Listen for auth state and load applications if admin is logged in
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        // If not logged in, redirect to admin login page
-        window.location.href = '/adminlogin';
-      } else {
-        loadApplications();
-      }
+
+    // Load applications on page load
+    loadApplications();
+
+    // Light/Dark mode toggle
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("light-theme");
     });
-  
-    // Logout function
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        await auth.signOut();
-        window.location.href = '/adminlogin';
-      } catch (error) {
-        console.error("Logout error:", error);
-      }
+
+    // Download PDF functionality
+    document.getElementById("downloadPDF").addEventListener("click", () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const applicationsList = document.getElementById("applicationsList");
+      const content = applicationsList.innerText;
+      const lines = content.split("\n");
+      let y = 10;
+      lines.forEach((line) => {
+        doc.text(line, 10, y);
+        y += 10;
+      });
+      doc.save("applications.pdf");
     });
   </script>
+
+  <!-- Footer with Social Media Icons -->
+  <footer>
+    <p>&copy; 2025 St. Mary's High School</p>
+    <div class="social-icons">
+      <a href="https://facebook.com" target="_blank" aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+  </footer>
 </body>
 </html>
