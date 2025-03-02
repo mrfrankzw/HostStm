@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard - St. Mary's High School</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Chart.js (if needed) and jsPDF plugins for further functionality -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    /* Basic Reset & Typography */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    :root {
+      --primary: #003366;
+      --secondary: #ffd700;
+      --glass: rgba(255, 255, 255, 0.08);
+      --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
+      --text-color: #ffffff;
+      --overlay: rgba(0, 0, 0, 0.4);
+    }
+    [data-theme="light"] {
+      --primary: #00b4db;
+      --secondary: #0083b0;
+      --glass: rgba(0, 0, 0, 0.05);
+      --bg-gradient: linear-gradient(45deg, #e0f7fa, #b2ebf2);
+      --text-color: #1c1917;
+      --overlay: rgba(255, 255, 255, 0.4);
+    }
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      min-height: 100vh;
+      transition: background 0.6s ease, color 0.6s ease;
+      overflow-x: hidden;
+    }
+    /* Header */
+    header {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 1.2rem 5%;
+      text-align: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-flex;
+      align-items: center;
+    }
+    .header-logo {
+      height: 40px;
+      margin-right: 10px;
+    }
+    /* Container */
+    .container {
+      padding: 180px 5% 100px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    /* Responsive Grid for Form & Stream Selection */
+    .form-grid, .stream-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-box, .stream-box {
+      background: var(--glass);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-box:hover, .stream-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    /* Student List */
+    .student-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .student-card {
+      background: var(--glass);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+    .student-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    /* Search Input */
+    #searchStudent {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 5px;
+    }
+    /* Marks Entry Form (reuse your existing styles) */
+    #marksForm {
+      display: none;
+      background: var(--glass);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    #marksForm .form-group {
+      margin-bottom: 1rem;
+    }
+    #marksForm input, #marksForm select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: var(--glass);
+      color: var(--text-color);
+    }
+    #marksForm button {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    /* Back Buttons */
+    .back-btn {
+      margin: 1rem 0;
+      padding: 0.5rem 1rem;
+      background: var(--secondary);
+      color: var(--primary);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .form-grid, .stream-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+    }
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(180deg);
+    }
+    .theme-toggle i {
+      font-size: 1.4rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Footer */
+    footer {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 1.5rem 5%;
+      text-align: center;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
+      St. Mary's High - Teacher Dashboard
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Welcome Message -->
+    <div id="welcomeContainer">
+      <h2 id="welcomeMessage">Welcome, Teacher!</h2>
+    </div>
+
+    <!-- Form Selection -->
+    <section id="formSelection">
+      <h2>Select Form</h2>
+      <div class="form-grid">
+        <div class="form-box" data-form="Form 1">FORM 1</div>
+        <div class="form-box" data-form="Form 2">FORM 2</div>
+        <div class="form-box" data-form="Form 3">FORM 3</div>
+        <div class="form-box" data-form="Form 4">FORM 4</div>
+        <div class="form-box" data-form="Form 5">FORM 5</div>
+        <div class="form-box" data-form="Form 6">FORM 6</div>
+      </div>
+    </section>
+
+    <!-- Stream Selection (initially hidden) -->
+    <section id="streamSelection" style="display:none;">
+      <h2>Select Stream</h2>
+      <div id="streamOptions" class="stream-grid">
+        <!-- Stream boxes will be generated here -->
+      </div>
+      <button class="back-btn" id="backToForm">Back to Form Selection</button>
+    </section>
+
+    <!-- Student List Section (initially hidden) -->
+    <section id="studentListSection" style="display:none;">
+      <h2>Student List</h2>
+      <input type="text" id="searchStudent" placeholder="Search student by name..." onkeyup="filterStudents()" />
+      <div id="studentList" class="student-list">
+        <!-- Student cards will be populated here -->
+      </div>
+      <button class="back-btn" id="backToStream">Back to Stream Selection</button>
+    </section>
+
+    <!-- Marks Entry Form (reuse your existing marks form) -->
+    <section id="marksEntrySection" style="display:none;">
+      <form id="marksForm">
+        <h2>Enter Marks for <span id="selectedStudent"></span></h2>
+        <div class="form-group">
+          <label for="yearInput">Year</label>
+          <input type="text" id="yearInput" placeholder="Enter academic year (e.g., 2025)" required />
+        </div>
+        <div class="form-group">
+          <label for="termInput">Term</label>
+          <select id="termInput" required>
+            <option value="">Select Term</option>
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+          </select>
+        </div>
+        <div id="subjectFields">
+          <!-- Dynamically generated subject fields (up to 10) -->
+        </div>
+        <button type="submit">Save Marks</button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+  </footer>
+
+  <!-- Theme Toggle -->
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </div>
+
+  <!-- Firebase & App Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // Firebase config – update as needed
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+      authDomain: "deee-9ab53.firebaseapp.com",
+      projectId: "deee-9ab53",
+      storageBucket: "deee-9ab53.firebasestorage.app",
+      messagingSenderId: "399732664479",
+      appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+      measurementId: "G-524ZPBX42B"
+    };
+
+    const appFirebase = initializeApp(firebaseConfig);
+    const db = getFirestore(appFirebase);
+    const auth = getAuth(appFirebase);
+
+    // Global variables to hold selection
+    let selectedForm = "";
+    let selectedStream = "";
+    
+    // On auth state change: set welcome message with teacher name (from email)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const email = user.email;
+        const teacherName = email.split("@")[0];
+        document.getElementById("welcomeMessage").textContent = `Welcome, ${teacherName}!`;
+      } else {
+        // Redirect to login if not authenticated
+        window.location.href = "/login";
+      }
+    });
+
+    // Sign out handler (if needed)
+    // (You can add a sign-out button in your header if desired)
+
+    // FORM SELECTION
+    const formSelection = document.getElementById("formSelection");
+    const streamSelection = document.getElementById("streamSelection");
+    const streamOptions = document.getElementById("streamOptions");
+    const studentListSection = document.getElementById("studentListSection");
+
+    document.querySelectorAll(".form-box").forEach(box => {
+      box.addEventListener("click", () => {
+        selectedForm = box.getAttribute("data-form");
+        // Hide form selection and show stream selection
+        formSelection.style.display = "none";
+        populateStreamOptions(selectedForm);
+        streamSelection.style.display = "block";
+      });
+    });
+
+    // Back button from stream selection to form selection
+    document.getElementById("backToForm").addEventListener("click", () => {
+      streamSelection.style.display = "none";
+      formSelection.style.display = "block";
+    });
+
+    // Back button from student list to stream selection
+    document.getElementById("backToStream").addEventListener("click", () => {
+      studentListSection.style.display = "none";
+      streamSelection.style.display = "block";
+    });
+
+    // Populate stream options based on selected form
+    function populateStreamOptions(form) {
+      streamOptions.innerHTML = "";
+      let streams = [];
+      // For Forms 1 to 4: streams: G, W, E, Z, U
+      if (["Form 1", "Form 2", "Form 3", "Form 4"].includes(form)) {
+        streams = ["G", "W", "E", "Z", "U"];
+      }
+      // For Form 5: streams: ARTS, COMMERCIALS, SCIENCES
+      else if (form === "Form 5") {
+        streams = ["ARTS", "COMMERCIALS", "SCIENCES"];
+      }
+      // For Form 6: streams: SCIENCES, ARTS, COMMERCIALS
+      else if (form === "Form 6") {
+        streams = ["SCIENCES", "ARTS", "COMMERCIALS"];
+      }
+      streams.forEach(stream => {
+        const div = document.createElement("div");
+        div.className = "stream-box";
+        div.textContent = `${form} ${stream}`;
+        div.setAttribute("data-stream", stream);
+        div.addEventListener("click", () => {
+          selectedStream = stream;
+          streamSelection.style.display = "none";
+          // Load student list based on selected form and stream
+          fetchStudents(selectedForm, selectedStream);
+          studentListSection.style.display = "block";
+        });
+        streamOptions.appendChild(div);
+      });
+    }
+
+    // Fetch and display students filtered by form and stream
+    async function fetchStudents(form, stream) {
+      try {
+        const studentCol = collection(db, "students");
+        const querySnapshot = await getDocs(studentCol);
+        const filteredStudents = [];
+        querySnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          // Assuming student documents have fields "form" and "stream"
+          if (data.form === form && data.stream === stream) {
+            data.id = docSnap.id;
+            filteredStudents.push(data);
+          }
+        });
+        // Sort alphabetically by surname
+        filteredStudents.sort((a, b) => a.surname.localeCompare(b.surname));
+        // Render student cards
+        const studentList = document.getElementById("studentList");
+        studentList.innerHTML = "";
+        if(filteredStudents.length === 0){
+          studentList.innerHTML = "<p>No students found for the selected form and stream.</p>";
+          return;
+        }
+        filteredStudents.forEach(student => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          card.innerHTML = `<h3>${student.firstname} ${student.surname}</h3>
+                            <p>${student.email || ""}</p>`;
+          card.addEventListener("click", () => openMarksForm(student));
+          studentList.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    }
+
+    // Filter student cards by search term
+    window.filterStudents = () => {
+      const search = document.getElementById("searchStudent").value.toLowerCase();
+      document.querySelectorAll(".student-card").forEach((card) => {
+        card.style.display = card.textContent.toLowerCase().includes(search)
+          ? ""
+          : "none";
+      });
+    };
+
+    // MARKS ENTRY FUNCTIONALITY (reuse your existing marks form code)
+    const marksForm = document.getElementById("marksForm");
+    const marksEntrySection = document.getElementById("marksEntrySection");
+    window.openMarksForm = (student) => {
+      // Hide student list section
+      studentListSection.style.display = "none";
+      // Show marks entry form section
+      marksEntrySection.style.display = "block";
+      document.getElementById("selectedStudent").textContent = student.firstname + " " + student.surname;
+      // Store selected student id in the form dataset for later update
+      marksForm.dataset.studentId = student.id;
+      // Generate subject fields (for simplicity, generate 10 empty fields)
+      const subjectFields = document.getElementById("subjectFields");
+      subjectFields.innerHTML = "";
+      for (let i = 0; i < 10; i++) {
+        const div = document.createElement("div");
+        div.className = "form-group";
+        div.innerHTML = `
+          <label>Subject ${i + 1}</label>
+          <input type="text" id="subject${i}" placeholder="Enter subject name" />
+          <input type="number" id="marks${i}" placeholder="Enter marks" oninput="updateGrade(${i})" />
+          <select id="grade${i}">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="F">F</option>
+          </select>
+        `;
+        subjectFields.appendChild(div);
+      }
+    };
+
+    // Auto-calculate grade when marks change
+    window.updateGrade = (index) => {
+      const marksInput = document.getElementById(`marks${index}`);
+      const gradeSelect = document.getElementById(`grade${index}`);
+      const marks = Number(marksInput.value);
+      let grade = "F";
+      if (!isNaN(marks)) {
+        if (marks >= 90) grade = "A";
+        else if (marks >= 80) grade = "B";
+        else if (marks >= 70) grade = "C";
+        else if (marks >= 60) grade = "D";
+        else grade = "F";
+      }
+      gradeSelect.value = grade;
+    };
+
+    // Save marks on form submission
+    marksForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const studentId = marksForm.dataset.studentId;
+      let marksData = {};
+      for (let i = 0; i < 10; i++) {
+        const subject = document.getElementById(`subject${i}`).value.trim();
+        const marks = document.getElementById(`marks${i}`).value;
+        const grade = document.getElementById(`grade${i}`).value;
+        if (subject && marks !== "") {
+          marksData[subject] = { marks: Number(marks), grade };
+        }
+      }
+      const yearVal = document.getElementById("yearInput").value.trim();
+      const termVal = document.getElementById("termInput").value;
+      if (!yearVal || !termVal) {
+        alert("Please enter both year and term.");
+        return;
+      }
+      try {
+        const studentRef = doc(db, "students", studentId);
+        await setDoc(studentRef, { marks: marksData, year: yearVal, term: termVal }, { merge: true });
+        alert("Marks saved successfully!");
+        marksForm.reset();
+        marksEntrySection.style.display = "none";
+        // Optionally, refresh the student list for the current form/stream
+        fetchStudents(selectedForm, selectedStream);
+        studentListSection.style.display = "block";
+      } catch (error) {
+        console.error("Error saving marks:", error);
+        alert("Error saving marks. Please try again.");
+      }
+    });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById("themeToggle");
+    let isDark = true;
+    themeToggle.addEventListener("click", () => {
+      isDark = !isDark;
+      document.body.setAttribute("data-theme", isDark ? "dark" : "light");
+      themeToggle.innerHTML = isDark
+        ? '<i class="fas fa-moon"></i>'
+        : '<i class="fas fa-sun"></i>';
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+    if (localStorage.getItem("theme")) {
+      const savedTheme = localStorage.getItem("theme");
+      document.body.setAttribute("data-theme", savedTheme);
+      isDark = savedTheme === "dark";
+      themeToggle.innerHTML = isDark
+        ? '<i class="fas fa-moon"></i>'
+        : '<i class="fas fa-sun"></i>';
+    }
+  </script>
+</body>
+</html>
