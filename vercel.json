@@ -9,6 +9,10 @@
       "dest": "/pages/faculty.html"
     },
     {
+      "src": "/setreport2",
+      "dest": "/pages/set-report2.html"
+    },
+    {
       "src": "/contact",
       "dest": "/pages/contact.html"
     },
