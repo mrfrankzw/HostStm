@@ -53,6 +53,16 @@
       "dest": "/admin/admin-login.html"
     },
     {
+      "src": "/admin",
+      "dest": "/admin/admin.html"
+    },
+    {
+      "src": "/credits",
+      "dest": "/admin/credits.html"
+    },
+
+  
+    {
       "src": "/teacherssignup",
       "dest": "/admin/admin-signup.html"
     },
