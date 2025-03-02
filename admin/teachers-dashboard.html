@@ -554,8 +554,8 @@
 
       // Check authentication
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          window.location.href = '/login';
+        if (!user) {
+          window.location.href = '/teacherslogin';
         } else {
           // Extract name from email and update welcome message
           const name = user.email.split("@")[0];
