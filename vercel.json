@@ -76,7 +76,7 @@
     },
     {
       "src": "/teacherusers",
-      "dest": "/pages/teacher-users.html"
+      "dest": "/admin/teacher-users.html"
     },
     {
       "src": "/studentusers",
