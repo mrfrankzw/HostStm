@@ -9,8 +9,8 @@
       "dest": "/pages/faculty.html"
     },
     {
-      "src": "/setreport2",
-      "dest": "/pages/set-report2.html"
+      "src": "/staff",
+      "dest": "/pages/stuff.html"
     },
     {
       "src": "/contact",
