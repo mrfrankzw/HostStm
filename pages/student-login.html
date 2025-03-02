@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
     <style>
-        /* Same CSS as before */
         :root {
             --primary: #003366;
             --secondary: #FFD700;
@@ -38,6 +37,7 @@
             --bg-dark: #333;
         }
 
+        /* Header and Navigation */
         header {
             background: var(--primary);
             color: white;
@@ -119,12 +119,13 @@
             display: block;
         }
 
+        /* Main Content */
         .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            padding-top: 80px;
+            min-height: 100vh;
+            padding: 80px 5% 100px; /* Adjusted padding for header and footer */
         }
 
         .login-form {
@@ -199,10 +200,11 @@
             text-decoration: underline;
         }
 
+        /* Footer */
         footer {
             background: var(--primary);
             color: white;
-            padding: 2rem 5%;
+            padding: 1rem 5%;
             text-align: center;
             position: fixed;
             width: 100%;
@@ -220,6 +222,7 @@
             color: var(--secondary);
         }
 
+        /* Light/Dark Mode Toggle */
         .theme-toggle {
             position: fixed;
             bottom: 30px;
@@ -241,6 +244,7 @@
             font-size: 1.5rem;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .menu-btn {
                 display: block;
@@ -269,6 +273,14 @@
 
             .dropdown-content a {
                 padding: 10px 0;
+            }
+
+            .container {
+                padding: 80px 2% 100px; /* Smaller padding for mobile */
+            }
+
+            .login-form {
+                padding: 1.5rem; /* Smaller padding for mobile */
             }
         }
     </style>
@@ -299,7 +311,6 @@
                 <a href="#"><i class="fas fa-user-tie"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
                 <div class="dropdown-content">
                     <a href="/teacherslogin"><i class="fas fa-sign-in-alt"></i> Login</a>
-                  <!--  <a href="/adminsignup"><i class="fas fa-user-plus"></i> Sign Up</a> -->
                 </div>
             </div>
             <a href="/apply" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Apply Now</a>
@@ -366,7 +377,7 @@
         const loginForm = document.getElementById('login-form');
         const errorMessage = document.getElementById('error-message');
 
-      /*  loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -381,25 +392,8 @@
                 .catch((error) => {
                     errorMessage.textContent = error.message;
                 });
-        });*/
-//#####
-      loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Store email in localStorage
-            localStorage.setItem('studentEmail', email);
-            // Redirect to dashboard
-            window.location.href = '/dashboard';
-        })
-        .catch((error) => {
-            errorMessage.textContent = error.message;
         });
-});
-        
+
         // Toggle Password Visibility
         const togglePassword = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
