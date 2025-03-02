@@ -5,6 +5,10 @@
       "dest": "/pages/about.html"
     },
     {
+      "src": "/download-application",
+      "dest": "https://github.com/mrfrank-ofc/STM/raw/main/admin/stmarys_application_form.pdf"
+    },
+    {
       "src": "/faculty",
       "dest": "/pages/faculty.html"
     },
