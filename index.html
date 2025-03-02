@@ -149,7 +149,6 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      /* Removed automatic slideshow animation to use JS-controlled animations */
     }
 
     .hero .slideshow img {
@@ -160,27 +159,11 @@
       top: 0;
       left: 0;
       opacity: 0;
+      transition: opacity 1s ease;
     }
 
-    /* The first image is active on load with a slide-from-left effect */
     .hero .slideshow img.active {
       opacity: 1;
-    }
-
-    /* Slide Animations */
-    @keyframes slideFromLeft {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideFromRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    .hero .slideshow img.slide-from-left {
-      animation: slideFromLeft 1s forwards;
-    }
-    .hero .slideshow img.slide-from-right {
-      animation: slideFromRight 1s forwards;
     }
 
     .hero h1 {
@@ -189,7 +172,7 @@
       animation: fadeIn 2s ease;
     }
 
-    /* School Motto & Buttons */
+    /* School Motto & Hero Buttons */
     #school-motto {
       font-size: 1.5rem;
       margin-top: 1rem;
@@ -203,17 +186,19 @@
     }
     .hero-buttons .btn {
       display: inline-block;
-      background: var(--secondary);
+      background: transparent;
+      border: 2px solid var(--primary);
       color: var(--primary);
       padding: 0.75rem 1.5rem;
       margin: 0 0.5rem;
-      border-radius: 5px;
+      border-radius: 25px;
       text-decoration: none;
       font-weight: 600;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, color 0.3s ease;
     }
     .hero-buttons .btn:hover {
-      background: #e6b800;
+      background: var(--primary);
+      color: var(--bg-light);
     }
 
     /* About Section */
@@ -506,7 +491,6 @@
         <a href="#"><i class="fas fa-user-shield"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
         <div class="dropdown-content">
           <a href="/teacherslogin"><i class="fas fa-sign-in-alt"></i> Login</a>
-          <!-- <a href="/teacherssignup">Sign Up</a>-->
         </div>
       </div>
       <a href="/apply" class="btn btn-primary"><i class="fas fa-file-download"></i> Apply Now</a>
@@ -516,15 +500,15 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="slideshow">
-      <!-- The first image loads with a slide-from-left effect -->
-      <img src="https://i.ibb.co/CKZ5MWwB/mrfrankofc.jpg" alt="School Photo 1" class="active slide-from-left" />
+      <!-- Using the original fade effect -->
+      <img src="https://i.ibb.co/CKZ5MWwB/mrfrankofc.jpg" alt="School Photo 1" class="active" />
       <img src="https://i.ibb.co/ZpbdLtNH/mrfrankofc.jpg" alt="School Photo 2" />
       <img src="https://i.ibb.co/9HTbz3q3/mrfrankofc.jpg" alt="School Photo 3" />
     </div>
     <h1 id="hero-text">Welcome to St. Mary's High School</h1>
     <p id="school-motto">We think we can and indeed we can</p>
     <div class="hero-buttons">
-      <a href="https://github.com/mrfrank-ofc/STM/raw/main/admin/stmarys_application_form.pdf" class="btn download-btn"><i class="fas fa-download"></i> Download Application Form</a>
+      <a href="/download-application" class="btn download-btn"><i class="fas fa-download"></i> Download Application Form</a>
       <a href="/signup" class="btn signup-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
     </div>
   </section>
@@ -622,7 +606,7 @@
   </div>
 
   <script>
-    // Slideshow Animation
+    // Slideshow Animation using a simple fade
     const slides = document.querySelectorAll('.slideshow img');
     const heroText = document.getElementById('hero-text');
     const texts = [
@@ -636,23 +620,10 @@
       heroText.textContent = texts[currentSlide];
     };
 
-    // Initialize first slide already has 'active' and 'slide-from-left'
-
     setInterval(() => {
-      // Remove active and slide classes from current slide
-      slides[currentSlide].classList.remove('active', 'slide-from-left', 'slide-from-right');
+      slides[currentSlide].classList.remove('active');
       currentSlide = (currentSlide + 1) % slides.length;
-      // Remove any existing slide animation classes on all slides for a clean state
-      slides.forEach(slide => {
-        slide.classList.remove('slide-from-left', 'slide-from-right');
-      });
-      // Add active and directional slide animation to new slide
       slides[currentSlide].classList.add('active');
-      if (currentSlide % 2 === 0) {
-        slides[currentSlide].classList.add('slide-from-left');
-      } else {
-        slides[currentSlide].classList.add('slide-from-right');
-      }
       updateHeroText();
     }, 5000);
 
