@@ -268,7 +268,7 @@
     </div>
     <div class="menu-links">
       <a href="#dashboard">Dashboard</a>
-      <a href="teacher-set-report">Set Student Report Card</a>
+      <a href="/teacher-set-report">Set Student Report Card</a>
       <a href="/adminapplication">View Applications</a>
       <a href="#addUpdate">Add Update/Notice</a>
       <a href="#updates">Updates/Notices</a>
@@ -408,7 +408,7 @@
         </div>
         <div class="form-group">
           <label for="updateContent">Content:</label>
-          <textarea id="updateContent" rows="4" placeholder="Enter update content" required></textarea>
+          <textarea id="updateContent           rows="4" placeholder="Enter update content" required></textarea>
         </div>
         <div class="form-group">
           <label for="updateYear">Year:</label>
@@ -441,11 +441,9 @@
     <!-- New Additional Sections -->
     <section id="studentRecords" style="display: none;">
       <h2><a href="/studentusers">View Student Records</a></h2>
-      
     </section>
     <section id="teacherRecords" style="display: none;">
       <h2><a href="/teacherusers">View Teacher Records</a></h2>
-      
     </section>
     <section id="settings" style="display: none;">
       <h2>Settings</h2>
@@ -556,7 +554,7 @@
 
       // Check authentication
       onAuthStateChanged(auth, (user) => {
-        if (!user) {
+        if (user) {
           window.location.href = '/login';
         } else {
           // Extract name from email and update welcome message
@@ -694,19 +692,25 @@
         }
       });
 
-      // Menu Links - Section Switching
+      // Menu Links - Section Switching and Page Navigation
       const menuLinks = document.querySelectorAll(".menu-links a");
       menuLinks.forEach(link => {
         link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute("href").substring(1);
-          document.querySelectorAll("section").forEach(sec => {
-            sec.style.display = (sec.id === targetId) ? "block" : "none";
-          });
-          sideMenu.classList.remove("active");
-          // If the Updates section is opened, load updates from Firebase
-          if (targetId === "updates") {
-            loadUpdates();
+          const targetHref = link.getAttribute("href");
+          if (targetHref.startsWith("#")) {
+            e.preventDefault();
+            const targetId = targetHref.substring(1);
+            document.querySelectorAll("section").forEach(sec => {
+              sec.style.display = (sec.id === targetId) ? "block" : "none";
+            });
+            sideMenu.classList.remove("active");
+            // If the Updates section is opened, load updates from Firebase
+            if (targetId === "updates") {
+              loadUpdates();
+            }
+          } else {
+            // Navigate to the external page
+            window.location.href = targetHref;
           }
         });
       });
