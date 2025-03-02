@@ -45,11 +45,11 @@
       "dest": "/pages/student-signup.html"
     },
     {
-      "src": "/teacherlogin",
+      "src": "/teacherslogin",
       "dest": "/admin/admin-login.html"
     },
     {
-      "src": "/teachersignup",
+      "src": "/teacherssignup",
       "dest": "/admin/admin-signup.html"
     },
     {
