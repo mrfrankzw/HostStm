@@ -55,7 +55,7 @@
         color: var(--text-color);
         min-height: 100vh;
         transition: background 0.6s ease, color 0.6s ease;
-        padding-bottom: 80px; /* space for fixed footer */
+        padding-bottom: 80px; /* for fixed footer */
       }
       body::after {
         content: "";
@@ -102,7 +102,7 @@
         height: 40px;
         margin-right: 10px;
       }
-      /* Side Menu Styles */
+      /* Side Menu */
       .menu-btn {
         font-size: 1.5rem;
         cursor: pointer;
@@ -358,7 +358,7 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-5px); }
       }
-      /* Responsive for Side Menu */
+      /* Responsive Side Menu */
       @media (max-width: 768px) {
         .side-menu {
           width: 100%;
@@ -371,7 +371,11 @@
     <!-- Header -->
     <header>
       <div class="logo">
-        <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
+        <img
+          src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
+          alt="Logo"
+          class="header-logo"
+        />
         St. Mary's High
       </div>
       <button class="menu-btn" id="menuBtn">
@@ -407,7 +411,7 @@
         <div class="dashboard-cards">
           <div class="card">
             <h3>Grade &amp; Class</h3>
-            <p id="currentGrade">Loading...</p>
+            <p id="currentGrade">Not set</p>
           </div>
           <div class="card">
             <h3>Notices</h3>
@@ -421,7 +425,12 @@
         <h2>Personal Information</h2>
         <div class="form-group">
           <label for="profile-pic">Profile Picture</label>
-          <img src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg" alt="Profile Picture" class="profile-pic" id="profilePic" />
+          <img
+            src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg"
+            alt="Profile Picture"
+            class="profile-pic"
+            id="profilePic"
+          />
           <input type="file" id="profilePicInput" accept="image/*" />
           <p id="studentDisplayName"></p>
         </div>
@@ -628,14 +637,18 @@
               "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
             document.getElementById("studentDisplayName").textContent = studentData.firstname || "";
             document.getElementById("welcomeMessage").textContent = `Hello, ${studentData.firstname}`;
-            // Update current grade card using form and stream
+            // Update current grade card using form and stream; display "Not set" if missing
             if (studentData.form && studentData.stream) {
               document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
             } else {
               document.getElementById("currentGrade").textContent = "Not set";
+              // Notify student to set personal info if grade & class not set
+              showMessage("Your personal info is incomplete. Please update your grade & class info in your profile.", "error");
             }
           } else {
             document.getElementById("welcomeMessage").textContent = `Welcome, ${auth.currentUser.email.split('@')[0]}`;
+            document.getElementById("currentGrade").textContent = "Not set";
+            showMessage("Your personal info is incomplete. Please update your profile.", "error");
           }
         } catch (error) {
           console.error("Error fetching student data:", error);
@@ -705,7 +718,7 @@
         }
       };
 
-      // Export report card as PDF with comment based on average marks
+      // Export report card as PDF with school signature and serial number
       window.exportPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -716,10 +729,11 @@
         const year = document.getElementById("reportYear").textContent;
         const term = document.getElementById("reportTerm").textContent;
 
-        doc.text(`Name: ${name}`, 14, 10);
-        doc.text(`Email: ${email}`, 14, 20);
-        doc.text(`Year: ${year}`, 14, 30);
-        doc.text(`Term: ${term}`, 14, 40);
+        doc.setFontSize(12);
+        doc.text(`Name: ${name}`, 14, 15);
+        doc.text(`Email: ${email}`, 14, 25);
+        doc.text(`Year: ${year}`, 14, 35);
+        doc.text(`Term: ${term}`, 14, 45);
 
         // Prepare table rows from reportCardBody
         let rows = [];
@@ -730,32 +744,45 @@
           rows.push(cells);
         });
 
-        // Add table using autoTable
         doc.autoTable({
           head: [["Subject", "Marks", "Grade"]],
           body: rows,
-          startY: 50,
+          startY: 55,
         });
 
         // Extract average from the last row (if exists)
         let avg = 0;
         if (rows.length > 0) {
-          const avgRowText = rows[rows.length - 1][0]; // Expecting "Average Marks: X"
-          const parts = avgRowText.split("Average Marks: ");
-          if (parts.length === 2) {
-            avg = parseFloat(parts[1]);
+          const lastRow = rows[rows.length - 1];
+          if (lastRow[0].includes("Average Marks:")) {
+            avg = parseFloat(lastRow[0].replace("Average Marks:", "").trim());
           }
         }
 
-        // Add comment based on average marks below table
-        const commentY = doc.lastAutoTable.finalY + 10;
+        // Generate a serial number based on current timestamp
+        const serial = "SN-" + Date.now();
+        const signatureY = doc.lastAutoTable.finalY + 20;
+
+        // Add school logo (using a placeholder base64 image; replace with your actual logo)
+        const schoolLogoBase64 =
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgElEQVR4nKVTT0iDQRRF7wS5AoBHAInIBKIECCFASCTFqBEGhQEJIRkKARBAUKgYQSEhJQvFvZo+xnJ3bt8mJmxN5m/s7e7N//AOnABbiB7gAt4CkwCc0CeaN20n1lO2eZ/oCSIRzsTrW0LZISZqP0+zvDd6d1ymAMG3rN5WXqoAxyADeId7BzU61gAlzBBO3AKfgoI9+yx4y3VhzpAHMHysAEvhA3NkWgGM+4FXEZu1Xay3AG6tAHYGvADqwCtwAWYoBI5kCtwAXaAAkkmOKwDHiCnw4BntDDrw7C3IkuQ9Qd5At2GLw49I+BavB+g7L5DZl0vwgZxDnzHXI8AmsKOxQY3EBv4tQFxGVFNjxWwhS8HZR7UMaYASrCm/y2pA6QBD1ARax6mAV3ANPCAvOFOdOfAB+KNYqBY+gpFkAHeBz+n8ZCufELH1S3Yy0wHWAPdHUpf1fYT2wAAAABJRU5ErkJggg==";
+        const pageWidth = doc.internal.pageSize.getWidth();
+        doc.addImage(schoolLogoBase64, "PNG", pageWidth - 40, signatureY - 10, 30, 30);
+
+        doc.setFontSize(10);
+        doc.text("School: St. Mary's High School", 14, signatureY);
+        doc.text("Contact: + 263 719 647 303", 14, signatureY + 7);
+        doc.text("Address: Mubvumira Rd, Zengeza, Chitungwiza", 14, signatureY + 14);
+        doc.text("Serial Number: " + serial, 14, signatureY + 21);
+
+        // Add comment based on average marks below signature info
+        const commentY = signatureY + 30;
         if (avg < 50) {
           doc.text("Work hard to improve this grade", 14, commentY);
         } else {
           doc.text("Good mark!", 14, commentY);
         }
 
-        // Save PDF
         doc.save("stmarys_student_report_card.pdf");
       };
 
@@ -780,7 +807,7 @@
         }
       };
 
-      // Call loadUpdates when the "Current Updates" section is opened
+      // Load updates for the "Current Updates" section
       const loadUpdates = async () => {
         try {
           const updatesQuery = query(
@@ -827,9 +854,11 @@
           };
           await setDoc(studentRef, studentData, { merge: true });
           showMessage("Profile updated successfully!", "success");
-          // Also update current grade card if available
+          // Update current grade card if available
           if (studentData.form && studentData.stream) {
             document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
+          } else {
+            document.getElementById("currentGrade").textContent = "Not set";
           }
         } catch (error) {
           console.error("Error saving student data:", error);
