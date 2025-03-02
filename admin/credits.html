@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits - St. Mary's High School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003366; /* School theme color */
+            --secondary: #FFD700; /* Accent color */
+            --text-color: #333;
+            --bg-light: #ffffff; /* Default white theme */
+            --bg-dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background 0.6s ease, color 0.6s ease;
+        }
+
+        body.dark-mode {
+            --text-color: #f9f9f9;
+            --bg-light: #1a1a1a;
+            --bg-dark: #333;
+        }
+
+        /* Header and Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            padding-top: 80px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            animation: dropIn 1.5s ease-in-out;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            animation: slideIn 2s ease-in-out;
+        }
+
+        .credits-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2.5s ease-in-out;
+        }
+
+        .credits-info h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .credits-info p {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin: 0.5rem 0;
+        }
+
+        .contact-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            animation: fadeIn 3s ease-in-out;
+            flex-wrap: wrap; /* Ensures buttons wrap on smaller screens */
+            justify-content: center; /* Centers buttons on smaller screens */
+        }
+
+        .contact-buttons a {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .contact-buttons a:hover {
+            background: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .contact-buttons i {
+            font-size: 1.5rem;
+        }
+
+        /* Animations */
+        @keyframes dropIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 2rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        .footer-links .btn {
+            background: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links .btn:hover {
+            background: #e6b800;
+        }
+
+        /* Light/Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .theme-toggle i {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 0;
+                background: var(--primary);
+                width: 100%;
+                padding: 1rem;
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 2rem; /* Smaller heading for mobile */
+            }
+
+            .credits-info {
+                padding: 1rem; /* Smaller padding for mobile */
+            }
+
+            .contact-buttons a {
+                padding: 0.75rem 1.5rem; /* Smaller buttons for mobile */
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" alt="School Logo">
+            St. Mary's High
+        </div>
+        <button class="menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/about"><i class="fas fa-info-circle"></i> About</a>
+            <a href="/gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="/staff" class="btn btn-primary"><i class="fas fa-chalkboard-teacher"></i> Staff</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Credits</h1>
+        <div class="credits-info">
+            <h2>Darrell Mucheri</h2>
+            <p>A St. Mary's Science student in Form 5 with a bright idea of innovation and a better future.</p>
+            <p>From Zimbabwe</p>
+            <p>Date of Birth: 18 October 2007</p>
+        </div>
+        <div class="contact-buttons">
+            <a href="mailto:darrelmucheri@gmail.com">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+            <a href="https://github.com/mrfrank-ofc" target="_blank">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="https://mrfrankinc.vercel.app" target="_blank">
+                <i class="fas fa-globe"></i> Portfolio
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <div class="footer-links">
+                <a href="/" class="btn"><i class="fas fa-home"></i> Go Home</a>
+            </div>
+        </div>
+        <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    </footer>
+
+    <!-- Light/Dark Mode Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <script>
+        // Light/Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Hamburger Menu Toggle
+        const menuBtn = document.querySelector('.menu-btn');
+        const nav = document.querySelector('nav');
+
+        menuBtn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
