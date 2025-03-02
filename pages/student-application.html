@@ -21,6 +21,8 @@
     type="image/png"
     href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
   />
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Subzero-inspired Theme Variables */
     :root {
@@ -393,12 +395,18 @@
           status: "pending", // Default status
           timestamp: new Date()
         });
-        document.getElementById("message").innerHTML =
-          '<i class="fa fa-check-circle" style="color: #28a745;"></i> Application submitted successfully!';
+        Swal.fire({
+          icon: 'success',
+          title: 'Application Submitted',
+          text: 'Your application has been submitted successfully!'
+        });
         document.getElementById("applicationForm").reset();
       } catch (error) {
-        document.getElementById("message").textContent = "Error submitting application: " + error.message;
-        document.getElementById("message").className = "message error";
+        Swal.fire({
+          icon: 'error',
+          title: 'Submission Failed',
+          text: 'Error submitting application: ' + error.message
+        });
       }
     });
 
