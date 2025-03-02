@@ -477,6 +477,33 @@
           <label for="address">Address</label>
           <input type="text" id="address" placeholder="Enter your address" />
         </div>
+        <!-- New Fields: Form and Stream/Class -->
+        <div class="form-group">
+          <label for="form">Form</label>
+          <select id="form">
+            <option value="">Select Form</option>
+            <option value="Form 1">Form 1</option>
+            <option value="Form 2">Form 2</option>
+            <option value="Form 3">Form 3</option>
+            <option value="Form 4">Form 4</option>
+            <option value="Form 5">Form 5</option>
+            <option value="Form 6">Form 6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stream">Stream/Class</label>
+          <select id="stream">
+            <option value="">Select Stream/Class</option>
+            <option value="G">G</option>
+            <option value="W">W</option>
+            <option value="E">E</option>
+            <option value="Z">Z</option>
+            <option value="U">U</option>
+            <option value="Arts">Arts</option>
+            <option value="Commercials">Commercials</option>
+            <option value="Sciences">Sciences</option>
+          </select>
+        </div>
         <div class="form-group">
           <button id="saveChangesBtn">Save Changes</button>
           <button id="changePasswordBtn">Reset Password</button>
@@ -489,7 +516,7 @@
         <div class="report-card">
           <div class="report-header">
             <p>Name: <span id="reportName"></span></p>
-                      <p>Email: <span id="reportEmail"></span></p>
+            <p>Email: <span id="reportEmail"></span></p>
             <p>Year: <span id="reportYear"></span></p>
             <p>Term: <span id="reportTerm"></span></p>
           </div>
@@ -498,7 +525,7 @@
             <thead>
               <tr>
                 <th>Subject</th>
-                                <th>Marks</th>
+                <th>Marks</th>
                 <th>Grade</th>
               </tr>
             </thead>
@@ -552,7 +579,6 @@
         updateDoc,
         collection,
         query,
-        where,
         orderBy,
         getDocs
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -606,6 +632,9 @@
             document.getElementById("dob").value = studentData.dob || "";
             document.getElementById("gender").value = studentData.gender || "male";
             document.getElementById("address").value = studentData.address || "";
+            // Set new fields: Form and Stream/Class
+            document.getElementById("form").value = studentData.form || "";
+            document.getElementById("stream").value = studentData.stream || "";
             document.getElementById("profilePic").src =
               studentData.profilePic ||
               "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
@@ -739,6 +768,8 @@
             dob: document.getElementById("dob").value,
             gender: document.getElementById("gender").value,
             address: document.getElementById("address").value,
+            form: document.getElementById("form").value,
+            stream: document.getElementById("stream").value,
             lastUpdated: new Date()
           };
           await setDoc(studentRef, studentData, { merge: true });
