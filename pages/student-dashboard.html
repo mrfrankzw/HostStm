@@ -642,7 +642,6 @@
               document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
             } else {
               document.getElementById("currentGrade").textContent = "Not set";
-              // Notify student to set personal info if grade & class not set
               showMessage("Your personal info is incomplete. Please update your grade & class info in your profile.", "error");
             }
           } else {
@@ -718,7 +717,7 @@
         }
       };
 
-      // Export report card as PDF with school signature and serial number
+      // Export report card as PDF with school signature (text only) and serial number
       window.exportPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -763,16 +762,11 @@
         const serial = "SN-" + Date.now();
         const signatureY = doc.lastAutoTable.finalY + 20;
 
-        // Add school logo (using a placeholder base64 image; replace with your actual logo)
-        const schoolLogoBase64 =
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgElEQVR4nKVTT0iDQRRF7wS5AoBHAInIBKIECCFASCTFqBEGhQEJIRkKARBAUKgYQSEhJQvFvZo+xnJ3bt8mJmxN5m/s7e7N//AOnABbiB7gAt4CkwCc0CeaN20n1lO2eZ/oCSIRzsTrW0LZISZqP0+zvDd6d1ymAMG3rN5WXqoAxyADeId7BzU61gAlzBBO3AKfgoI9+yx4y3VhzpAHMHysAEvhA3NkWgGM+4FXEZu1Xay3AG6tAHYGvADqwCtwAWYoBI5kCtwAXaAAkkmOKwDHiCnw4BntDDrw7C3IkuQ9Qd5At2GLw49I+BavB+g7L5DZl0vwgZxDnzHXI8AmsKOxQY3EBv4tQFxGVFNjxWwhS8HZR7UMaYASrCm/y2pA6QBD1ARax6mAV3ANPCAvOFOdOfAB+KNYqBY+gpFkAHeBz+n8ZCufELH1S3Yy0wHWAPdHUpf1fYT2wAAAABJRU5ErkJggg==";
-        const pageWidth = doc.internal.pageSize.getWidth();
-        doc.addImage(schoolLogoBase64, "PNG", pageWidth - 40, signatureY - 10, 30, 30);
-
+        // Add school signature block as text only
         doc.setFontSize(10);
         doc.text("School: St. Mary's High School", 14, signatureY);
-        doc.text("Contact: + 263 719 647 303", 14, signatureY + 7);
-        doc.text("Address: Mubvumira Rd, Zengeza, Chitungwiza", 14, signatureY + 14);
+        doc.text("Contact: +1 (234) 567-8900", 14, signatureY + 7);
+        doc.text("Address: 123 School Lane, City, Country", 14, signatureY + 14);
         doc.text("Serial Number: " + serial, 14, signatureY + 21);
 
         // Add comment based on average marks below signature info
@@ -854,7 +848,7 @@
           };
           await setDoc(studentRef, studentData, { merge: true });
           showMessage("Profile updated successfully!", "success");
-          // Update current grade card if available
+          // Update current grade card if available, else display "Not set"
           if (studentData.form && studentData.stream) {
             document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
           } else {
