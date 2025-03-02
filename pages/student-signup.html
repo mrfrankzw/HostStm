@@ -1,487 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - St. Mary's High School</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
-    <style>
-        :root {
-            --primary: #003366;
-            --secondary: #FFD700;
-            --text-color: #333;
-            --bg-light: #ffffff;
-            --bg-dark: #1a1a1a;
-        }
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - St. Mary's High School</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg"
+  />
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root {
+      --primary: #003366;
+      --secondary: #FFD700;
+      --text-color: #333;
+      --bg-light: #ffffff;
+      --bg-dark: #1a1a1a;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            background: var(--bg-light);
-            color: var(--text-color);
-            overflow-x: hidden;
-            transition: background 0.6s ease, color 0.6s ease;
-        }
+    body {
+      background: var(--bg-light);
+      color: var(--text-color);
+      overflow-x: hidden;
+      transition: background 0.6s ease, color 0.6s ease;
+    }
 
-        body.dark-mode {
-            --text-color: #f9f9f9;
-            --bg-light: #1a1a1a;
-            --bg-dark: #333;
-        }
+    body.dark-mode {
+      --text-color: #f9f9f9;
+      --bg-light: #1a1a1a;
+      --bg-dark: #333;
+    }
 
-        /* Header and Navigation */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+    /* Header and Navigation */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--secondary);
-        }
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--secondary);
+    }
 
-        .logo img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
+    .logo img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
 
-        nav {
-            display: flex;
-            align-items: center;
-        }
+    nav {
+      display: flex;
+      align-items: center;
+    }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 1rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
 
-        nav a:hover {
-            color: var(--secondary);
-        }
+    nav a:hover {
+      color: var(--secondary);
+    }
 
-        .menu-btn {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
+    .menu-btn {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
 
-        .dropdown {
-            position: relative;
-        }
+    .dropdown {
+      position: relative;
+    }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background: var(--primary);
-            min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            border-radius: 5px;
-        }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: var(--primary);
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 5px;
+    }
 
-        .dropdown-content a {
-            color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            transition: background 0.3s ease;
-        }
+    .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.3s ease;
+    }
 
-        .dropdown-content a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+    .dropdown-content a:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
 
-        /* Main Content */
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 80px 5% 100px; /* Adjusted padding for header and footer */
-        }
+    /* Main Content */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 80px 5% 100px; /* Adjusted padding for header and footer */
+    }
 
-        .login-form {
-            background: var(--bg-light);
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
+    .login-form {
+      background: var(--bg-light);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-        .login-form h2 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
+    .login-form h2 {
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
 
-        .login-form input {
-            width: 100%;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+    .login-form input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
 
-        .phone-container {
-            display: flex;
-            gap: 0.5rem;
-        }
+    .phone-container {
+      display: flex;
+      gap: 0.5rem;
+    }
 
-        .phone-container select {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+    .phone-container select {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
 
-        .phone-container input {
-            flex: 2;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+    .phone-container input {
+      flex: 2;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
 
-        .password-container {
-            position: relative;
-        }
+    .password-container {
+      position: relative;
+    }
 
-        .password-container i {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--primary);
-        }
+    .password-container i {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--primary);
+    }
 
-        .login-form button {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
+    .login-form button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
 
-        .login-form button:hover {
-            background: #002244;
-        }
+    .login-form button:hover {
+      background: #002244;
+    }
 
-        .error {
-            color: red;
-            margin-top: 1rem;
-        }
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
 
-        .login-link {
-            margin-top: 1rem;
-            color: var(--primary);
-        }
+    .login-link {
+      margin-top: 1rem;
+      color: var(--primary);
+    }
 
-        .login-link a {
-            color: var(--secondary);
-            text-decoration: none;
-        }
+    .login-link a {
+      color: var(--secondary);
+      text-decoration: none;
+    }
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
 
-        /* Footer */
-        footer {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 5%;
-            text-align: center;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
+    /* Footer */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 5%;
+      text-align: center;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
 
-        .social-icons a {
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 0.5rem;
-            transition: color 0.3s ease;
-        }
+    .social-icons a {
+      color: white;
+      font-size: 1.5rem;
+      margin: 0 0.5rem;
+      transition: color 0.3s ease;
+    }
 
-        .social-icons a:hover {
-            color: var(--secondary);
-        }
+    .social-icons a:hover {
+      color: var(--secondary);
+    }
 
-        /* Light/Dark Mode Toggle */
-        .theme-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
+    /* Light/Dark Mode Toggle */
+    .theme-toggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
 
-        .theme-toggle i {
-            font-size: 1.5rem;
-        }
+    .theme-toggle i {
+      font-size: 1.5rem;
+    }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .menu-btn {
-                display: block;
-            }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .menu-btn {
+        display: block;
+      }
 
-            nav {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                right: 0;
-                background: var(--primary);
-                width: 100%;
-                padding: 1rem;
-            }
+      nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background: var(--primary);
+        width: 100%;
+        padding: 1rem;
+      }
 
-            nav.active {
-                display: flex;
-            }
+      nav.active {
+        display: flex;
+      }
 
-            .dropdown-content {
-                position: static;
-                background: transparent;
-                box-shadow: none;
-            }
+      .dropdown-content {
+        position: static;
+        background: transparent;
+        box-shadow: none;
+      }
 
-            .dropdown-content a {
-                padding: 10px 0;
-            }
+      .dropdown-content a {
+        padding: 10px 0;
+      }
 
-            .container {
-                padding: 80px 2% 100px; /* Smaller padding for mobile */
-            }
+      .container {
+        padding: 80px 2% 100px; /* Smaller padding for mobile */
+      }
 
-            .login-form {
-                padding: 1.5rem; /* Smaller padding for mobile */
-            }
+      .login-form {
+        padding: 1.5rem; /* Smaller padding for mobile */
+      }
 
-            .phone-container {
-                flex-direction: column; /* Stack phone inputs vertically on mobile */
-            }
+      .phone-container {
+        flex-direction: column; /* Stack phone inputs vertically on mobile */
+      }
 
-            .phone-container select,
-            .phone-container input {
-                width: 100%; /* Full width for mobile */
-            }
-        }
-    </style>
+      .phone-container select,
+      .phone-container input {
+        width: 100%; /* Full width for mobile */
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo">
-            St. Mary's High
-        </div>
-        <button class="menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <nav>
-            <a href="/"><i class="fas fa-home"></i> Home</a>
-            <a href="/about"><i class="fas fa-info-circle"></i> About</a>
-            <a href="/gallery"><i class="fas fa-images"></i> Gallery</a>
-            <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
-            <div class="dropdown">
-                <a href="#"><i class="fas fa-user-graduate"></i> Student Portal <i class="fas fa-caret-down"></i></a>
-                <div class="dropdown-content">
-                    <a href="/studentlogin"><i class="fas fa-sign-in-alt"></i> Login</a>
-                    <a href="/studentsignup"><i class="fas fa-user-plus"></i> Sign Up</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <a href="#"><i class="fas fa-user-tie"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
-                <div class="dropdown-content">
-                    <a href="/teacherslogin"><i class="fas fa-sign-in-alt"></i> Login</a>
-                </div>
-            </div>
-            <a href="/apply" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Apply Now</a>
-        </nav>
-    </header>
-
-    <!-- Signup Form -->
-    <div class="container">
-        <div class="login-form">
-            <h2>Student Sign Up</h2>
-            <form id="signup-form">
-                <input type="text" id="firstname" placeholder="First Name" required>
-                <input type="text" id="surname" placeholder="Surname" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <div class="password-container">
-                    <input type="password" id="password" placeholder="Password" required>
-                    <i class="fas fa-eye" id="toggle-password"></i>
-                </div>
-                <div class="phone-container">
-                    <select id="country-code">
-                        <option value="+263" data-flag="🇿🇼">🇿🇼 Zimbabwe (+263)</option>
-                        <option value="+27" data-flag="🇧🇼">🇧🇼 Botswana (+267)</option>
-                        <option value="+260" data-flag="🇿🇲">🇿🇲 Zambia (+260)</option>
-                        <option value="+27" data-flag="🇿🇦">🇿🇦 South Africa (+27)</option>
-                        <option value="+254" data-flag="🇰🇪">🇰🇪 Kenya (+254)</option>
-                    </select>
-                    <input type="tel" id="phone" placeholder="Phone Number" required>
-                </div>
-                <button type="submit">Sign Up</button>
-            </form>
-            <div class="error" id="error-message"></div>
-            <div class="login-link">
-                Already have an account? <a href="/login">Login</a>
-            </div>
-        </div>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo" />
+      St. Mary's High
     </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
+    <button class="menu-btn">
+      <i class="fas fa-bars"></i>
+    </button>
+    <nav>
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/about"><i class="fas fa-info-circle"></i> About</a>
+      <a href="/gallery"><i class="fas fa-images"></i> Gallery</a>
+      <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
+      <div class="dropdown">
+        <a href="#"
+          ><i class="fas fa-user-graduate"></i> Student Portal
+          <i class="fas fa-caret-down"></i></a
+        >
+        <div class="dropdown-content">
+          <a href="/studentlogin"><i class="fas fa-sign-in-alt"></i> Login</a>
+          <a href="/studentsignup"><i class="fas fa-user-plus"></i> Sign Up</a>
         </div>
-        <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
-    </footer>
+      </div>
+      <div class="dropdown">
+        <a href="#"
+          ><i class="fas fa-user-tie"></i> Admin Portal
+          <i class="fas fa-caret-down"></i></a
+        >
+        <div class="dropdown-content">
+          <a href="/teacherslogin"><i class="fas fa-sign-in-alt"></i> Login</a>
+        </div>
+      </div>
+      <a href="/apply" class="btn btn-primary"
+        ><i class="fas fa-pencil-alt"></i> Apply Now</a
+      >
+    </nav>
+  </header>
 
-    <!-- Light/Dark Mode Toggle -->
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon"></i>
+  <!-- Signup Form -->
+  <div class="container">
+    <div class="login-form">
+      <h2>Student Sign Up</h2>
+      <form id="signup-form">
+        <input type="text" id="firstname" placeholder="First Name" required />
+        <input type="text" id="surname" placeholder="Surname" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <div class="password-container">
+          <input type="password" id="password" placeholder="Password" required />
+          <i class="fas fa-eye" id="toggle-password"></i>
+        </div>
+        <div class="phone-container">
+          <select id="country-code">
+            <option value="+263" data-flag="🇿🇼">🇿🇼 Zimbabwe (+263)</option>
+            <option value="+27" data-flag="🇧🇼">🇧🇼 Botswana (+267)</option>
+            <option value="+260" data-flag="🇿🇲">🇿🇲 Zambia (+260)</option>
+            <option value="+27" data-flag="🇿🇦">🇿🇦 South Africa (+27)</option>
+            <option value="+254" data-flag="🇰🇪">🇰🇪 Kenya (+254)</option>
+          </select>
+          <input type="tel" id="phone" placeholder="Phone Number" required />
+        </div>
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="error" id="error-message"></div>
+      <div class="login-link">
+        Already have an account? <a href="/login">Login</a>
+      </div>
     </div>
+  </div>
 
-    <!-- Firebase SDK v9 -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  <!-- Footer -->
+  <footer>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-tiktok"></i></a>
+    </div>
+    <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+  </footer>
 
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
-            authDomain: "deee-9ab53.firebaseapp.com",
-            projectId: "deee-9ab53",
-            storageBucket: "deee-9ab53.firebasestorage.app",
-            messagingSenderId: "399732664479",
-            appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
-            measurementId: "G-524ZPBX42B"
-        };
+  <!-- Light/Dark Mode Toggle -->
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+  <!-- Firebase SDK v9 -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Signup Logic
-        const signupForm = document.getElementById('signup-form');
-        const errorMessage = document.getElementById('error-message');
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+      authDomain: "deee-9ab53.firebaseapp.com",
+      projectId: "deee-9ab53",
+      storageBucket: "deee-9ab53.firebasestorage.app",
+      messagingSenderId: "399732664479",
+      appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+      measurementId: "G-524ZPBX42B",
+    };
 
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const firstname = document.getElementById('firstname').value;
-            const surname = document.getElementById('surname').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const countryCode = document.getElementById('country-code').value;
-            const phone = document.getElementById('phone').value;
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-            const fullPhone = `${countryCode}${phone}`;
+    // Signup Logic
+    const signupForm = document.getElementById("signup-form");
 
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Redirect to dashboard
-                    window.location.href = '/login';
-                })
-                .catch((error) => {
-                    errorMessage.textContent = error.message;
-                });
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const firstname = document.getElementById("firstname").value;
+      const surname = document.getElementById("surname").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const countryCode = document.getElementById("country-code").value;
+      const phone = document.getElementById("phone").value;
+
+      const fullPhone = `${countryCode}${phone}`;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Using SweetAlert2 for success notification
+          Swal.fire({
+            icon: "success",
+            title: "Sign Up Successful",
+            text: "Your account has been created successfully.",
+          }).then(() => {
+            window.location.href = "/login";
+          });
+        })
+        .catch((error) => {
+          // Using SweetAlert2 for error notification
+          Swal.fire({
+            icon: "error",
+            title: "Sign Up Failed",
+            text: error.message,
+          });
         });
+    });
 
-        // Toggle Password Visibility
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('password');
+    // Toggle Password Visibility
+    const togglePassword = document.getElementById("toggle-password");
+    const passwordInput = document.getElementById("password");
 
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            togglePassword.classList.toggle('fa-eye-slash');
-        });
+    togglePassword.addEventListener("click", () => {
+      const type =
+        passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      togglePassword.classList.toggle("fa-eye-slash");
+    });
 
-        // Light/Dark Mode Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
+    // Light/Dark Mode Toggle
+    const themeToggle = document.getElementById("themeToggle");
+    const body = document.body;
 
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const isDarkMode = body.classList.contains('dark-mode');
-            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        });
+    themeToggle.addEventListener("click", () => {
+      body.classList.toggle("dark-mode");
+      const isDarkMode = body.classList.contains("dark-mode");
+      themeToggle.innerHTML = isDarkMode
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
+      localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    });
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      body.classList.add("dark-mode");
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
 
-        // Hamburger Menu Toggle
-        const menuBtn = document.querySelector('.menu-btn');
-        const nav = document.querySelector('nav');
+    // Hamburger Menu Toggle
+    const menuBtn = document.querySelector(".menu-btn");
+    const nav = document.querySelector("nav");
 
-        menuBtn.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
+    menuBtn.addEventListener("click", () => {
+      nav.classList.toggle("active");
+    });
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
-                nav.classList.remove('active');
-            }
-        });
-    </script>
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!nav.contains(e.target) && !menuBtn.contains(e.target)) {
+        nav.classList.remove("active");
+      }
+    });
+  </script>
 </body>
 </html>
