@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* SUBZERO-MD Inspired CSS */
         :root {
@@ -396,7 +398,6 @@
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-
                     // Add user data to Firestore with role: "admin"
                     return setDoc(doc(db, "users", user.uid), {
                         firstname: firstname,
@@ -406,11 +407,20 @@
                     });
                 })
                 .then(() => {
-                    alert('Admin account created successfully!');
-                    window.location.href = '/teacherlogin'; // Redirect to admin login page
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Admin account created successfully!',
+                        text: 'Your admin account has been created.'
+                    }).then(() => {
+                        window.location.href = '/teacherlogin'; // Redirect to admin login page
+                    });
                 })
                 .catch((error) => {
-                    document.getElementById('error-message').textContent = error.message;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message
+                    });
                 });
         });
 
