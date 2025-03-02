@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>St. Mary's High School Dashboard</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg"
+    />
+    <style>
+      /* Base & Theme Variables */
+      :root {
+        --primary: #003366;
+        --secondary: #ffd700;
+        --glass: rgba(255, 255, 255, 0.08);
+        --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
+        --text-color: #ffffff;
+        --overlay: rgba(0, 0, 0, 0.4);
+      }
+      [data-theme="light"] {
+        --primary: #00b4db;
+        --secondary: #0083b0;
+        --glass: rgba(0, 0, 0, 0.05);
+        --bg-gradient: linear-gradient(45deg, #e0f7fa, #b2ebf2);
+        --text-color: #1c1917;
+        --overlay: rgba(255, 255, 255, 0.4);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        overflow: auto;
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.6s ease, color 0.6s ease;
+      }
+      /* Header */
+      header {
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        padding: 1.2rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        animation: logoFloat 4s ease-in-out infinite;
+      }
+      .header-logo {
+        height: 40px;
+        margin-right: 10px;
+      }
+      /* Side Menu */
+      .menu-btn {
+        font-size: 1.5rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+        padding: 10px;
+      }
+      .side-menu {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        padding: 2rem;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 2000;
+        border-left: 1px solid rgba(255,255,255,0.1);
+      }
+      .side-menu.active {
+        right: 0;
+      }
+      .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .close-btn {
+        font-size: 1.8rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+      }
+      .menu-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .menu-links a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 1.1rem;
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .menu-links a:hover {
+        background: rgba(255,255,255,0.1);
+      }
+      /* Main Container */
+      .container {
+        padding: 180px 5% 100px;
+        margin-top: 80px;
+      }
+      /* Message Box */
+      #messageBox {
+        position: fixed;
+        top: 100px;
+        right: 5%;
+        z-index: 1101;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        display: none;
+      }
+      #messageBox.success {
+        background-color: #28a745;
+      }
+      #messageBox.error {
+        background-color: #dc3545;
+      }
+      h2 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+      }
+      /* Dashboard Cards */
+      .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .card {
+        background: var(--glass);
+        padding: 1.5rem;
+        border-radius: 10px;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+      .card h3 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+      }
+      .card p {
+        font-size: 1.2rem;
+      }
+      /* Personal Info Form */
+      .profile-pic {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 3px solid var(--primary);
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary);
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: var(--glass);
+        color: var(--text-color);
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+      .form-group button {
+        padding: 0.75rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+      }
+      .form-group button:hover {
+        background: #002244;
+      }
+      /* Report Card Section */
+      .report-card {
+        background: var(--glass);
+        padding: 1.5rem;
+        border-radius: 10px;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 2rem;
+      }
+      .report-card h3 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+      }
+      .report-card table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      }
+      .report-card th,
+      .report-card td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+      .report-card th {
+        background: var(--primary);
+        color: white;
+      }
+      /* Attendance Table (Teacher) */
+      .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      }
+      .attendance-table th,
+      .attendance-table td {
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 0.5rem;
+        text-align: center;
+      }
+      .low-attendance {
+        color: red;
+        font-weight: bold;
+      }
+      /* Notices */
+      .notice-card {
+        background: var(--glass);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      /* Download PDF Button Style */
+      .pdf-btn {
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary);
+        color: var(--primary);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+      }
+      .pdf-btn:hover {
+        background: #e6c200;
+      }
+      /* Footer */
+      footer {
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        color: white;
+        padding: 2rem 5%;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+      .social-icons a {
+        color: white;
+        font-size: 1.5rem;
+        margin: 0 0.5rem;
+        transition: color 0.3s ease;
+      }
+      .social-icons a:hover {
+        color: var(--secondary);
+      }
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--glass);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      .theme-toggle:hover {
+        transform: scale(1.1) rotate(180deg);
+      }
+      .theme-toggle i {
+        font-size: 1.4rem;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      /* Keyframe Animations */
+      @keyframes logoFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+      }
+      @media (max-width: 768px) {
+        .side-menu {
+          width: 100%;
+          right: -100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <img
+          src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
+          alt="Logo"
+          class="header-logo"
+        />
+        St. Mary's High
+      </div>
+      <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+      <div class="menu-header">
+        <h3>Menu</h3>
+        <button class="close-btn" id="closeBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="menu-links">
+        <a href="#dashboard-home"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#personal-info"><i class="fas fa-user"></i> Personal Info</a>
+        <a href="#results"><i class="fas fa-chart-bar"></i> View Results</a>
+        <a href="#attendance"><i class="fas fa-check-square"></i> Attendance</a>
+        <a href="#grades"><i class="fas fa-graduation-cap"></i> Grades</a>
+        <a href="#notices"><i class="fas fa-sticky-note"></i> Notices</a>
+        <a href="#updates"><i class="fas fa-bell"></i> Current Updates</a>
+        <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+      <!-- Message Box -->
+      <div id="messageBox"></div>
+
+      <!-- Dashboard Home -->
+      <section id="dashboard-home">
+        <h2 id="welcomeMessage">Hello, Student</h2>
+        <div class="dashboard-cards">
+          <div class="card">
+            <h3>Current Grade</h3>
+            <p id="currentGrade">Loading...</p>
+          </div>
+          <div class="card">
+            <h3>Attendance</h3>
+            <p id="attendance">Loading...</p>
+          </div>
+          <div class="card">
+            <h3>Level &amp; Class</h3>
+            <p id="levelClass">Loading...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Personal Info -->
+      <section id="personal-info" style="display: none;">
+        <h2>Personal Information</h2>
+        <div class="form-group">
+          <label for="profile-pic">Profile Picture</label>
+          <img
+            src="https://i.ibb.co/ynzs0qc2/subzero-bot.jpg"
+            alt="Profile Picture"
+            class="profile-pic"
+            id="profilePic"
+          />
+          <input type="file" id="profilePicInput" accept="image/*" />
+          <p id="studentDisplayName"></p>
+        </div>
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Enter your name" />
+        </div>
+        <div class="form-group">
+          <label for="surname">Surname</label>
+          <input type="text" id="surname" placeholder="Enter your surname" />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="text" id="phone" placeholder="Enter your phone number" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" readonly />
+        </div>
+        <div class="form-group">
+          <label for="parent-name">Parent Name</label>
+          <input type="text" id="parent-name" placeholder="Enter parent's name" />
+        </div>
+        <div class="form-group">
+          <label for="parent-phone">Parent Phone</label>
+          <input type="text" id="parent-phone" placeholder="Enter parent's phone" />
+        </div>
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" />
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" placeholder="Enter your address" />
+        </div>
+        <div class="form-group">
+          <label for="form">Form</label>
+          <select id="form">
+            <option value="">Select Form</option>
+            <option value="1">Form 1</option>
+            <option value="2">Form 2</option>
+            <option value="3">Form 3</option>
+            <option value="4">Form 4</option>
+            <option value="5">Form 5</option>
+            <option value="6">Form 6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="level">Level</label>
+          <select id="level">
+            <option value="">Select Level</option>
+            <option value="O Level">O Level</option>
+            <option value="A Level">A Level</option>
+          </select>
+        </div>
+        <div class="form-group" id="oLevelClassGroup" style="display: none;">
+          <label for="oLevelClass">O Level Class</label>
+          <select id="oLevelClass">
+            <option value="">Select Class</option>
+            <option value="G">G</option>
+            <option value="W">W</option>
+            <option value="E">E</option>
+            <option value="Z">Z</option>
+            <option value="U">U</option>
+          </select>
+        </div>
+        <div class="form-group" id="aLevelClassGroup" style="display: none;">
+          <label for="aLevelClass">A Level Class</label>
+          <select id="aLevelClass">
+            <option value="">Select Class</option>
+            <option value="Sciences">Sciences</option>
+            <option value="Arts">Arts</option>
+            <option value="Commercial">Commercial</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button id="saveChangesBtn">Save Changes</button>
+          <button id="changePasswordBtn">Reset Password</button>
+        </div>
+      </section>
+
+      <!-- View Results / Report Card -->
+      <section id="results" style="display: none;">
+        <h2>View Results</h2>
+        <div class="report-card">
+          <div class="report-header">
+            <p>Name: <span id="reportName"></span></p>
+            <p>Email: <span id="reportEmail"></span></p>
+            <p>Year: <span id="reportYear"></span></p>
+            <p>Term: <span id="reportTerm"></span></p>
+          </div>
+          <h3>Report Card</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Grade</th>
+                <th>Year - Term</th>
+              </tr>
+            </thead>
+            <tbody id="reportCardBody">
+              <!-- Report card rows will be inserted here -->
+            </tbody>
+          </table>
+          <button class="pdf-btn" onclick="exportPDF()">Download PDF</button>
+        </div>
+      </section>
+
+      <!-- Attendance (Teacher) -->
+      <section id="attendance" style="display: none;">
+        <h2>Set Attendance</h2>
+        <form id="attendanceForm">
+          <div class="form-group">
+            <label for="attendanceStudent">Student:</label>
+            <select id="attendanceStudent" required>
+              <option value="">Select Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="attendanceYear">Year:</label>
+            <input type="text" id="attendanceYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="attendanceTerm">Term:</label>
+            <select id="attendanceTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="attendanceMonth">Month:</label>
+            <select id="attendanceMonth" required>
+              <option value="">Select Month</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+          <p>Mark attendance for 4 weeks (Mon - Fri):</p>
+          <table class="attendance-table">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <!-- Dynamically generated rows -->
+            </tbody>
+          </table>
+          <div class="form-group">
+            <button type="submit">Save Attendance</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Grades (Teacher) -->
+      <section id="grades" style="display: none;">
+        <h2>Set Grade</h2>
+        <form id="gradeForm">
+          <div class="form-group">
+            <label for="gradeStudent">Student:</label>
+            <select id="gradeStudent" required>
+              <option value="">Select Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="studentClass">Class:</label>
+            <input type="text" id="studentClass" placeholder="Enter Class" required />
+          </div>
+          <div class="form-group">
+            <label for="gradeYear">Year:</label>
+            <input type="text" id="gradeYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="gradeTerm">Term:</label>
+            <select id="gradeTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="finalGrade">Final Grade:</label>
+            <select id="finalGrade" required>
+              <option value="">Select Grade</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit">Save Grade</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Notices (Teacher) -->
+      <section id="notices" style="display: none;">
+        <h2>Add Notice</h2>
+        <form id="noticeForm">
+          <div class="form-group">
+            <label for="noticeTitle">Title:</label>
+            <input type="text" id="noticeTitle" placeholder="Enter notice title" required />
+          </div>
+          <div class="form-group">
+            <label for="noticeContent">Content:</label>
+            <textarea id="noticeContent" rows="4" placeholder="Enter notice content" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="noticeYear">Year:</label>
+            <input type="text" id="noticeYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="noticeTerm">Term:</label>
+            <select id="noticeTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit">Post Notice</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Current Updates -->
+      <section id="updates" style="display: none;">
+        <h2>Current Updates</h2>
+        <div id="updatesList">
+          <p>Loading updates...</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-tiktok"></i></a>
+      </div>
+      <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    </footer>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Firebase & App Scripts -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged,
+        sendPasswordResetEmail
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        updateDoc,
+        collection,
+        query,
+        where,
+        orderBy,
+        getDocs
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getStorage,
+        ref,
+        uploadBytes,
+        getDownloadURL
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+        authDomain: "deee-9ab53.firebaseapp.com",
+        projectId: "deee-9ab53",
+        storageBucket: "deee-9ab53.firebasestorage.app",
+        messagingSenderId: "399732664479",
+        appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+        measurementId: "G-524ZPBX42B"
+      };
+
+      const appFirebase = initializeApp(firebaseConfig);
+      const auth = getAuth(appFirebase);
+      const db = getFirestore(appFirebase);
+      const storage = getStorage(appFirebase);
+
+      // Utility: Show message in message box
+      function showMessage(message, type) {
+        const messageBox = document.getElementById("messageBox");
+        messageBox.textContent = message;
+        messageBox.className = "";
+        messageBox.classList.add(type);
+        messageBox.style.display = "block";
+        setTimeout(() => {
+          messageBox.style.display = "none";
+        }, 3000);
+      }
+
+      // Fetch student data (for Personal Info & Dashboard)
+      async function fetchStudentData(email) {
+        try {
+          const studentRef = doc(db, "students", email);
+          const docSnap = await getDoc(studentRef);
+          if (docSnap.exists()) {
+            const studentData = docSnap.data();
+            // Personal Info
+            document.getElementById("name").value = studentData.firstname || "";
+            document.getElementById("surname").value = studentData.surname || "";
+            document.getElementById("phone").value = studentData.phone || "";
+            document.getElementById("email").value = studentData.email || "";
+            document.getElementById("parent-name").value = studentData.parentName || "";
+            document.getElementById("parent-phone").value = studentData.parentPhone || "";
+            document.getElementById("dob").value = studentData.dob || "";
+            document.getElementById("gender").value = studentData.gender || "male";
+            document.getElementById("address").value = studentData.address || "";
+            document.getElementById("form").value = studentData.form || "";
+            document.getElementById("level").value = studentData.level || "";
+            document.getElementById("oLevelClass").value = studentData.oLevelClass || "";
+            document.getElementById("aLevelClass").value = studentData.aLevelClass || "";
+            document.getElementById("profilePic").src =
+              studentData.profilePic || "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
+            document.getElementById("studentDisplayName").textContent = studentData.firstname || "";
+            document.getElementById("welcomeMessage").textContent = `Hello, ${studentData.firstname}`;
+            // Dashboard Cards
+            document.getElementById("currentGrade").textContent = studentData.finalGrade || "Not set";
+            document.getElementById("attendance").textContent = studentData.attendancePercentage ? `${studentData.attendancePercentage}%` : "Not set";
+            document.getElementById("levelClass").textContent = studentData.level ? `${studentData.level} - ${studentData.level === "O Level" ? studentData.oLevelClass : studentData.aLevelClass}` : "Update your profile";
+          } else {
+            document.getElementById("welcomeMessage").textContent = `Hello, ${email.split('@')[0]}`;
+          }
+        } catch (error) {
+          console.error("Error fetching student data:", error);
+          showMessage("Error fetching student data: " + error.message, "error");
+        }
+      }
+
+      // Save student data from Personal Info
+      async function saveStudentData() {
+        try {
+          const email = auth.currentUser.email;
+          const studentRef = doc(db, "students", email);
+          const studentData = {
+            firstname: document.getElementById("name").value,
+            surname: document.getElementById("surname").value,
+            phone: document.getElementById("phone").value,
+            email: email,
+            parentName: document.getElementById("parent-name").value,
+            parentPhone: document.getElementById("parent-phone").value,
+            dob: document.getElementById("dob").value,
+            gender: document.getElementById("gender").value,
+            address: document.getElementById("address").value,
+            form: document.getElementById("form").value,
+            level: document.getElementById("level").value,
+            oLevelClass: document.getElementById("oLevelClass").value,
+            aLevelClass: document.getElementById("aLevelClass").value,
+            lastUpdated: new Date()
+          };
+          await setDoc(studentRef, studentData, { merge: true });
+          showMessage("Profile updated successfully!", "success");
+          fetchStudentData(email);
+        } catch (error) {
+          console.error("Error saving student data:", error);
+          showMessage("Error saving student data: " + error.message, "error");
+        }
+      }
+
+      // Profile Picture Upload
+      document.getElementById("profilePicInput").addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const email = auth.currentUser.email;
+        const storageRef = ref(storage, `profilePictures/${email}`);
+        try {
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          await updateDoc(doc(db, "students", email), { profilePic: downloadURL });
+          document.getElementById("profilePic").src = downloadURL;
+          showMessage("Profile picture updated!", "success");
+        } catch (error) {
+          console.error("Error uploading profile picture:", error);
+          showMessage("Failed to upload profile picture: " + error.message, "error");
+        }
+      });
+
+      // Populate Student Dropdowns for Teacher Forms
+      async function populateStudentDropdowns() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "students"));
+          let options = '<option value="">Select Student</option>';
+          querySnapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            options += `<option value="${data.email}">${data.firstname || ''} ${data.surname || ''} (${data.email})</option>`;
+          });
+          document.getElementById("attendanceStudent").innerHTML = options;
+          document.getElementById("gradeStudent").innerHTML = options;
+        } catch (error) {
+          console.error("Error populating student dropdowns:", error);
+        }
+      }
+
+      // Teacher: Attendance Form Submission
+      document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const studentEmail = document.getElementById("attendanceStudent").value;
+        const year = document.getElementById("attendanceYear").value;
+        const term = document.getElementById("attendanceTerm").value;
+        const month = document.getElementById("attendanceMonth").value;
+        const checkboxes = document.querySelectorAll(".attendanceCheckbox");
+        let presentCount = 0;
+        checkboxes.forEach(checkbox => {
+          if (checkbox.checked) presentCount++;
+        });
+        const totalDays = checkboxes.length; // 20 days (4 weeks x 5 days)
+        const percentage = ((presentCount / totalDays) * 100).toFixed(2);
+
+        let attendanceData = {};
+        for (let week = 1; week <= 4; week++) {
+          attendanceData["week" + week] = {};
+          ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach(day => {
+            const checkbox = document.querySelector(`.attendanceCheckbox[data-week="${week}"][data-day="${day}"]`);
+            attendanceData["week" + week][day] = checkbox.checked;
+          });
+        }
+
+        const docId = `${studentEmail}_${year}_${term}_${month}`;
+        try {
+          await setDoc(doc(db, "attendance", docId), {
+            studentEmail,
+            year,
+            term,
+            month,
+            attendance: attendanceData,
+            percentage: Number(percentage)
+          });
+          showMessage(`Attendance saved! (${percentage}%)`, "success");
+        } catch (error) {
+          console.error("Error saving attendance:", error);
+          showMessage("Error saving attendance: " + error.message, "error");
+        }
+      });
+
+      // Dynamically generate attendance table rows
+      function generateAttendanceTable() {
+        const tbody = document.getElementById("attendanceTableBody");
+        let rows = "";
+        for (let week = 1; week <= 4; week++) {
+          rows += `<tr>
+            <td>Week ${week}</td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Monday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Tuesday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Wednesday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Thursday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Friday" /></td>
+          </tr>`;
+        }
+        tbody.innerHTML = rows;
+      }
+      generateAttendanceTable();
+
+      // Teacher: Grade Form Submission
+      document.getElementById("gradeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const studentEmail = document.getElementById("gradeStudent").value;
+        const studentClass = document.getElementById("studentClass").value;
+        const year = document.getElementById("gradeYear").value;
+        const term = document.getElementById("gradeTerm").value;
+        const finalGrade = document.getElementById("finalGrade").value;
+        const docId = `${studentEmail}_${year}_${term}`;
+        try {
+          await setDoc(doc(db, "grades", docId), {
+            studentEmail,
+            studentClass,
+            year,
+            term,
+            finalGrade
+          });
+          showMessage("Grade saved successfully!", "success");
+        } catch (error) {
+          console.error("Error saving grade:", error);
+          showMessage("Error saving grade: " + error.message, "error");
+        }
+      });
+
+      // Teacher: Notice Form Submission
+      document.getElementById("noticeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const noticeTitle = document.getElementById("noticeTitle").value;
+        const noticeContent = document.getElementById("noticeContent").value;
+        const noticeYear = document.getElementById("noticeYear").value;
+        const noticeTerm = document.getElementById("noticeTerm").value;
+        try {
+          await setDoc(doc(collection(db, "notices")), {
+            noticeTitle,
+            noticeContent,
+            noticeYear,
+            noticeTerm,
+            timestamp: new Date()
+          });
+          showMessage("Notice posted successfully!", "success");
+        } catch (error) {
+          console.error("Error posting notice:", error);
+          showMessage("Error posting notice: " + error.message, "error");
+        }
+      });
+
+      // Fetch Report Card (View Results) for student
+      async function fetchReportCard(studentEmail) {
+        const reportCardBody = document.getElementById("reportCardBody");
+        try {
+          const gradesQuery = query(
+            collection(db, "grades"),
+            where("studentEmail", "==", studentEmail)
+          );
+          const querySnapshot = await getDocs(gradesQuery);
+          if (querySnapshot.empty) {
+            reportCardBody.innerHTML = "<tr><td colspan='3'>No report card available yet.</td></tr>";
+          } else {
+            let tableHTML = "";
+            querySnapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              tableHTML += `
+                <tr>
+                  <td>${data.studentClass || 'N/A'}</td>
+                  <td>${data.finalGrade || 'N/A'}</td>
+                  <td>${data.year || 'N/A'} - ${data.term || 'N/A'}</td>
+                </tr>
+              `;
+            });
+            reportCardBody.innerHTML = tableHTML;
+          }
+        } catch (error) {
+          console.error("Error fetching report card:", error);
+          reportCardBody.innerHTML = "<tr><td colspan='3'>Error loading report card.</td></tr>";
+        }
+      }
+
+      // Fetch Updates / Notices
+      async function fetchUpdates() {
+        const updatesList = document.getElementById("updatesList");
+        try {
+          const q = query(collection(db, "notices"), orderBy("timestamp", "desc"));
+          const querySnapshot = await getDocs(q);
+          if (querySnapshot.empty) {
+            updatesList.innerHTML = "<p>No updates available.</p>";
+          } else {
+            let updatesHTML = "";
+            querySnapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              updatesHTML += `
+                <div class="notice-card">
+                  <h4>${data.noticeTitle}</h4>
+                  <p>${data.noticeContent}</p>
+                  <p><small>${new Date(data.timestamp.seconds * 1000).toLocaleString()}</small></p>
+                </div>
+              `;
+            });
+            updatesList.innerHTML = updatesHTML;
+          }
+        } catch (error) {
+          console.error("Error fetching updates:", error);
+          updatesList.innerHTML = "<p>Error loading updates.</p>";
+        }
+      }
+
+      // Export Report Card to PDF using jsPDF
+      async function exportPDF() {
+        const { jsPDF } = window.jspdf;
+        const docPDF = new jsPDF();
+        const reportCardText = document.getElementById("results").innerText;
+        docPDF.text(reportCardText, 10, 10);
+        docPDF.save("report_card.pdf");
+      }
+      window.exportPDF = exportPDF; // Expose function for inline onclick
+
+      // Side Menu Controls
+      const menuBtn = document.getElementById("menuBtn");
+      const sideMenu = document.getElementById("sideMenu");
+      const closeBtn = document.getElementById("closeBtn");
+      menuBtn.addEventListener("click", () => {
+        sideMenu.classList.toggle("active");
+      });
+      closeBtn.addEventListener("click", () => {
+        sideMenu.classList.remove("active");
+      });
+      document.addEventListener("click", (e) => {
+        if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          sideMenu.classList.remove("active");
+        }
+      });
+
+      // Menu Links - Section Switching
+      const menuLinks = document.querySelectorAll(".menu-links a");
+      menuLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("href").substring(1);
+          document.querySelectorAll("section").forEach(sec => {
+            sec.style.display = (sec.id === targetId) ? "block" : "none";
+          });
+          sideMenu.classList.remove("active");
+        });
+      });
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      let isDark = true;
+      themeToggle.addEventListener("click", () => {
+        isDark = !isDark;
+        document.body.setAttribute("data-theme", isDark ? "dark" : "light");
+        themeToggle.innerHTML = isDark
+          ? '<i class="fas fa-moon"></i>'
+          : '<i class="fas fa-sun"></i>';
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      });
+      if (localStorage.getItem("theme")) {
+        const savedTheme = localStorage.getItem("theme");
+        document.body.setAttribute("data-theme", savedTheme);
+        isDark = savedTheme === "dark";
+        themeToggle.innerHTML = isDark
+          ? '<i class="fas fa-moon"></i>'
+          : '<i class="fas fa-sun"></i>';
+      }
+
+      // Auth State Handling
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = "/login";
+        } else {
+          fetchStudentData(user.email);
+          populateStudentDropdowns();
+          fetchReportCard(user.email);
+          fetchUpdates();
+        }
+      });
+
+      // Save changes for Personal Info
+      document.getElementById("saveChangesBtn").addEventListener("click", saveStudentData);
+
+      // Show/hide class fields based on level selection
+      document.getElementById("level").addEventListener("change", (e) => {
+        const level = e.target.value;
+        document.getElementById("oLevelClassGroup").style.display = level === "O Level" ? "block" : "none";
+        document.getElementById("aLevelClassGroup").style.display = level === "A Level" ? "block" : "none";
+      });
+    </script>
+  </body>
+</html>
