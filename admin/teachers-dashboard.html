@@ -289,114 +289,7 @@
       <p id="welcomeMessage">Welcome!</p>
     </section>
 
-    <!-- Attendance Section -->
-    <section id="attendance" style="display: none;">
-      <h2>View Applications</h2>
-      <form id="attendanceForm">
-        <div class="form-group">
-          <label for="attendanceStudent">Student:</label>
-          <select id="attendanceStudent" required>
-            <option value="">Select Student</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="attendanceYear">Year:</label>
-          <input type="text" id="attendanceYear" placeholder="e.g., 2025" required />
-        </div>
-        <div class="form-group">
-          <label for="attendanceTerm">Term:</label>
-          <select id="attendanceTerm" required>
-            <option value="">Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="attendanceMonth">Month:</label>
-          <select id="attendanceMonth" required>
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
-          </select>
-        </div>
-        <p>Mark attendance for 4 weeks (Mon - Fri):</p>
-        <table class="attendance-table">
-          <thead>
-            <tr>
-              <th>Week</th>
-              <th>Mon</th>
-              <th>Tue</th>
-              <th>Wed</th>
-              <th>Thu</th>
-              <th>Fri</th>
-            </tr>
-          </thead>
-          <tbody id="attendanceTableBody">
-            <!-- Rows will be populated dynamically -->
-          </tbody>
-        </table>
-        <div class="form-group">
-          <button type="submit">Save Attendance</button>
-        </div>
-      </form>
-      <div id="attendanceResult"></div>
-    </section>
-
-    <!-- Grades Section -->
-    <section id="grades" style="display: none;">
-      <h2>Set Report Card</h2>
-      <form id="gradeForm">
-        <div class="form-group">
-          <label for="gradeStudent">Student:</label>
-          <select id="gradeStudent" required>
-            <option value="">Select Student</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="studentClass">Class:</label>
-          <input type="text" id="studentClass" placeholder="Enter Class" required />
-        </div>
-        <div class="form-group">
-          <label for="gradeYear">Year:</label>
-          <input type="text" id="gradeYear" placeholder="e.g., 2025" required />
-        </div>
-        <div class="form-group">
-          <label for="gradeTerm">Term:</label>
-          <select id="gradeTerm" required>
-            <option value="">Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="finalGrade">Final Grade:</label>
-          <select id="finalGrade" required>
-            <option value="">Select Grade</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="F">F</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <button type="submit">Save Grade</button>
-        </div>
-      </form>
-      <div id="gradeResult"></div>
-    </section>
+    
 
     <!-- Add Update Section -->
     <section id="addUpdate" style="display: none;">
@@ -438,20 +331,6 @@
       </div>
     </section>
 
-    <!-- New Additional Sections -->
-    <section id="studentRecords" style="display: none;">
-      <h2><a href="/studentusers">View Student Records</a></h2>
-      
-    </section>
-    <section id="teacherRecords" style="display: none;">
-      <h2><a href="/teacherusers">View Teacher Records</a></h2>
-      
-    </section>
-    <section id="settings" style="display: none;">
-      <h2>Settings</h2>
-      <p>This is the Settings page.</p>
-    </section>
-  </div>
 
   <!-- Footer -->
   <footer>
