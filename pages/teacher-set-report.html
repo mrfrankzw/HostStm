@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Responsive meta tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher Dashboard - St. Mary's High School</title>
   <!-- Google Fonts -->
@@ -21,22 +22,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <style>
-    /* General Styles */
     :root {
       --primary: #003366;
       --secondary: #ffd700;
-      --glass: rgba(255, 255, 255, 0.08);
-      --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
+      --glass: rgba(255, 255, 255, 0.1);
+      --bg-gradient: linear-gradient(135deg, #003d4d, #005f73);
       --text-color: #ffffff;
-      --overlay: rgba(0, 0, 0, 0.4);
+      --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     }
     [data-theme="light"] {
       --primary: #00b4db;
       --secondary: #0083b0;
-      --glass: rgba(0, 0, 0, 0.05);
-      --bg-gradient: linear-gradient(45deg, #e0f7fa, #b2ebf2);
+      --glass: rgba(255, 255, 255, 0.95);
+      --bg-gradient: linear-gradient(135deg, #e0f7fa, #b2ebf2);
       --text-color: #1c1917;
-      --overlay: rgba(255, 255, 255, 0.4);
     }
     * {
       margin: 0;
@@ -48,21 +47,20 @@
       background: var(--bg-gradient);
       color: var(--text-color);
       min-height: 100vh;
-      overflow-x: hidden;
       transition: background 0.6s ease, color 0.6s ease;
     }
+    /* Header */
     header {
       background: var(--glass);
       backdrop-filter: blur(12px);
       padding: 1.2rem 5%;
       display: flex;
-      justify-content: center;
       align-items: center;
       position: fixed;
       width: 100%;
       top: 0;
       z-index: 1000;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
     .logo {
       font-size: 1.8rem;
@@ -76,24 +74,95 @@
     .header-logo {
       height: 40px;
       margin-right: 10px;
-      vertical-align: middle;
     }
-    .container {
+    .header-controls {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .hamburger-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Side Menu */
+    #sideMenu {
+      position: fixed;
+      top: 80px;
+      left: 0;
+      /* More opaque background so text stands out */
+      background: rgba(0, 0, 0, 0.7);
+      width: 250px;
+      max-width: 100%;
+      padding: 20px;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      height: calc(100% - 80px);
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+      /* High z-index so it appears on top of everything */
+      z-index: 9999;
+    }
+    /* On mobile, expand the side menu width a bit */
+    @media (max-width: 767px) {
+      #sideMenu {
+        width: 75vw;
+        transform: translateX(-100%);
+      }
+      #sideMenu.shown {
+        transform: translateX(0);
+      }
+    }
+    #sideMenu h2,
+    #sideMenu p,
+    #sideMenu ul li {
+      /* Icy blue text for better visibility */
+      color: #b3e5fc;
+    }
+
+    .main-container {
       padding: 180px 5% 100px;
       max-width: 1000px;
       margin: auto;
+      transition: margin-left 0.3s ease;
     }
-    input, select, button {
-      font-family: inherit;
+    @media (min-width: 768px) {
+      .main-container {
+        margin-left: 270px;
+      }
     }
-    /* Search Bar */
+    /* Form, search, filters */
     #searchStudent {
       width: 100%;
       padding: 0.75rem;
       margin-bottom: 1rem;
       border: none;
       border-radius: 5px;
+      outline: none;
     }
+    #filterSection {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #filterSection select {
+      padding: 0.65rem 0.8rem;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: var(--glass);
+      color: var(--text-color);
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    #filterSection select:focus {
+      border-color: var(--secondary);
+    }
+
     /* Student List */
     .student-list {
       display: grid;
@@ -106,13 +175,13 @@
       padding: 1.5rem;
       border-radius: 10px;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
     .student-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--card-shadow);
     }
     .student-card h3 {
       color: var(--primary);
@@ -121,15 +190,17 @@
     .student-card p {
       color: var(--text-color);
     }
-    /* Marks Entry Form */
+
+    /* Marks Form */
     #marksForm {
       display: none;
       background: var(--glass);
       padding: 1.5rem;
       border-radius: 10px;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       margin-bottom: 2rem;
+      box-shadow: var(--card-shadow);
     }
     .form-group {
       margin-bottom: 1rem;
@@ -144,16 +215,17 @@
     .form-group select {
       width: 100%;
       padding: 0.75rem;
-      border: 1px solid #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 5px;
       font-size: 1rem;
       background: var(--glass);
       color: var(--text-color);
+      outline: none;
+      transition: border-color 0.3s ease;
     }
     .form-group input:focus,
     .form-group select:focus {
-      border-color: var(--primary);
-      outline: none;
+      border-color: var(--secondary);
     }
     .form-group button,
     #marksForm button {
@@ -170,14 +242,16 @@
     #marksForm button:hover {
       background: #002244;
     }
+
     /* Report Card */
     .report-card {
       background: var(--glass);
       padding: 1.5rem;
       border-radius: 10px;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       margin-bottom: 2rem;
+      box-shadow: var(--card-shadow);
     }
     .report-card h3 {
       color: var(--primary);
@@ -195,7 +269,7 @@
     .report-card td {
       padding: 0.75rem;
       text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
     .report-card th {
       background: var(--primary);
@@ -224,11 +298,11 @@
       color: white;
       margin-bottom: 1rem;
     }
-    /* Chart Container */
     .chart-container {
       width: 100%;
       height: 300px;
     }
+
     /* Footer */
     footer {
       background: var(--glass);
@@ -239,6 +313,39 @@
       position: fixed;
       width: 100%;
       bottom: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .social-icons {
+      margin-top: 10px;
+    }
+    .social-icons a {
+      color: var(--text-color);
+      margin: 0 10px;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: var(--secondary);
+    }
+
+    /* Theme Toggle Button */
+    #themeToggleButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      padding: 10px;
+      font-size: 1.5rem;
+      color: var(--text-color);
+      cursor: pointer;
+      z-index: 1002;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    #themeToggleButton:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -246,15 +353,54 @@
   <!-- Header -->
   <header>
     <div class="logo">
-      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
+      <img
+        src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
+        alt="Logo"
+        class="header-logo"
+      />
       St. Mary's High - Teacher Dashboard
+    </div>
+    <div class="header-controls">
+      <button id="hamburgerBtn" class="hamburger-btn">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </header>
 
+  <!-- Side Menu (Student Totals) -->
+  <aside id="sideMenu">
+    <h2>Student Totals</h2>
+    <div id="totalsDisplay">
+      <p><strong>Overall:</strong> 0</p>
+      <ul id="formTotals"></ul>
+    </div>
+  </aside>
+
   <!-- Main Content -->
-  <div class="container">
+  <div class="main-container">
     <!-- Search Field -->
-    <input type="text" id="searchStudent" placeholder="Search student by name..." onkeyup="filterStudents()" />
+    <input
+      type="text"
+      id="searchStudent"
+      placeholder="Search student by name..."
+      onkeyup="filterStudents()"
+    />
+
+    <!-- Filter Section -->
+    <div id="filterSection">
+      <select id="formSelect" onchange="filterByForm()">
+        <option value="">Select Form</option>
+        <option value="Form 1">Form 1</option>
+        <option value="Form 2">Form 2</option>
+        <option value="Form 3">Form 3</option>
+        <option value="Form 4">Form 4</option>
+        <option value="Form 5">Form 5</option>
+        <option value="Form 6">Form 6</option>
+      </select>
+      <select id="streamSelect" onchange="filterByStream()" style="display: none;">
+        <option value="">Select Stream/Class</option>
+      </select>
+    </div>
 
     <!-- Student List -->
     <h2>Student List</h2>
@@ -265,10 +411,13 @@
     <!-- Marks Entry Form -->
     <form id="marksForm">
       <h2>Enter Marks for <span id="selectedStudent"></span></h2>
-      <!-- New Year and Term fields -->
       <div class="form-group">
         <label for="yearInput">Year</label>
-        <input type="text" id="yearInput" placeholder="Enter academic year (e.g., 2025)" />
+        <input
+          type="text"
+          id="yearInput"
+          placeholder="Enter academic year (e.g., 2025)"
+        />
       </div>
       <div class="form-group">
         <label for="termInput">Term</label>
@@ -279,16 +428,12 @@
           <option value="Term 3">Term 3</option>
         </select>
       </div>
-      <!-- Subject Fields (up to 10) -->
-      <div id="subjectFields">
-        <!-- Dynamically generated subject fields -->
-      </div>
+      <div id="subjectFields"></div>
       <button type="submit">Save Marks</button>
     </form>
 
     <!-- Report Card -->
     <div id="reportCard" class="report-card" style="display: none;">
-      <!-- Report header with student info -->
       <div class="report-header" style="margin-bottom: 1rem;">
         <p>Name: <span id="reportName"></span></p>
         <p>Surname: <span id="reportSurname"></span></p>
@@ -306,9 +451,7 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="reportCardBody">
-          <!-- Dynamically generated report card rows -->
-        </tbody>
+        <tbody id="reportCardBody"></tbody>
       </table>
       <button class="pdf-btn" onclick="exportPDF()">Download PDF</button>
       <div class="chart-container">
@@ -317,9 +460,20 @@
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Fixed Theme Toggle Button (Bottom Right) -->
+  <button id="themeToggleButton" title="Toggle Dark/Light Mode">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <!-- Footer with Social Media Icons -->
   <footer>
     <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    <div class="social-icons">
+      <a href="#" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    </div>
   </footer>
 
   <!-- Firebase and App Script -->
@@ -334,102 +488,180 @@
       setDoc
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Firebase config (using your original project settings)
+    // Your Firebase config
     const firebaseConfig = {
-      apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
-      authDomain: "deee-9ab53.firebaseapp.com",
-      projectId: "deee-9ab53",
-      storageBucket: "deee-9ab53.firebasestorage.app",
-      messagingSenderId: "399732664479",
-      appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
-      measurementId: "G-524ZPBX42B"
-    };
+        apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+        authDomain: "deee-9ab53.firebaseapp.com",
+        projectId: "deee-9ab53",
+        storageBucket: "deee-9ab53.firebasestorage.app",
+        messagingSenderId: "399732664479",
+        appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+        measurementId: "G-524ZPBX42B",
+      };
+
 
     // Initialize Firebase
     const appFirebase = initializeApp(firebaseConfig);
     const db = getFirestore(appFirebase);
 
     // Global variables
+    let allStudents = [];
     const studentList = document.getElementById("studentList");
     const marksForm = document.getElementById("marksForm");
     const reportCard = document.getElementById("reportCard");
     const reportCardBody = document.getElementById("reportCardBody");
-    let performanceChart; // for Chart.js
+    let performanceChart;
 
-    // Fetch and display all students
+    // Fetch students
     async function fetchStudents() {
       try {
         const querySnapshot = await getDocs(collection(db, "students"));
         let students = [];
         querySnapshot.forEach((docSnap) => {
-          let data = docSnap.data();
+          const data = docSnap.data();
           data.id = docSnap.id;
           students.push(data);
         });
-        // Sort students alphabetically by surname
-        students.sort((a, b) => a.surname.localeCompare(b.surname));
-        studentList.innerHTML = "";
-        students.forEach((student) => {
-          const card = document.createElement("div");
-          card.className = "student-card";
-          card.innerHTML = `
-            <h3>${student.firstname} ${student.surname}</h3>
-            <p>${student.email || ""}</p>
-          `;
-          card.addEventListener("click", () => openMarksForm(student));
-          studentList.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Error fetching students:", error);
+        // Sort by surname
+        students.sort((a, b) => (a.surname || "").localeCompare(b.surname || ""));
+        allStudents = students;
+        displayStudents(allStudents);
+        updateSideMenu();
+      } catch (err) {
+        console.error("Error fetching students:", err);
       }
     }
 
-    // Filter students by search term
+    // Display students as cards
+    function displayStudents(students) {
+      studentList.innerHTML = "";
+      if (!students.length) {
+        studentList.innerHTML = "<p>No students found.</p>";
+        return;
+      }
+      students.forEach((s) => {
+        const card = document.createElement("div");
+        card.className = "student-card";
+        card.innerHTML = `
+          <h3>${s.firstname || ""} ${s.surname || ""}</h3>
+          <p>${s.email || ""}</p>
+        `;
+        card.addEventListener("click", () => openMarksForm(s));
+        studentList.appendChild(card);
+      });
+    }
+
+    // Update side menu totals
+    function updateSideMenu() {
+      const overall = allStudents.length;
+      document.querySelector("#sideMenu p").innerHTML = `<strong>Overall:</strong> ${overall}`;
+
+      // Group by form -> streams
+      const formsCount = {};
+      allStudents.forEach((st) => {
+        const f = st.form || "Unknown";
+        const str = st.stream || "Not set";
+        if (!formsCount[f]) {
+          formsCount[f] = { total: 0, streams: {} };
+        }
+        formsCount[f].total++;
+        if (!formsCount[f].streams[str]) {
+          formsCount[f].streams[str] = 0;
+        }
+        formsCount[f].streams[str]++;
+      });
+
+      // Sort forms
+      const formTotalsEl = document.getElementById("formTotals");
+      formTotalsEl.innerHTML = "";
+      const sortedForms = Object.keys(formsCount).sort((a, b) => {
+        const numA = parseInt(a.replace("Form ", "")) || 0;
+        const numB = parseInt(b.replace("Form ", "")) || 0;
+        return numA - numB;
+      });
+
+      sortedForms.forEach((f) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${f}:</strong> ${formsCount[f].total}`;
+        const streamsUl = document.createElement("ul");
+        Object.keys(formsCount[f].streams).forEach((st) => {
+          const stLi = document.createElement("li");
+          stLi.textContent = `${st}: ${formsCount[f].streams[st]}`;
+          streamsUl.appendChild(stLi);
+        });
+        li.appendChild(streamsUl);
+        formTotalsEl.appendChild(li);
+      });
+    }
+
+    // Filter logic
     window.filterStudents = () => {
       const search = document.getElementById("searchStudent").value.toLowerCase();
       document.querySelectorAll(".student-card").forEach((card) => {
-        card.style.display = card.textContent.toLowerCase().includes(search)
-          ? ""
-          : "none";
+        card.style.display = card.textContent.toLowerCase().includes(search) ? "" : "none";
       });
     };
-
-    // Extract name and surname from email (expects format: firstname.lastname@domain)
-    function extractNameSurname(email) {
-      let name = "";
-      let surname = "";
-      if (email) {
-        let local = email.split("@")[0];
-        let parts = local.split(".");
-        if (parts.length >= 2) {
-          name = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-          surname = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
-        } else {
-          name = local;
-        }
+    window.filterByForm = () => {
+      const formVal = document.getElementById("formSelect").value;
+      const streamSel = document.getElementById("streamSelect");
+      let filtered = [...allStudents];
+      if (!formVal) {
+        streamSel.style.display = "none";
+        streamSel.innerHTML = `<option value="">Select Stream/Class</option>`;
+        displayStudents(filtered);
+        return;
       }
-      return { name, surname };
-    }
+      streamSel.style.display = "inline-block";
+      if (formVal === "Form 5" || formVal === "Form 6") {
+        streamSel.innerHTML = `<option value="">Select Stream/Class</option>
+          <option value="Arts">Arts</option>
+          <option value="Commercials">Commercials</option>
+          <option value="Sciences">Sciences</option>`;
+      } else {
+        streamSel.innerHTML = `<option value="">Select Stream/Class</option>
+          <option value="G">G</option>
+          <option value="W">W</option>
+          <option value="Z">Z</option>
+          <option value="E">E</option>
+          <option value="U">U</option>`;
+      }
+      filtered = filtered.filter((s) => s.form === formVal);
+      const selectedStream = streamSel.value;
+      if (selectedStream) {
+        filtered = filtered.filter((s) => s.stream === selectedStream);
+      }
+      displayStudents(filtered);
+    };
+    window.filterByStream = () => {
+      const formVal = document.getElementById("formSelect").value;
+      const streamVal = document.getElementById("streamSelect").value;
+      let filtered = [...allStudents];
+      if (formVal) {
+        filtered = filtered.filter((s) => s.form === formVal);
+      }
+      if (streamVal) {
+        filtered = filtered.filter((s) => s.stream === streamVal);
+      }
+      displayStudents(filtered);
+    };
 
-    // Open marks entry form with (prefilled) subjects and year/term if available
+    // Open marks form
     window.openMarksForm = (student) => {
-      document.getElementById("selectedStudent").textContent =
-        student.firstname + " " + student.surname;
+      document.getElementById("selectedStudent").textContent = `${student.firstname || ""} ${student.surname || ""}`;
       marksForm.style.display = "block";
       marksForm.dataset.studentId = student.id;
       const subjectFields = document.getElementById("subjectFields");
       subjectFields.innerHTML = "";
-      // Prepopulate with existing marks if any
-      const subjects = student.marks || {};
-      const keys = Object.keys(subjects);
+      const subs = student.marks || {};
+      const keys = Object.keys(subs);
       for (let i = 0; i < 10; i++) {
-        const subjectName = keys[i] || "";
-        const marksVal = keys[i] ? subjects[keys[i]].marks : "";
-        const gradeVal = keys[i] ? subjects[keys[i]].grade : "";
+        const subName = keys[i] || "";
+        const marksVal = keys[i] ? subs[keys[i]].marks : "";
+        const gradeVal = keys[i] ? subs[keys[i]].grade : "";
         subjectFields.innerHTML += `
           <div class="form-group">
             <label>Subject ${i + 1}</label>
-            <input type="text" id="subject${i}" value="${subjectName}" placeholder="Enter subject name" />
+            <input type="text" id="subject${i}" value="${subName}" placeholder="Enter subject name" />
             <input type="number" id="marks${i}" value="${marksVal}" placeholder="Enter marks" oninput="updateGrade(${i})"/>
             <select id="grade${i}">
               <option value="A" ${gradeVal === "A" ? "selected" : ""}>A</option>
@@ -441,219 +673,226 @@
           </div>
         `;
       }
-      // Prepopulate year and term if available
       document.getElementById("yearInput").value = student.year || "";
       document.getElementById("termInput").value = student.term || "";
     };
 
-    // Auto-grade calculation on marks input
-    window.updateGrade = (index) => {
-      const marksInput = document.getElementById(`marks${index}`);
-      const gradeSelect = document.getElementById(`grade${index}`);
-      const marks = Number(marksInput.value);
+    // Auto-grade
+    window.updateGrade = (i) => {
+      const marksInput = document.getElementById(`marks${i}`);
+      const gradeSelect = document.getElementById(`grade${i}`);
+      const val = Number(marksInput.value);
       let grade = "F";
-      if (!isNaN(marks)) {
-        if (marks >= 90) grade = "A";
-        else if (marks >= 80) grade = "B";
-        else if (marks >= 70) grade = "C";
-        else if (marks >= 60) grade = "D";
-        else grade = "F";
+      if (!isNaN(val)) {
+        if (val >= 90) grade = "A";
+        else if (val >= 80) grade = "B";
+        else if (val >= 70) grade = "C";
+        else if (val >= 60) grade = "D";
       }
       gradeSelect.value = grade;
     };
 
-    // Save marks (plus year and term) and display report card on form submission
+    // Save marks
     marksForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const studentId = marksForm.dataset.studentId;
-      let marksData = {};
+      let newMarks = {};
       for (let i = 0; i < 10; i++) {
-        const subject = document.getElementById(`subject${i}`).value.trim();
-        const marks = document.getElementById(`marks${i}`).value;
-        const grade = document.getElementById(`grade${i}`).value;
-        if (subject !== "" && marks !== "") {
-          marksData[subject] = { marks: Number(marks), grade };
+        const sub = document.getElementById(`subject${i}`).value.trim();
+        const m = document.getElementById(`marks${i}`).value;
+        const g = document.getElementById(`grade${i}`).value;
+        if (sub && m) {
+          newMarks[sub] = { marks: Number(m), grade: g };
         }
       }
       const yearVal = document.getElementById("yearInput").value.trim();
       const termVal = document.getElementById("termInput").value;
       try {
-        const studentRef = doc(db, "students", studentId);
-        await setDoc(studentRef, { marks: marksData, year: yearVal, term: termVal }, { merge: true });
+        await setDoc(doc(db, "students", studentId), {
+          marks: newMarks,
+          year: yearVal,
+          term: termVal
+        }, { merge: true });
         alert("Marks saved successfully!");
         marksForm.reset();
         marksForm.style.display = "none";
         displayReportCard(studentId);
-      } catch (error) {
-        console.error("Error saving marks:", error);
+      } catch (err) {
+        console.error("Error saving marks:", err);
         alert("Error saving marks. Please try again.");
       }
     });
 
-    // Display report card with marks, actions, and analytics
+    // Display report card
     async function displayReportCard(studentId) {
       try {
-        const studentRef = doc(db, "students", studentId);
-        const studentSnap = await getDoc(studentRef);
-        if (studentSnap.exists()) {
-          const studentData = studentSnap.data();
-          // Update report header details using email extraction
-          const { name, surname } = extractNameSurname(studentData.email || "");
+        const snap = await getDoc(doc(db, "students", studentId));
+        if (snap.exists()) {
+          const data = snap.data();
+          const { name, surname } = extractNameSurname(data.email || "");
           document.getElementById("reportName").textContent = name;
           document.getElementById("reportSurname").textContent = surname;
-          document.getElementById("reportEmail").textContent = studentData.email || "";
-          document.getElementById("reportYear").textContent = studentData.year || "";
-          document.getElementById("reportTerm").textContent = studentData.term || "";
-          
-          if (studentData.marks) {
+          document.getElementById("reportEmail").textContent = data.email || "";
+          document.getElementById("reportYear").textContent = data.year || "";
+          document.getElementById("reportTerm").textContent = data.term || "";
+
+          if (data.marks) {
             reportCard.style.display = "block";
             reportCardBody.innerHTML = "";
-            let totalMarks = 0,
-              count = 0;
-            for (const [subject, data] of Object.entries(studentData.marks)) {
+            let total = 0, count = 0;
+            for (const [subj, info] of Object.entries(data.marks)) {
               reportCardBody.innerHTML += `
                 <tr>
-                  <td>${subject}</td>
-                  <td>${data.marks}</td>
-                  <td>${data.grade}</td>
+                  <td>${subj}</td>
+                  <td>${info.marks}</td>
+                  <td>${info.grade}</td>
                   <td>
-                    <button class="edit-btn" onclick="editSubject('${studentId}', '${subject}')">Edit</button>
-                    <button class="delete-btn" onclick="deleteSubject('${studentId}', '${subject}')">Delete</button>
+                    <button class="edit-btn" onclick="editSubject('${studentId}', '${subj}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteSubject('${studentId}', '${subj}')">Delete</button>
                   </td>
                 </tr>
               `;
-              totalMarks += Number(data.marks);
+              total += info.marks;
               count++;
             }
-            const avgMarks = count ? (totalMarks / count).toFixed(2) : 0;
+            const avg = count ? (total / count).toFixed(2) : 0;
             reportCardBody.innerHTML += `
-              <tr>
-                <td colspan="4">Average Marks: ${avgMarks}</td>
-              </tr>
+              <tr><td colspan="4">Average Marks: ${avg}</td></tr>
             `;
-            updateChart(studentData.marks);
+            updateChart(data.marks);
           } else {
             reportCard.style.display = "none";
           }
         }
-      } catch (error) {
-        console.error("Error displaying report card:", error);
+      } catch (err) {
+        console.error("Error displaying report card:", err);
       }
     }
 
-    // Update performance chart using Chart.js
+    // Update chart
     function updateChart(marksData) {
       const ctx = document.getElementById("performanceChart").getContext("2d");
-      const subjects = Object.keys(marksData);
-      const marks = subjects.map((sub) => marksData[sub].marks);
+      const subs = Object.keys(marksData);
+      const vals = subs.map((sub) => marksData[sub].marks);
       if (performanceChart) {
         performanceChart.destroy();
       }
       performanceChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: subjects,
+          labels: subs,
           datasets: [
             {
               label: "Marks",
-              data: marks,
+              data: vals,
               backgroundColor: "rgba(0, 179, 219, 0.5)",
               borderColor: "rgba(0, 179, 219, 1)",
-              borderWidth: 1,
-            },
-          ],
+              borderWidth: 1
+            }
+          ]
         },
         options: {
           scales: {
-            y: { beginAtZero: true },
-          },
-        },
+            y: { beginAtZero: true }
+          }
+        }
       });
     }
 
-    // Delete a subject from the student's marks
-    window.deleteSubject = async (studentId, subject) => {
-      if (confirm(`Are you sure you want to delete ${subject}?`)) {
-        try {
-          const studentRef = doc(db, "students", studentId);
-          const studentSnap = await getDoc(studentRef);
-          if (studentSnap.exists()) {
-            const studentData = studentSnap.data();
-            if (studentData.marks && studentData.marks[subject]) {
-              delete studentData.marks[subject];
-              await setDoc(studentRef, { marks: studentData.marks }, { merge: true });
-              alert(`${subject} deleted successfully!`);
-              displayReportCard(studentId);
-            }
+    // Delete subject
+    window.deleteSubject = async (studentId, subj) => {
+      if (!confirm(`Delete ${subj}?`)) return;
+      try {
+        const snap = await getDoc(doc(db, "students", studentId));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.marks && data.marks[subj]) {
+            delete data.marks[subj];
+            await setDoc(doc(db, "students", studentId), {
+              marks: data.marks
+            }, { merge: true });
+            alert(`${subj} deleted successfully!`);
+            displayReportCard(studentId);
           }
-        } catch (error) {
-          console.error("Error deleting subject:", error);
         }
+      } catch (err) {
+        console.error("Error deleting subject:", err);
       }
     };
 
-    // Edit a subject by reopening the marks form and highlighting the subject field
-    window.editSubject = async (studentId, subject) => {
+    // Edit subject
+    window.editSubject = async (studentId, subj) => {
       try {
-        const studentRef = doc(db, "students", studentId);
-        const studentSnap = await getDoc(studentRef);
-        if (studentSnap.exists()) {
-          const studentData = studentSnap.data();
-          studentData.id = studentId;
-          openMarksForm(studentData);
-          // Highlight the field for the subject after a short delay
+        const snap = await getDoc(doc(db, "students", studentId));
+        if (snap.exists()) {
+          const data = snap.data();
+          data.id = studentId;
+          openMarksForm(data);
+          // highlight the matching subject
           setTimeout(() => {
             for (let i = 0; i < 10; i++) {
-              const subInput = document.getElementById(`subject${i}`);
-              if (subInput && subInput.value === subject) {
-                subInput.focus();
-                subInput.style.border = "2px solid red";
-                setTimeout(() => {
-                  subInput.style.border = "";
-                }, 2000);
+              const si = document.getElementById(`subject${i}`);
+              if (si && si.value === subj) {
+                si.focus();
+                si.style.border = "2px solid red";
+                setTimeout(() => (si.style.border = ""), 2000);
                 break;
               }
             }
           }, 100);
         }
-      } catch (error) {
-        console.error("Error editing subject:", error);
+      } catch (err) {
+        console.error("Error editing subject:", err);
       }
     };
 
-    // Export report card to PDF using jsPDF and autoTable
+    // Export to PDF
     window.exportPDF = () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      // Retrieve header details
       const name = document.getElementById("reportName").textContent;
       const surname = document.getElementById("reportSurname").textContent;
       const email = document.getElementById("reportEmail").textContent;
       const year = document.getElementById("reportYear").textContent;
       const term = document.getElementById("reportTerm").textContent;
-      // Add header to PDF
       doc.text(`Name: ${name}`, 14, 10);
       doc.text(`Surname: ${surname}`, 14, 20);
       doc.text(`Email: ${email}`, 14, 30);
       doc.text(`Year: ${year}`, 14, 40);
       doc.text(`Term: ${term}`, 14, 50);
-      // Prepare table rows from reportCardBody
       let rows = [];
       document.querySelectorAll("#reportCardBody tr").forEach((tr) => {
-        const cells = Array.from(tr.querySelectorAll("td")).map(
-          (td) => td.textContent
-        );
+        const cells = [...tr.querySelectorAll("td")].map((td) => td.textContent);
         rows.push(cells);
       });
       doc.autoTable({
         head: [["Subject", "Marks", "Grade", "Actions"]],
         body: rows,
-        startY: 60,
+        startY: 60
       });
       doc.save("report_card.pdf");
     };
 
-    // Load students on page load
+    // Hamburger toggle
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const sideMenu = document.getElementById("sideMenu");
+    hamburgerBtn.addEventListener("click", () => {
+      sideMenu.classList.toggle("shown");
+    });
+
+    // Theme toggle
+    const themeToggleButton = document.getElementById("themeToggleButton");
+    themeToggleButton.addEventListener("click", () => {
+      if (document.body.getAttribute("data-theme") === "light") {
+        document.body.removeAttribute("data-theme");
+        themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+      } else {
+        document.body.setAttribute("data-theme", "light");
+        themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+    });
+
+    // Load
     fetchStudents();
   </script>
 </body>
