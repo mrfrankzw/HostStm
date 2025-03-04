@@ -161,23 +161,6 @@
         padding: 180px 5% 100px;
         margin-top: 80px;
       }
-      /* Message Box */
-      #messageBox {
-        position: fixed;
-        top: 100px;
-        right: 5%;
-        z-index: 1101;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 1rem;
-        display: none;
-      }
-      #messageBox.success {
-        background-color: #28a745;
-      }
-      #messageBox.error {
-        background-color: #dc3545;
-      }
       h2 {
         color: var(--primary);
         margin-bottom: 1.5rem;
@@ -307,6 +290,10 @@
         margin-bottom: 1rem;
         border: 1px solid rgba(255,255,255,0.1);
       }
+      .notice-card small {
+        font-size: 0.9rem;
+        color: var(--text-color);
+      }
       /* Footer */
       footer {
         background: var(--glass);
@@ -407,7 +394,8 @@
 
       <!-- Dashboard Home -->
       <section id="dashboard-home">
-        <h2 id="welcomeMessage">Hello, Student</h2>
+        <!-- Welcome message: name will be updated by JS -->
+        <h2 id="welcomeMessage">Hello, Student 😊</h2>
         <div class="dashboard-cards">
           <div class="card">
             <h3>Grade &amp; Class</h3>
@@ -415,7 +403,8 @@
           </div>
           <div class="card">
             <h3>Notices</h3>
-            <p id="notices">Loading...</p>
+            <!-- Updated to show teacher name and date/time -->
+            <p id="notices">Loading notices...</p>
           </div>
         </div>
       </section>
@@ -614,6 +603,12 @@
         }, 3000);
       }
 
+      // Utility: Capitalize first letter
+      function capitalize(s) {
+        if (!s) return "";
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      }
+
       // Fetch student data for Personal Info and update dashboard grade card
       const fetchStudentData = async (email) => {
         try {
@@ -636,7 +631,9 @@
               studentData.profilePic ||
               "https://i.ibb.co/ynzs0qc2/subzero-bot.jpg";
             document.getElementById("studentDisplayName").textContent = studentData.firstname || "";
-            document.getElementById("welcomeMessage").textContent = `Hello, ${studentData.firstname}`;
+            // Set welcome message with first-letter capitalized and smiley emoji
+            const studentName = capitalize(studentData.firstname);
+            document.getElementById("welcomeMessage").textContent = `Hello, ${studentName} 😊`;
             // Update current grade card using form and stream; display "Not set" if missing
             if (studentData.form && studentData.stream) {
               document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
@@ -645,7 +642,8 @@
               showMessage("Your personal info is incomplete. Please update your grade & class info in your profile.", "error");
             }
           } else {
-            document.getElementById("welcomeMessage").textContent = `Welcome, ${auth.currentUser.email.split('@')[0]}`;
+            const defaultName = auth.currentUser.email.split('@')[0];
+            document.getElementById("welcomeMessage").textContent = `Hello, ${capitalize(defaultName)} 😊`;
             document.getElementById("currentGrade").textContent = "Not set";
             showMessage("Your personal info is incomplete. Please update your profile.", "error");
           }
@@ -655,7 +653,7 @@
         }
       };
 
-      // Load results for the "View Results" section and append average row if needed
+      // Load results for the "View Results" section and compute average marks
       const loadResults = async () => {
         try {
           const studentEmail = auth.currentUser.email;
@@ -680,7 +678,7 @@
             const reportCardBody = document.getElementById("reportCardBody");
             reportCardBody.innerHTML = "";
 
-            // Add rows for each subject
+            // Add rows for each subject and compute total marks
             let totalMarks = 0;
             let subjectCount = 0;
             for (const [subject, data] of Object.entries(marks)) {
@@ -695,7 +693,7 @@
               subjectCount++;
             }
 
-            // Compute and add average marks row
+            // Compute and add average marks row if subjects exist
             if (subjectCount > 0) {
               const averageMarks = (totalMarks / subjectCount).toFixed(2);
               const averageRow = document.createElement("tr");
@@ -717,7 +715,7 @@
         }
       };
 
-      // Export report card as PDF with school signature (text only) and serial number
+      // Export report card as PDF using jsPDF and autoTable
       window.exportPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -749,15 +747,6 @@
           startY: 55,
         });
 
-        // Extract average from the last row (if exists)
-        let avg = 0;
-        if (rows.length > 0) {
-          const lastRow = rows[rows.length - 1];
-          if (lastRow[0].includes("Average Marks:")) {
-            avg = parseFloat(lastRow[0].replace("Average Marks:", "").trim());
-          }
-        }
-
         // Generate a serial number based on current timestamp
         const serial = "SN-" + Date.now();
         const signatureY = doc.lastAutoTable.finalY + 20;
@@ -771,11 +760,7 @@
 
         // Add comment based on average marks below signature info
         const commentY = signatureY + 30;
-        if (avg < 50) {
-          doc.text("Work hard to improve this grade", 14, commentY);
-        } else {
-          doc.text("Good mark!", 14, commentY);
-        }
+        doc.text("Good mark!", 14, commentY);
 
         doc.save("stmarys_student_report_card.pdf");
       };
@@ -792,7 +777,8 @@
           let noticeText = "No notices available.";
           querySnapshot.forEach((docSnap) => {
             const update = docSnap.data();
-            noticeText = update.updateTitle || "No title provided.";
+            // Show update title plus teacher name and formatted date/time
+            noticeText = `${update.updateTitle || "No title"} (Posted by ${update.teacherName || "Unknown"} on ${update.timestamp ? new Date(update.timestamp.seconds * 1000).toLocaleString() : "unknown"})`;
           });
           document.getElementById("notices").textContent = noticeText;
         } catch (error) {
@@ -814,13 +800,14 @@
             const update = docSnap.data();
             updatesHtml += `
               <div class="notice-card">
-                <h3>${update.updateTitle}</h3>
-                <p>${update.updateContent}</p>
-                <small>Year: ${update.updateYear} | ${update.updateTerm}</small>
+                <h3>${update.updateTitle || "No Title"}</h3>
+                <p>${update.updateContent || ""}</p>
+                <small>Posted by ${update.teacherName || "Unknown"} on ${update.timestamp ? new Date(update.timestamp.seconds * 1000).toLocaleString() : "unknown"}</small>
               </div>
             `;
           });
-          document.getElementById("updatesList").innerHTML = updatesHtml || "<p>No updates available.</p>";
+          document.getElementById("updatesList").innerHTML =
+            updatesHtml || "<p>No updates available.</p>";
         } catch (error) {
           console.error("Error loading updates:", error);
           document.getElementById("updatesList").innerHTML = "<p>Error loading updates.</p>";
@@ -848,7 +835,6 @@
           };
           await setDoc(studentRef, studentData, { merge: true });
           showMessage("Profile updated successfully!", "success");
-          // Update current grade card if available, else display "Not set"
           if (studentData.form && studentData.stream) {
             document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
           } else {
@@ -886,24 +872,28 @@
       document.getElementById("logoutBtn").addEventListener("click", logout);
       document.getElementById("changePasswordBtn").addEventListener("click", resetPassword);
 
-      // Upload new profile picture
-      document.getElementById("profilePicInput").addEventListener("change", async (e) => {
+      // Updated: Upload new profile picture using FileReader and store as Base64 string in Firestore
+      document.getElementById("profilePicInput").addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        const user = auth.currentUser;
-        if (!user) return;
-        const storageRef = ref(storage, `profilePics/${user.email}`);
-        try {
-          await uploadBytes(storageRef, file);
-          const photoURL = await getDownloadURL(storageRef);
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const base64String = event.target.result;
+          const user = auth.currentUser;
+          if (!user) return;
           const studentRef = doc(db, "students", user.email);
-          await updateDoc(studentRef, { profilePic: photoURL });
-          document.getElementById("profilePic").src = photoURL;
-          showMessage("Profile picture updated!", "success");
-        } catch (error) {
-          console.error("Error uploading profile picture:", error);
-          showMessage("Error uploading profile picture: " + error.message, "error");
-        }
+          try {
+            // Save the Base64 string to Firestore
+            await updateDoc(studentRef, { profilePic: base64String });
+            // Update the displayed profile picture
+            document.getElementById("profilePic").src = base64String;
+            showMessage("Profile picture updated!", "success");
+          } catch (error) {
+            console.error("Error updating profile picture:", error);
+            showMessage("Error updating profile picture: " + error.message, "error");
+          }
+        };
+        reader.readAsDataURL(file);
       });
 
       // Side Menu Controls
@@ -932,18 +922,16 @@
             sec.style.display = sec.id === targetId ? "block" : "none";
           });
           sideMenu.classList.remove("active");
-          // If switching to updates section, load updates
           if (targetId === "updates") {
             loadUpdates();
           }
-          // If switching to results, load results
           if (targetId === "results") {
             loadResults();
           }
         });
       });
 
-      // Theme Toggle (Circular)
+      // Theme Toggle
       const themeToggle = document.getElementById("themeToggle");
       let isDark = true;
       themeToggle.addEventListener("click", () => {
@@ -963,14 +951,15 @@
           : '<i class="fas fa-sun"></i>';
       }
 
-      // On Auth State Change
+      // Auth state observer
       onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          window.location.href = "/login";
-        } else {
+        if (user) {
           fetchStudentData(user.email);
           loadResults();
           loadNotices();
+          loadUpdates();
+        } else {
+          window.location.href = "/login";
         }
       });
     </script>
