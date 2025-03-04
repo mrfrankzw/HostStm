@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Reports</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/6cDkTqRh/mrfrankofc.jpg" />
+    <style>
+        /* Glassmorphism UI Styles */
+        :root {
+            --primary: #003366;
+            --secondary: #ffd700;
+            --glass: rgba(255, 255, 255, 0.08);
+            --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
+            --text-color: #ffffff;
+            --overlay: rgba(0, 0, 0, 0.4);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .reports-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .report-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+        .report-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .report-card p {
+            margin-bottom: 0.5rem;
+        }
+        .report-card img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .filters {
+            margin-bottom: 2rem;
+        }
+        .filters button {
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .filters button:hover {
+            background: #002244;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        .action-buttons button {
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-buttons button:hover {
+            background: #002244;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="filters">
+        <button onclick="loadReports('all')">All Reports</button>
+        <button onclick="loadReports('pending')">Pending</button>
+        <button onclick="loadReports('solved')">Solved</button>
+    </div>
+    <div class="reports-container" id="reportsContainer"></div>
+
+    <footer>
+        <p>&copy; 2025 St. Mary's High School. All rights reserved. | <a href="#">Privacy Policy</a></p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+      apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+      authDomain: "deee-9ab53.firebaseapp.com",
+      projectId: "deee-9ab53",
+      storageBucket: "deee-9ab53.firebasestorage.app",
+      messagingSenderId: "399732664479",
+      appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+      measurementId: "G-524ZPBX42B"
+    };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load reports based on filter
+        const loadReports = async (filter) => {
+            const reportsContainer = document.getElementById("reportsContainer");
+            reportsContainer.innerHTML = "";
+
+            let q;
+            if (filter === "all") {
+                q = query(collection(db, "reports"));
+            } else {
+                q = query(collection(db, "reports"), where("status", "==", filter));
+            }
+
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                const report = doc.data();
+                const reportCard = document.createElement("div");
+                reportCard.className = "report-card";
+                reportCard.innerHTML = `
+                    <h3>${report.name} (${report.class})</h3>
+                    <p>${report.message}</p>
+                    <p><strong>Status:</strong> ${report.status}</p>
+                    <p><strong>Time:</strong> ${new Date(report.timestamp).toLocaleString()}</p>
+                    ${report.image ? `<img src="${report.image}" alt="Report Image" />` : "<p>No image attached.</p>"}
+                    <div class="action-buttons">
+                        <button onclick="markAsSolved('${doc.id}')">Mark as Solved</button>
+                        <button onclick="deleteReport('${doc.id}')">Delete</button>
+                    </div>
+                `;
+                reportsContainer.appendChild(reportCard);
+            });
+        };
+
+        // Mark report as solved
+        window.markAsSolved = async (id) => {
+            await updateDoc(doc(db, "reports", id), { status: "solved" });
+            loadReports("all");
+        };
+
+        // Delete report
+        window.deleteReport = async (id) => {
+                        await deleteDoc(doc(db, "reports", id));
+            Swal.fire({
+                icon: "success",
+                title: "Report Deleted!",
+                text: "The report has been deleted successfully.",
+            });
+            loadReports("all"); // Refresh the list after deletion
+        };
+
+        // Load all reports on page load
+        loadReports("all");
+    </script>
+</body>
+</html>
