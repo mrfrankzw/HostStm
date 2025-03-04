@@ -17,6 +17,14 @@
       "dest": "/pages/stuff.html"
     },
     {
+      "src": "/repots",
+      "dest": "/pages/reports.html"
+    },
+    {
+      "src": "/viewreports",
+      "dest": "/pages/viewreports.html"
+    },
+    {
       "src": "/contact",
       "dest": "/pages/contact.html"
     },
