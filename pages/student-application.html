@@ -6,27 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Application Form - St. Mary's High School</title>
   <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <!-- Favicon -->
-  <link
-    rel="icon"
-    type="image/png"
-    href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg"
-  />
+  <link rel="icon" type="image/png" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" />
   <!-- SweetAlert2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    /* Subzero-inspired Theme Variables */
+    /* Blue UI & Glassmorphism Styles */
     :root {
-      --primary: #00B4DB;
+      --primary: #003D4D;
       --secondary: #0083B0;
       --glass: rgba(255, 255, 255, 0.08);
       --bg-gradient: linear-gradient(45deg, #003D4D, #005F73);
@@ -50,12 +40,41 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
+      padding-top: 80px; /* space for fixed header */
+      padding-bottom: 80px; /* space for fixed footer */
       transition: background 0.3s, color 0.3s;
     }
     body.light-theme {
       background: var(--light-bg);
       color: var(--light-text);
+    }
+    /* Fixed Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 1rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      z-index: 1000;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    header .logo img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      border-radius: 50%;
     }
     /* Container */
     .container {
@@ -70,14 +89,13 @@
     }
     body.light-theme .container {
       background: var(--light-glass);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       border: 1px solid #ccc;
     }
-    .logo {
+    .logo-form {
       text-align: center;
       margin-bottom: 1.5rem;
     }
-    .logo img {
+    .logo-form img {
       height: 60px;
     }
     h1 {
@@ -112,7 +130,7 @@
     .input-icon textarea {
       width: 100%;
       padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 5px;
       font-size: 1rem;
       background: var(--glass);
@@ -160,52 +178,53 @@
     .message.error {
       color: #dc3545;
     }
-    /* Circular Theme Toggle Button */
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--glass);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1);
-    }
-    .theme-toggle i {
-      font-size: 1.4rem;
-      color: var(--text-color);
-    }
-    /* Footer */
+    /* Fixed Footer */
     footer {
-      margin-top: auto;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 1rem 5%;
       text-align: center;
-      padding: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
       font-size: 0.9rem;
       color: var(--primary);
+      z-index: 1000;
     }
-    footer a {
+    footer .social-icons {
+      margin-top: 0.5rem;
+    }
+    footer .social-icons a {
       color: var(--primary);
       margin: 0 0.5rem;
       text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    footer .social-icons a:hover {
+      color: var(--secondary);
     }
   </style>
 </head>
 <body>
+  <!-- Fixed Theme Toggle Button -->
   <button class="theme-toggle" id="themeToggle">
     <i class="fas fa-moon"></i>
   </button>
-  <div class="container">
+
+  <!-- Fixed Header -->
+  <header>
     <div class="logo">
+      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo" />
+      St. Mary's High
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="logo-form">
       <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="St. Mary's Logo" />
     </div>
     <h1>Application Form</h1>
@@ -333,12 +352,24 @@
     </form>
     <div id="message" class="message"></div>
   </div>
+
+  <!-- Fixed Footer -->
   <footer>
-    <p>Follow us:</p>
-    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-    <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+    <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    <div class="social-icons">
+      <a href="https://facebook.com" target="_blank" aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://twitter.com" target="_blank" aria-label="Twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
   </footer>
 
   <!-- Firebase SDK and App Logic -->
@@ -410,7 +441,7 @@
       }
     });
 
-    // Circular Theme Toggle
+    // Theme Toggle functionality
     document.getElementById("themeToggle").addEventListener("click", () => {
       document.body.classList.toggle("light-theme");
       const toggleIcon = document.getElementById("themeToggle").querySelector("i");
