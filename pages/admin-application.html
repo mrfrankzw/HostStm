@@ -24,10 +24,10 @@
   <!-- jsPDF Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    /* Subzero-inspired Theme Styles */
+    /* Blue UI & Glassmorphism Styles */
     :root {
-      --primary: #00B4DB;
-      --secondary: #0083B0;
+      --primary: #003D4D;
+      --secondary: #005F73;
       --glass: rgba(255, 255, 255, 0.08);
       --bg-gradient: linear-gradient(45deg, #003D4D, #005F73);
       --text-color: #ffffff;
@@ -37,25 +37,40 @@
       background: var(--bg-gradient);
       color: var(--text-color);
       min-height: 100vh;
-      padding: 2rem;
       margin: 0;
+      padding: 2rem;
       font-family: "Poppins", sans-serif;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: var(--primary);
-      font-size: 2.5rem;
+    /* Header */
+    header {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 1rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .logo {
-      text-align: center;
-      margin-bottom: 1.5rem;
+    header .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-color);
     }
-    .logo img {
-      height: 60px;
+    header .logo img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+      border-radius: 50%;
     }
     /* Controls Section */
     .controls {
+      margin-top: 90px; /* leave space for fixed header */
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -70,11 +85,14 @@
       padding: 10px 20px;
       border: none;
       border-radius: 50px;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      background: var(--primary);
       color: #fff;
       font-weight: 600;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .filter-buttons button i {
+      margin-right: 5px;
     }
     .filter-buttons button:hover,
     .filter-buttons button.active {
@@ -89,7 +107,7 @@
       padding: 10px 20px;
       border: none;
       border-radius: 50px;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      background: var(--primary);
       color: #fff;
       font-weight: 600;
       cursor: pointer;
@@ -121,10 +139,20 @@
       margin-bottom: 0.5rem;
       line-height: 1.4;
     }
+    /* Display additional fields */
+    .application-card p.field {
+      font-size: 0.9rem;
+    }
+    /* Date/Time display */
+    .application-card p.timestamp {
+      font-style: italic;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
     .application-card .actions {
+      margin-top: 1rem;
       display: flex;
       gap: 0.75rem;
-      margin-top: 1rem;
     }
     .application-card button.accept,
     .application-card button.decline,
@@ -156,8 +184,9 @@
       margin-top: 2rem;
       padding: 1rem;
       text-align: center;
-      background: #1A1A1A;
-      color: #bbb;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
       font-size: 14px;
     }
@@ -173,11 +202,11 @@
     footer .social-icons a:hover {
       color: var(--primary);
     }
-    /* Light Theme Overrides */
+    /* Light Theme Override (if toggled) */
     .light-theme {
-      --primary: #00B4DB;
-      --secondary: #0083B0;
-      --glass: rgba(0, 0, 0, 0.05);
+      --primary: #003D4D;
+      --secondary: #005F73;
+      --glass: rgba(255, 255, 255, 0.9);
       --bg-gradient: linear-gradient(45deg, #E0F7FA, #B2EBF2);
       --text-color: #1c1917;
       --overlay: rgba(255, 255, 255, 0.4);
@@ -185,29 +214,48 @@
   </style>
 </head>
 <body>
-  <div class="logo">
-    <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="St. Mary's Logo" />
-  </div>
-  <h1 id="statusTitle">Pending Applications</h1>
-  <!-- Controls: Filter, PDF & Theme Toggle -->
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="School Logo" />
+      St. Mary's High
+    </div>
+    <button class="hamburger" onclick="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+  </header>
+
+  <!-- Controls Section -->
   <div class="controls">
     <div class="filter-buttons">
-      <button data-status="all">All</button>
-      <button data-status="pending" class="active">Pending</button>
-      <button data-status="accepted">Accepted</button>
-      <button data-status="declined">Declined</button>
+      <button data-status="all"><i class="fas fa-list"></i> All</button>
+      <button data-status="pending" class="active"><i class="fas fa-clock"></i> Pending</button>
+      <button data-status="accepted"><i class="fas fa-check"></i> Accepted</button>
+      <button data-status="declined"><i class="fas fa-times"></i> Declined</button>
     </div>
     <div class="action-buttons">
-      <button id="downloadPDF">Download PDF</button>
-      <button id="themeToggle">Toggle Light/Dark</button>
+      <button id="downloadPDF"><i class="fas fa-file-pdf"></i> Download PDF</button>
+      <button id="themeToggle"><i class="fas fa-adjust"></i> Toggle Light/Dark</button>
     </div>
   </div>
+
   <!-- Applications List -->
   <div class="applications-list" id="applicationsList">
     <p>Loading applications...</p>
   </div>
 
-  <!-- Firebase SDK and App Logic -->
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    <div class="social-icons">
+      <a href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK and Application Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import {
@@ -236,87 +284,84 @@
 
     let currentFilter = "pending";
 
-    // Load applications based on status filter
+    // Load applications based on status filter (or all if "all" is selected)
     const loadApplications = async (statusFilter = currentFilter) => {
       const applicationsList = document.getElementById("applicationsList");
-      const statusTitle = document.getElementById("statusTitle");
-      statusTitle.textContent =
-        statusFilter.charAt(0).toUpperCase() +
-        statusFilter.slice(1) +
-        " Applications";
       applicationsList.innerHTML = "<p>Loading applications...</p>";
 
+      let q;
+      if (statusFilter === "all") {
+        q = query(collection(db, "applications"));
+      } else {
+        q = query(collection(db, "applications"), where("status", "==", statusFilter));
+      }
+
       try {
-        let q;
-        if (statusFilter !== "all") {
-          q = query(collection(db, "applications"), where("status", "==", statusFilter));
-        } else {
-          q = query(collection(db, "applications"));
-        }
         const querySnapshot = await getDocs(q);
         let html = "";
-
         querySnapshot.forEach((docSnap) => {
-          const application = docSnap.data();
+          const data = docSnap.data();
+          // Format timestamp if it exists (assumes Firestore Timestamp)
+          const submittedOn = data.timestamp ? data.timestamp.toDate().toLocaleString() : "N/A";
           html += `
             <div class="application-card">
-              <h3>${application.name}</h3>
-              <p>Email: ${application.email || "N/A"}</p>
-              <p>Phone: ${application.phone}</p>
-              <p>Level: ${application.level}</p>
-              <p>Form: ${application.form}</p>
-              <p>Previous School: ${application.previousSchool}</p>
-              <p>Previous Results: ${application.previousResults}</p>
-              <p>Parent Name: ${application.parentName}</p>
-              <p>Parent Phone: ${application.parentPhone}</p>
-              <p>Parent Email: ${application.parentEmail || "N/A"}</p>
-              <p>Date of Birth: ${application.dob || "N/A"}</p>
-              <p>Nationality: ${application.nationality || "N/A"}</p>
-              <p>Gender: ${application.gender || "N/A"}</p>
-              <p>Birth Number: ${application.birthNumber || "N/A"}</p>
+              <h3>${data.name || "No Name"}</h3>
+              <p class="field">Email: ${data.email || "N/A"}</p>
+              <p class="field">Phone: ${data.phone || "N/A"}</p>
+              <p class="field">DOB: ${data.dob || "N/A"}</p>
+              <p class="field">ID/Birth Number: ${data.idNumber || "N/A"}</p>
+              <p class="field">Nationality: ${data.nationality || "N/A"}</p>
+              <p class="field">Gender: ${data.gender || "N/A"}</p>
+              <p class="field">Level: ${data.level || "N/A"}</p>
+              <p class="field">Form: ${data.form || "N/A"}</p>
+              <p class="field">Previous School: ${data.previousSchool || "N/A"}</p>
+              <p class="field">Previous Results: ${data.previousResults || "N/A"}</p>
+              <p class="field">Parent Name: ${data.parentName || "N/A"}</p>
+              <p class="field">Parent Phone: ${data.parentPhone || "N/A"}</p>
+              <p class="field">Parent Email: ${data.parentEmail || "N/A"}</p>
+              <p class="timestamp">Submitted on: ${submittedOn}</p>
+              <p class="field">Status: <strong>${data.status ? data.status.charAt(0).toUpperCase() + data.status.slice(1) : "N/A"}</strong></p>
               <div class="actions">
-                <button class="accept" onclick="updateStatus('${docSnap.id}', 'accepted')">Accept</button>
-                <button class="decline" onclick="updateStatus('${docSnap.id}', 'declined')">Decline</button>
-                <button class="delete" onclick="deleteApplication('${docSnap.id}')">Delete</button>
+                <button class="accept" onclick="updateStatus('${docSnap.id}', 'accepted')"><i class="fas fa-check"></i> Accept</button>
+                <button class="decline" onclick="updateStatus('${docSnap.id}', 'declined')"><i class="fas fa-times"></i> Decline</button>
+                <button class="delete" onclick="deleteApplication('${docSnap.id}')"><i class="fas fa-trash"></i> Delete</button>
               </div>
             </div>
           `;
         });
-
         applicationsList.innerHTML = html || "<p>No applications found.</p>";
       } catch (error) {
-        applicationsList.innerHTML = "<p>Error loading applications.</p>";
         console.error("Error loading applications:", error);
+        applicationsList.innerHTML = "<p>Error loading applications.</p>";
       }
     };
 
-    // Update application status (Firebase code untouched)
-    window.updateStatus = async (id, status) => {
+    // Update application status
+    window.updateStatus = async (id, newStatus) => {
       try {
-        await updateDoc(doc(db, "applications", id), { status });
-        loadApplications(); // Refresh the list
+        await updateDoc(doc(db, "applications", id), { status: newStatus });
+        loadApplications(currentFilter);
       } catch (error) {
         console.error("Error updating status:", error);
       }
     };
 
-    // Delete application permanently
+    // Delete application
     window.deleteApplication = async (id) => {
       if (confirm("Are you sure you want to permanently delete this application? This action cannot be undone.")) {
         try {
           await deleteDoc(doc(db, "applications", id));
-          loadApplications();
+          loadApplications(currentFilter);
         } catch (error) {
           console.error("Error deleting application:", error);
         }
       }
     };
 
-    // Event listeners for filter buttons
+    // Filter buttons event listeners
     const filterButtons = document.querySelectorAll(".filter-buttons button");
     filterButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        // Remove active class from all buttons
         filterButtons.forEach((btn) => btn.classList.remove("active"));
         button.classList.add("active");
         currentFilter = button.getAttribute("data-status");
@@ -324,47 +369,28 @@
       });
     });
 
-    // Load applications on page load
-    loadApplications();
+    // Download PDF functionality
+    document.getElementById("downloadPDF").addEventListener("click", async () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("Applications Report", 20, 20);
+      const applicationsText = document.getElementById("applicationsList").innerText;
+      const lines = applicationsText.split("\n");
+      let y = 30;
+      lines.forEach((line) => {
+        doc.text(line, 20, y);
+        y += 10;
+      });
+      doc.save("applications_report.pdf");
+    });
 
-    // Light/Dark mode toggle
+    // Theme toggle functionality
     document.getElementById("themeToggle").addEventListener("click", () => {
       document.body.classList.toggle("light-theme");
     });
 
-    // Download PDF functionality
-    document.getElementById("downloadPDF").addEventListener("click", () => {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const applicationsList = document.getElementById("applicationsList");
-      const content = applicationsList.innerText;
-      const lines = content.split("\n");
-      let y = 10;
-      lines.forEach((line) => {
-        doc.text(line, 10, y);
-        y += 10;
-      });
-      doc.save("applications.pdf");
-    });
+    // Initially load pending applications
+    loadApplications(currentFilter);
   </script>
-
-  <!-- Footer with Social Media Icons -->
-  <footer>
-    <p>&copy; 2025 St. Mary's High School</p>
-    <div class="social-icons">
-      <a href="https://facebook.com" target="_blank" aria-label="Facebook">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-      <a href="https://twitter.com" target="_blank" aria-label="Twitter">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="https://instagram.com" target="_blank" aria-label="Instagram">
-        <i class="fab fa-instagram"></i>
-      </a>
-      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-    </div>
-  </footer>
 </body>
 </html>
