@@ -214,6 +214,29 @@
       background: #002244;
     }
 
+    /* Google Signup Button Styling */
+    .google-signup-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #db4437;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .google-signup-btn i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    .google-signup-btn:hover {
+      background: #c33d2e;
+    }
+
     .error {
       color: red;
       margin-top: 1rem;
@@ -343,27 +366,19 @@
       <a href="/gallery"><i class="fas fa-images"></i> Gallery</a>
       <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
       <div class="dropdown">
-        <a href="#"
-          ><i class="fas fa-user-graduate"></i> Student Portal
-          <i class="fas fa-caret-down"></i></a
-        >
+        <a href="#"><i class="fas fa-user-graduate"></i> Student Portal <i class="fas fa-caret-down"></i></a>
         <div class="dropdown-content">
           <a href="/studentlogin"><i class="fas fa-sign-in-alt"></i> Login</a>
           <a href="/studentsignup"><i class="fas fa-user-plus"></i> Sign Up</a>
         </div>
       </div>
       <div class="dropdown">
-        <a href="#"
-          ><i class="fas fa-user-tie"></i> Admin Portal
-          <i class="fas fa-caret-down"></i></a
-        >
+        <a href="#"><i class="fas fa-user-tie"></i> Admin Portal <i class="fas fa-caret-down"></i></a>
         <div class="dropdown-content">
           <a href="/teacherslogin"><i class="fas fa-sign-in-alt"></i> Login</a>
         </div>
       </div>
-      <a href="/apply" class="btn btn-primary"
-        ><i class="fas fa-pencil-alt"></i> Apply Now</a
-      >
+      <a href="/apply" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Apply Now</a>
     </nav>
   </header>
 
@@ -392,6 +407,12 @@
         <button type="submit">Sign Up</button>
       </form>
       <div class="error" id="error-message"></div>
+      <!-- Google Sign Up Option -->
+      <div class="google-signup">
+        <button type="button" id="google-signup" class="google-signup-btn">
+          <i class="fab fa-google"></i> Sign Up with Google
+        </button>
+      </div>
       <div class="login-link">
         Already have an account? <a href="/login">Login</a>
       </div>
@@ -421,6 +442,8 @@
     import {
       getAuth,
       createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     // Your Firebase configuration
@@ -431,14 +454,14 @@
       storageBucket: "deee-9ab53.firebasestorage.app",
       messagingSenderId: "399732664479",
       appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
-      measurementId: "G-524ZPBX42B",
+      measurementId: "G-524ZPBX42B"
     };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Signup Logic
+    // Signup Logic (Email/Password)
     const signupForm = document.getElementById("signup-form");
 
     signupForm.addEventListener("submit", (e) => {
@@ -458,7 +481,7 @@
           Swal.fire({
             icon: "success",
             title: "Sign Up Successful",
-            text: "Your account has been created successfully.",
+            text: "Your account has been created successfully."
           }).then(() => {
             window.location.href = "/login";
           });
@@ -468,7 +491,29 @@
           Swal.fire({
             icon: "error",
             title: "Sign Up Failed",
-            text: error.message,
+            text: error.message
+          });
+        });
+    });
+
+    // Google Sign Up Logic
+    document.getElementById("google-signup").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          Swal.fire({
+            icon: "success",
+            title: "Sign Up Successful",
+            text: "Your account has been created successfully."
+          }).then(() => {
+            window.location.href = "/login";
+          });
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Sign Up Failed",
+            text: error.message
           });
         });
     });
