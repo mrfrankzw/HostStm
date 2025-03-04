@@ -1,578 +1,723 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teacher Dashboard - Attendance, Grades & Updates</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
-  <style>
-    /* Base Styles & Glassmorphism */
-    :root {
-      --primary: #003366;
-      --secondary: #ffd700;
-      --glass: rgba(255, 255, 255, 0.08);
-      --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
-      --text-color: #ffffff;
-      --overlay: rgba(0, 0, 0, 0.4);
-    }
-    [data-theme="light"] {
-      --primary: #00b4db;
-      --secondary: #0083b0;
-      --glass: rgba(0, 0, 0, 0.05);
-      --bg-gradient: linear-gradient(45deg, #e0f7fa, #b2ebf2);
-      --text-color: #1c1917;
-      --overlay: rgba(255, 255, 255, 0.4);
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-    body {
-      background: var(--bg-gradient);
-      color: var(--text-color);
-      min-height: 100vh;
-      transition: background 0.6s ease, color 0.6s ease;
-    }
-    /* Header */
-    header {
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      padding: 1.2rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-    }
-    .header-logo {
-      height: 40px;
-      margin-right: 10px;
-    }
-    .menu-btn {
-      font-size: 1.5rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-    }
-    /* Side Menu */
-    .side-menu {
-      position: fixed;
-      top: 0;
-      right: -300px;
-      width: 300px;
-      height: 100%;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      padding: 2rem;
-      transition: right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 2000;
-      border-left: 1px solid rgba(255,255,255,0.1);
-    }
-    .side-menu.active {
-      right: 0;
-    }
-    .menu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-    .close-btn {
-      font-size: 1.8rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-    }
-    .menu-links {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .menu-links a {
-      color: var(--text-color);
-      text-decoration: none;
-      font-size: 1.1rem;
-      padding: 10px;
-      border-radius: 8px;
-      transition: background 0.3s ease;
-    }
-    .menu-links a:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    /* Container */
-    .container {
-      padding: 180px 5% 100px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    h2 {
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-    }
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--primary);
-    }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background: var(--glass);
-      color: var(--text-color);
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
-    .form-group button {
-      padding: 0.75rem 1.5rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s ease;
-    }
-    .form-group button:hover {
-      background: #002244;
-    }
-    /* Attendance Grid */
-    .attendance-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1rem;
-    }
-    .attendance-table th,
-    .attendance-table td {
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 0.5rem;
-      text-align: center;
-    }
-    /* Low Attendance Red Text */
-    .low-attendance {
-      color: red;
-      font-weight: bold;
-    }
-    /* Notice/Update Card Styling */
-    .notice-card {
-      background: var(--glass);
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    /* Footer */
-    footer {
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      color: white;
-      padding: 2rem 5%;
-      text-align: center;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-    .social-icons a {
-      color: white;
-      font-size: 1.5rem;
-      margin: 0 0.5rem;
-      transition: color 0.3s ease;
-    }
-    .social-icons a:hover {
-      color: var(--secondary);
-    }
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--glass);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.1);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(180deg);
-    }
-    .theme-toggle i {
-      font-size: 1.4rem;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
-      St. Mary's High - Teacher Dashboard
-    </div>
-    <button class="menu-btn" id="menuBtn">
-      <i class="fas fa-bars"></i>
-    </button>
-  </header>
-
-  <!-- Side Menu -->
-  <div class="side-menu" id="sideMenu">
-    <div class="menu-header">
-      <h3>Menu</h3>
-      <button class="close-btn" id="closeBtn">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="menu-links">
-      <a href="#dashboard">Dashboard</a>
-      <a href="/setreportcard">Set Student Report Card</a>
-      <a href="/adminapplication">View Applications</a>
-      <a href="#addUpdate">Add Update/Notice</a>
-      <a href="#updates">Updates/Notices</a>
-      <!-- Three additional items -->
-      <a href="/studentusers">View Student Records</a>
-      <a href="/teacherusers">View Teacher Records</a>
-      <a href="#settings">Settings</a>
-      <a href="/teacherslogin" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="container">
-    <!-- Dashboard Section -->
-    <section id="dashboard">
-      <h2>Dashboard</h2>
-      <!-- Welcome message with name extracted from email -->
-      <p id="welcomeMessage">Welcome!</p>
-    </section>
-
-    <!-- Attendance Section -->
-    <section id="attendance" style="display: none;">
-      <h2>View Applications</h2>
-      <form id="attendanceForm">
-        <div class="form-group">
-          <label for="attendanceStudent">Student:</label>
-          <select id="attendanceStudent" required>
-            <option value="">Select Student</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="attendanceYear">Year:</label>
-          <input type="text" id="attendanceYear" placeholder="e.g., 2025" required />
-        </div>
-        <div class="form-group">
-          <label for="attendanceTerm">Term:</label>
-          <select id="attendanceTerm" required>
-            <option value="">Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="attendanceMonth">Month:</label>
-          <select id="attendanceMonth" required>
-            <option value="">Select Month</option>
-            <option value="January">January</option>
-            <option value="February">February</option>
-            <option value="March">March</option>
-            <option value="April">April</option>
-            <option value="May">May</option>
-            <option value="June">June</option>
-            <option value="July">July</option>
-            <option value="August">August</option>
-            <option value="September">September</option>
-            <option value="October">October</option>
-            <option value="November">November</option>
-            <option value="December">December</option>
-          </select>
-        </div>
-        <p>Mark attendance for 4 weeks (Mon - Fri):</p>
-        <table class="attendance-table">
-          <thead>
-            <tr>
-              <th>Week</th>
-              <th>Mon</th>
-              <th>Tue</th>
-              <th>Wed</th>
-              <th>Thu</th>
-              <th>Fri</th>
-            </tr>
-          </thead>
-          <tbody id="attendanceTableBody">
-            <!-- Rows will be populated dynamically -->
-          </tbody>
-        </table>
-        <div class="form-group">
-          <button type="submit">Save Attendance</button>
-        </div>
-      </form>
-      <div id="attendanceResult"></div>
-    </section>
-
-    <!-- Grades Section -->
-    <section id="grades" style="display: none;">
-      <h2>Set Report Card</h2>
-      <form id="gradeForm">
-        <div class="form-group">
-          <label for="gradeStudent">Student:</label>
-          <select id="gradeStudent" required>
-            <option value="">Select Student</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="studentClass">Class:</label>
-          <input type="text" id="studentClass" placeholder="Enter Class" required />
-        </div>
-        <div class="form-group">
-          <label for="gradeYear">Year:</label>
-          <input type="text" id="gradeYear" placeholder="e.g., 2025" required />
-        </div>
-        <div class="form-group">
-          <label for="gradeTerm">Term:</label>
-          <select id="gradeTerm" required>
-            <option value="">Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="finalGrade">Final Grade:</label>
-          <select id="finalGrade" required>
-            <option value="">Select Grade</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="F">F</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <button type="submit">Save Grade</button>
-        </div>
-      </form>
-      <div id="gradeResult"></div>
-    </section>
-
-    <!-- Add Update Section -->
-    <section id="addUpdate" style="display: none;">
-      <h2>Add Update/ Notices</h2>
-      <form id="updateForm">
-        <div class="form-group">
-          <label for="updateTitle">Title:</label>
-          <input type="text" id="updateTitle" placeholder="Enter update title" required />
-        </div>
-        <div class="form-group">
-          <label for="updateContent">Content:</label>
-          <textarea id="updateContent           rows="4" placeholder="Enter update content" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="updateYear">Year:</label>
-          <input type="text" id="updateYear" placeholder="e.g., 2025" required />
-        </div>
-        <div class="form-group">
-          <label for="updateTerm">Term:</label>
-          <select id="updateTerm" required>
-            <option value="">Select Term</option>
-            <option value="Term 1">Term 1</option>
-            <option value="Term 2">Term 2</option>
-            <option value="Term 3">Term 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <button type="submit">Post Update</button>
-        </div>
-      </form>
-      <div id="updateResult"></div>
-    </section>
-
-    <!-- Updates Section -->
-    <section id="updates" style="display: none;">
-      <h2>Current Updates</h2>
-      <div id="updatesList">
-        <!-- Updates from Firebase will load here -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Dashboard - Attendance, Grades, Updates & Student Management</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg">
+    <style>
+      /* Root Variables & Themes */
+      :root {
+        --primary: #003366;
+        --secondary: #ffd700;
+        --glass: rgba(255, 255, 255, 0.08);
+        --bg-gradient: linear-gradient(45deg, #003d4d, #005f73);
+        --text-color: #ffffff;
+        --overlay: rgba(0, 0, 0, 0.4);
+      }
+      [data-theme="light"] {
+        --primary: #00b4db;
+        --secondary: #0083b0;
+        --glass: rgba(255, 255, 255, 0.9);
+        --bg-gradient: linear-gradient(45deg, #e0f7fa, #b2ebf2);
+        --text-color: #1c1917;
+        --overlay: rgba(255, 255, 255, 0.4);
+      }
+      /* Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        transition: background 0.6s ease, color 0.6s ease;
+      }
+      /* Header & Side Menu (Teacher Dashboard) */
+      header {
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        padding: 1.2rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+      }
+      .header-logo {
+        height: 40px;
+        margin-right: 10px;
+      }
+      .menu-btn {
+        font-size: 1.5rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+      }
+      .side-menu {
+        position: fixed;
+        top: 0;
+        right: -300px;
+        width: 300px;
+        height: 100%;
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        padding: 2rem;
+        transition: right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 2000;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .side-menu.active {
+        right: 0;
+      }
+      .menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .close-btn {
+        font-size: 1.8rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: var(--text-color);
+      }
+      .menu-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .menu-links a {
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 1.1rem;
+        padding: 10px;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+      }
+      .menu-links a:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      /* Container & Sections */
+      .container {
+        padding: 180px 5% 100px;
+        max-width: 1200px;
+        margin: auto;
+      }
+      section {
+        margin-bottom: 40px;
+      }
+      /* Dashboard Section */
+      #dashboard {
+        text-align: center;
+      }
+      #welcomeMessage {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        animation: fadeIn 1s ease-in-out;
+      }
+      #teacherStats {
+        margin-bottom: 2rem;
+      }
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary);
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: var(--glass);
+        color: var(--text-color);
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+      .form-group button {
+        padding: 0.75rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+      }
+      .form-group button:hover {
+        background: #002244;
+      }
+      /* Table, Notifications & Modal (Student Management) */
+      .total-count {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .notification {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        text-align: center;
+        display: none;
+      }
+      .notification.success {
+        background-color: #dff0d8;
+        color: #3c763d;
+      }
+      .notification.error {
+        background-color: #f2dede;
+        color: #a94442;
+      }
+      .notification.notice {
+        background-color: #d9edf7;
+        color: #31708f;
+      }
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        min-width: 900px;
+      }
+      table th,
+      table td {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 8px;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+      table th {
+        background: var(--primary);
+        color: #fff;
+      }
+      .action-buttons button {
+        margin-right: 5px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+      .edit-btn {
+        background: #4caf50;
+        color: #fff;
+      }
+      .delete-btn {
+        background: #f44336;
+        color: #fff;
+      }
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 10px;
+      }
+      .modal-content h2 {
+        margin-top: 0;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+      }
+      .modal form div {
+        margin-bottom: 10px;
+      }
+      .modal form label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .modal form input,
+      .modal form select {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      /* Footer */
+      footer {
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        color: white;
+        padding: 2rem 5%;
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+      .social-icons a {
+        color: white;
+        font-size: 1.5rem;
+        margin: 0 0.5rem;
+        transition: color 0.3s ease;
+      }
+      .social-icons a:hover {
+        color: var(--secondary);
+      }
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--glass);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+      .theme-toggle:hover {
+        transform: scale(1.1) rotate(180deg);
+      }
+      .theme-toggle i {
+        font-size: 1.4rem;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      /* Animation Keyframes */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <img src="https://i.ibb.co/yFJryv1y/mrfrankofc.jpg" alt="Logo" class="header-logo" />
+        St. Mary's High - Teacher Dashboard
       </div>
-    </section>
+      <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </header>
 
-    <!-- New Additional Sections -->
-    <section id="studentRecords" style="display: none;">
-      <h2><a href="/studentusers">View Student Records</a></h2>
-    </section>
-    <section id="teacherRecords" style="display: none;">
-      <h2><a href="/teacherusers">View Teacher Records</a></h2>
-    </section>
-    <section id="settings" style="display: none;">
-      <h2>Settings</h2>
-      <p>This is the Settings page.</p>
-    </section>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="social-icons">
-      <a href="#"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-tiktok"></i></a>
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+      <div class="menu-header">
+        <h3>Menu</h3>
+        <button class="close-btn" id="closeBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="menu-links">
+        <a href="#dashboard">Dashboard</a>
+        <a href="/setreportcard">Set Student Report Card</a>
+        <a href="/adminapplication">View Applications</a>
+        <a href="#addUpdate">Add Update/Notice</a>
+        <a href="#updates">Updates/Notices</a>
+        <a href="#studentManagement">Student Management</a>
+        <a href="/teacherusers">Teacher Records</a>
+        <a href="#settings">Settings</a>
+        <a href="/teacherslogin" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
     </div>
-    <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
-  </footer>
 
-  <!-- Theme Toggle -->
-  <div class="theme-toggle" id="themeToggle">
-    <i class="fas fa-moon"></i>
-  </div>
+    <!-- Main Content Container -->
+    <div class="container">
+      <!-- Dashboard Section -->
+      <section id="dashboard">
+        <h2 id="welcomeMessage">Welcome!</h2>
+        <div id="teacherStats">
+          <!-- Dynamic teacher stats will load here -->
+        </div>
+      </section>
 
-  <!-- Firebase & App Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { 
-      getFirestore, 
-      collection, 
-      getDocs, 
-      doc, 
-      setDoc, 
-      addDoc, 
-      getDoc, 
-      deleteDoc 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      <!-- Attendance Section -->
+      <section id="attendance" style="display: none;">
+        <h2>Attendance</h2>
+        <form id="attendanceForm">
+          <div class="form-group">
+            <label for="attendanceStudent">Student:</label>
+            <select id="attendanceStudent" required>
+              <option value="">Select Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="attendanceYear">Year:</label>
+            <input type="text" id="attendanceYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="attendanceTerm">Term:</label>
+            <select id="attendanceTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="attendanceMonth">Month:</label>
+            <select id="attendanceMonth" required>
+              <option value="">Select Month</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+          <p>Mark attendance for 4 weeks (Mon - Fri):</p>
+          <table class="attendance-table">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <!-- Dynamically generated attendance rows -->
+            </tbody>
+          </table>
+          <div class="form-group">
+            <button type="submit">Save Attendance</button>
+          </div>
+        </form>
+        <div id="attendanceResult"></div>
+      </section>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
-      authDomain: "deee-9ab53.firebaseapp.com",
-      projectId: "deee-9ab53",
-      storageBucket: "deee-9ab53.firebasestorage.app",
-      messagingSenderId: "399732664479",
-      appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
-      measurementId: "G-524ZPBX42B"
-    };
+      <!-- Grades Section -->
+      <section id="grades" style="display: none;">
+        <h2>Set Report Card</h2>
+        <form id="gradeForm">
+          <div class="form-group">
+            <label for="gradeStudent">Student:</label>
+            <select id="gradeStudent" required>
+              <option value="">Select Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="studentClass">Class:</label>
+            <input type="text" id="studentClass" placeholder="Enter Class" required />
+          </div>
+          <div class="form-group">
+            <label for="gradeYear">Year:</label>
+            <input type="text" id="gradeYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="gradeTerm">Term:</label>
+            <select id="gradeTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="finalGrade">Final Grade:</label>
+            <select id="finalGrade" required>
+              <option value="">Select Grade</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="F">F</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit">Save Grade</button>
+          </div>
+        </form>
+        <div id="gradeResult"></div>
+      </section>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+      <!-- Add Update / Notice Section -->
+      <section id="addUpdate" style="display: none;">
+        <h2>Add Update/Notice</h2>
+        <form id="updateForm">
+          <div class="form-group">
+            <label for="teacherName">Teacher Name:</label>
+            <input type="text" id="teacherName" placeholder="Enter your name" required />
+          </div>
+          <div class="form-group">
+            <label for="updateTitle">Title:</label>
+            <input type="text" id="updateTitle" placeholder="Enter update title" required />
+          </div>
+          <div class="form-group">
+            <label for="updateContent">Content:</label>
+            <textarea id="updateContent" rows="4" placeholder="Enter update content" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="updateYear">Year:</label>
+            <input type="text" id="updateYear" placeholder="e.g., 2025" required />
+          </div>
+          <div class="form-group">
+            <label for="updateTerm">Term:</label>
+            <select id="updateTerm" required>
+              <option value="">Select Term</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit">Post Update</button>
+          </div>
+        </form>
+        <div id="updateResult"></div>
+      </section>
 
-    // ------------------- UPDATES FUNCTIONALITY -------------------
+      <!-- Updates Section -->
+      <section id="updates" style="display: none;">
+        <h2>Current Updates</h2>
+        <div id="updatesList">
+          <!-- Updates from Firebase will load here -->
+        </div>
+      </section>
 
-    // Function to load updates from Firebase (collection "updates")
-    async function loadUpdates() {
-      try {
-        const updatesSnapshot = await getDocs(collection(db, "updates"));
-        let html = "";
-        updatesSnapshot.forEach((docSnap) => {
-          const update = docSnap.data();
-          html += `<div class="notice-card">
-            <h3>${update.updateTitle || "Update"}</h3>
-            <p>${update.updateContent || ""}</p>
-            <small>${update.timestamp ? new Date(update.timestamp.seconds * 1000).toLocaleString() : ""}</small>
-            <br/>
-            <button onclick="deleteUpdate('${docSnap.id}')" style="margin-top:10px; background:red; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Delete Update</button>
-          </div>`;
-        });
-        document.getElementById("updatesList").innerHTML = html || "<p>No updates available.</p>";
-      } catch (error) {
-        console.error("Error loading updates:", error);
-        document.getElementById("updatesList").innerHTML = "<p>Error loading updates.</p>";
-      }
-    }
+      <!-- Student Management Section (Admin Code) -->
+      <section id="studentManagement" style="display: none;">
+        <h1>Admin - Student Management</h1>
+        <div id="notification" class="notification"></div>
+        <div class="total-count" id="totalCount">Total Students: 0</div>
+        <div id="studentsList">
+          <!-- Grouped student tables will be appended here -->
+        </div>
+        <!-- Edit Modal -->
+        <div id="editModal" class="modal">
+          <div class="modal-content">
+            <span class="close" id="editModalClose">&times;</span>
+            <h2>Edit Student</h2>
+            <form id="editForm">
+              <input type="hidden" id="editStudentId" />
+              <div>
+                <label for="editFirstName">First Name:</label>
+                <input type="text" id="editFirstName" required />
+              </div>
+              <div>
+                <label for="editSurname">Surname:</label>
+                <input type="text" id="editSurname" required />
+              </div>
+              <div>
+                <label for="editPhone">Phone:</label>
+                <input type="text" id="editPhone" required />
+              </div>
+              <div>
+                <label for="editEmail">Email:</label>
+                <input type="email" id="editEmail" required />
+              </div>
+              <div>
+                <label for="editParentName">Parent Name:</label>
+                <input type="text" id="editParentName" />
+              </div>
+              <div>
+                <label for="editParentPhone">Parent Phone:</label>
+                <input type="text" id="editParentPhone" />
+              </div>
+              <div>
+                <label for="editDob">DOB:</label>
+                <input type="date" id="editDob" />
+              </div>
+              <div>
+                <label for="editGender">Gender:</label>
+                <select id="editGender">
+                  <option value="">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="editAddress">Address:</label>
+                <input type="text" id="editAddress" />
+              </div>
+              <div>
+                <label for="editUserPass">Password:</label>
+                <input type="password" id="editUserPass" />
+              </div>
+              <div style="margin-top: 15px;">
+                <button type="submit" style="padding: 5px 10px;">Save Changes</button>
+                <button type="button" id="cancelEdit" style="padding: 5px 10px;">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
 
-    // Make deleteUpdate globally available
-    window.deleteUpdate = async function(updateId) {
-      if (confirm("Are you sure you want to delete this update?")) {
+      <!-- Teacher Records Section -->
+      <section id="teacherRecords" style="display: none;">
+        <h2><a href="/teacherusers">View Teacher Records</a></h2>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings" style="display: none;">
+        <h2>Settings</h2>
+        <p>This is the Settings page.</p>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-tiktok"></i></a>
+      </div>
+      <p>
+        <a href="https://wa.me/263719647303?text=hi%20darrell%20i%20would%20want%20you%20to%20create%20me%20a%20site%20like%20that%20of%20st%20marys.%20It%20wonderful" target="_blank" style="color: white; text-decoration: none;">
+          Made By Darrell Mucheri
+        </a>
+      </p>
+      <p>&copy; 2025 St. Mary's High School. All rights reserved.</p>
+    </footer>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+      <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Firebase & Application Scripts -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        setDoc,
+        addDoc,
+        deleteDoc,
+        updateDoc
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // Firebase configuration and initialization
+      const firebaseConfig = {
+        apiKey: "AIzaSyAR9J2Wz7Eu8dXRzDG8JNHcymLCUQUPJRo",
+        authDomain: "deee-9ab53.firebaseapp.com",
+        projectId: "deee-9ab53",
+        storageBucket: "deee-9ab53.firebasestorage.app",
+        messagingSenderId: "399732664479",
+        appId: "1:399732664479:web:b84ac30e8266cc51761aaa",
+        measurementId: "G-524ZPBX42B"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      /* --------------------- Teacher Dashboard Functions --------------------- */
+      // Load dynamic teacher stats from Firestore (Total Students, Updates, Grades)
+      async function loadTeacherStats() {
         try {
-          await deleteDoc(doc(db, "updates", updateId));
-          loadUpdates();
+          const studentsSnapshot = await getDocs(collection(db, "students"));
+          const updatesSnapshot = await getDocs(collection(db, "updates"));
+          const gradesSnapshot = await getDocs(collection(db, "grades"));
+
+          const totalStudents = studentsSnapshot.size;
+          const totalUpdates = updatesSnapshot.size;
+          const totalGrades = gradesSnapshot.size;
+
+          const statsHTML = `
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+              <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; flex: 1; min-width: 150px;">
+                <h3>Total Students</h3>
+                <p>${totalStudents}</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; flex: 1; min-width: 150px;">
+                <h3>Total Updates</h3>
+                <p>${totalUpdates}</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; flex: 1; min-width: 150px;">
+                <h3>Total Grades</h3>
+                <p>${totalGrades}</p>
+              </div>
+            </div>
+          `;
+          document.getElementById("teacherStats").innerHTML = statsHTML;
         } catch (error) {
-          console.error("Error deleting update:", error);
+          console.error("Error loading teacher stats:", error);
+          document.getElementById("teacherStats").innerHTML = "<p>Error loading stats.</p>";
         }
       }
-    };
-
-    // ------------------- END UPDATES FUNCTIONALITY -------------------
-
-    // Wait for DOM content to be loaded
-    document.addEventListener("DOMContentLoaded", () => {
-
-      // Dynamically generate attendance table rows
-      const attendanceTableBody = document.getElementById("attendanceTableBody");
-      let tableRows = "";
-      for (let week = 1; week <= 4; week++) {
-        tableRows += `<tr>
-          <td>Week ${week}</td>
-          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Monday" /></td>
-          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Tuesday" /></td>
-          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Wednesday" /></td>
-          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Thursday" /></td>
-          <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Friday" /></td>
-        </tr>`;
-      }
-      attendanceTableBody.innerHTML = tableRows;
-
-      // Check authentication
-      onAuthStateChanged(auth, (user) => {
-        if (!user) {
-          window.location.href = '/teacherslogin';
-        } else {
-          // Extract name from email and update welcome message
-          const name = user.email.split("@")[0];
-          document.getElementById("welcomeMessage").innerText = `Welcome, ${name}!`;
-          populateStudentDropdowns();
-        }
-      });
-
-      // Logout functionality
-      document.getElementById("logoutBtn").addEventListener("click", async () => {
-        try {
-          await signOut(auth);
-          window.location.href = "/login";
-        } catch (error) {
-          console.error("Logout error:", error);
-        }
-      });
 
       // Populate student dropdowns for Attendance and Grades forms
       async function populateStudentDropdowns() {
@@ -590,8 +735,25 @@
         }
       }
 
+      // Generate attendance table rows dynamically
+      function generateAttendanceRows() {
+        const attendanceTableBody = document.getElementById("attendanceTableBody");
+        let tableRows = "";
+        for (let week = 1; week <= 4; week++) {
+          tableRows += `<tr>
+            <td>Week ${week}</td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Monday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Tuesday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Wednesday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Thursday" /></td>
+            <td><input type="checkbox" class="attendanceCheckbox" data-week="${week}" data-day="Friday" /></td>
+          </tr>`;
+        }
+        attendanceTableBody.innerHTML = tableRows;
+      }
+
       // Attendance Form Submission
-      document.getElementById("attendanceForm").addEventListener("submit", async (e) => {
+      document.getElementById("attendanceForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const studentEmail = document.getElementById("attendanceStudent").value;
         const year = document.getElementById("attendanceYear").value;
@@ -602,10 +764,9 @@
         checkboxes.forEach(checkbox => {
           if (checkbox.checked) presentCount++;
         });
-        const totalDays = checkboxes.length; // 20 days (4 weeks x 5 days)
+        const totalDays = checkboxes.length;
         const percentage = ((presentCount / totalDays) * 100).toFixed(2);
 
-        // Build attendance grid data
         let attendanceData = {};
         for (let week = 1; week <= 4; week++) {
           attendanceData["week" + week] = {};
@@ -615,7 +776,6 @@
           });
         }
 
-        // Save to Firestore under collection "attendance"
         const docId = `${studentEmail}_${year}_${term}_${month}`;
         try {
           await setDoc(doc(db, "attendance", docId), {
@@ -633,7 +793,7 @@
       });
 
       // Grade Form Submission
-      document.getElementById("gradeForm").addEventListener("submit", async (e) => {
+      document.getElementById("gradeForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const studentEmail = document.getElementById("gradeStudent").value;
         const studentClass = document.getElementById("studentClass").value;
@@ -655,15 +815,17 @@
         }
       });
 
-      // Update Form Submission (Add Update)
-      document.getElementById("updateForm").addEventListener("submit", async (e) => {
+      // Update Form Submission (Add Update/Notice)
+      document.getElementById("updateForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const teacherName = document.getElementById("teacherName").value;
         const updateTitle = document.getElementById("updateTitle").value;
         const updateContent = document.getElementById("updateContent").value;
         const updateYear = document.getElementById("updateYear").value;
         const updateTerm = document.getElementById("updateTerm").value;
         try {
           await addDoc(collection(db, "updates"), {
+            teacherName,
             updateTitle,
             updateContent,
             updateYear,
@@ -676,6 +838,208 @@
         }
       });
 
+      // Load Updates
+      async function loadUpdates() {
+        try {
+          const updatesSnapshot = await getDocs(collection(db, "updates"));
+          let html = "";
+          updatesSnapshot.forEach((docSnap) => {
+            const update = docSnap.data();
+            html += `<div class="notice-card">
+              <h3>${update.updateTitle || "Update"}</h3>
+              <p>${update.updateContent || ""}</p>
+              <small>${update.teacherName ? "Posted by " + update.teacherName + " | " : ""}${update.timestamp ? new Date(update.timestamp.seconds * 1000).toLocaleString() : ""}</small>
+              <br/>
+              <button onclick="deleteUpdate('${docSnap.id}')" style="margin-top:10px; background:red; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Delete Update</button>
+            </div>`;
+          });
+          document.getElementById("updatesList").innerHTML = html || "<p>No updates available.</p>";
+        } catch (error) {
+          console.error("Error loading updates:", error);
+          document.getElementById("updatesList").innerHTML = "<p>Error loading updates.</p>";
+        }
+      }
+      window.deleteUpdate = async function(updateId) {
+        if (confirm("Are you sure you want to delete this update?")) {
+          try {
+            await deleteDoc(doc(db, "updates", updateId));
+            loadUpdates();
+          } catch (error) {
+            console.error("Error deleting update:", error);
+          }
+        }
+      };
+
+      /* --------------------- Student Management Functions (Admin Code) --------------------- */
+      let studentsData = [];
+      // Notification helper
+      function showNotification(message, type = "notice") {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = "block";
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 3000);
+      }
+      // Load Students for Student Management Section
+      async function loadStudents() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "students"));
+          let students = [];
+          querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            data.id = docSnap.id;
+            students.push(data);
+          });
+          // Sort students alphabetically by first name
+          students.sort((a, b) => {
+            const nameA = (a.firstname || "").toLowerCase();
+            const nameB = (b.firstname || "").toLowerCase();
+            if (nameA < nameB) return -1;
+            if (nameA > nameB) return 1;
+            return 0;
+          });
+          studentsData = students;
+          // Group students by form and stream (if available)
+          const groups = {};
+          students.forEach((student) => {
+            const groupKey = `${student.form || "Not set"} - ${student.stream || "Not set"}`;
+            if (!groups[groupKey]) {
+              groups[groupKey] = [];
+            }
+            groups[groupKey].push(student);
+          });
+          // Update total count
+          document.getElementById("totalCount").textContent = `Total Students: ${students.length}`;
+          // Render grouped students
+          const container = document.getElementById("studentsList");
+          container.innerHTML = "";
+          for (const group in groups) {
+            const groupDiv = document.createElement("div");
+            groupDiv.classList.add("group-section");
+            groupDiv.innerHTML = `<h2>Group: ${group}</h2>`;
+            const tableWrapper = document.createElement("div");
+            tableWrapper.classList.add("table-responsive");
+            const table = document.createElement("table");
+            const thead = document.createElement("thead");
+            thead.innerHTML = `
+              <tr>
+                <th>#</th>
+                <th>First Name</th>
+                <th>Surname</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Parent Name</th>
+                <th>Parent Phone</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Address</th>
+                <th>Password</th>
+                <th>Actions</th>
+              </tr>
+            `;
+            table.appendChild(thead);
+            const tbody = document.createElement("tbody");
+            groups[group].forEach((student, index) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${student.firstname || ""}</td>
+                <td>${student.surname || ""}</td>
+                <td>${student.phone || ""}</td>
+                <td>${student.email || ""}</td>
+                <td>${student.parentName || ""}</td>
+                <td>${student.parentPhone || ""}</td>
+                <td>${student.dob || ""}</td>
+                <td>${student.gender || ""}</td>
+                <td>${student.address || ""}</td>
+                <td>${student.userPass || ""}</td>
+                <td class="action-buttons">
+                  <button class="edit-btn" onclick="editStudent('${student.id}')">Edit</button>
+                  <button class="delete-btn" onclick="deleteStudent('${student.id}')">Delete</button>
+                </td>
+              `;
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            tableWrapper.appendChild(table);
+            groupDiv.appendChild(tableWrapper);
+            container.appendChild(groupDiv);
+          }
+        } catch (error) {
+          console.error("Error loading students:", error);
+          showNotification("Error loading students: " + error.message, "error");
+        }
+      }
+      // Delete Student
+      async function deleteStudent(studentId) {
+        if (confirm("Are you sure you want to delete this student?")) {
+          try {
+            await deleteDoc(doc(db, "students", studentId));
+            showNotification("Student deleted successfully.", "success");
+            loadStudents();
+          } catch (error) {
+            console.error("Error deleting student:", error);
+            showNotification("Error deleting student: " + error.message, "error");
+          }
+        }
+      }
+      // Edit Student - populate modal
+      function editStudent(studentId) {
+        const student = studentsData.find((s) => s.id === studentId);
+        if (!student) {
+          showNotification("Student not found.", "error");
+          return;
+        }
+        document.getElementById("editStudentId").value = student.id;
+        document.getElementById("editFirstName").value = student.firstname || "";
+        document.getElementById("editSurname").value = student.surname || "";
+        document.getElementById("editPhone").value = student.phone || "";
+        document.getElementById("editEmail").value = student.email || "";
+        document.getElementById("editParentName").value = student.parentName || "";
+        document.getElementById("editParentPhone").value = student.parentPhone || "";
+        document.getElementById("editDob").value = student.dob || "";
+        document.getElementById("editGender").value = student.gender || "";
+        document.getElementById("editAddress").value = student.address || "";
+        document.getElementById("editUserPass").value = student.userPass || "";
+        document.getElementById("editModal").style.display = "block";
+      }
+      // Close modal
+      document.getElementById("editModalClose").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "none";
+      });
+      document.getElementById("cancelEdit").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "none";
+      });
+      // Handle edit form submission
+      document.getElementById("editForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const studentId = document.getElementById("editStudentId").value;
+        const updatedData = {
+          firstname: document.getElementById("editFirstName").value,
+          surname: document.getElementById("editSurname").value,
+          phone: document.getElementById("editPhone").value,
+          email: document.getElementById("editEmail").value,
+          parentName: document.getElementById("editParentName").value,
+          parentPhone: document.getElementById("editParentPhone").value,
+          dob: document.getElementById("editDob").value,
+          gender: document.getElementById("editGender").value,
+          address: document.getElementById("editAddress").value,
+          userPass: document.getElementById("editUserPass").value,
+        };
+        try {
+          await updateDoc(doc(db, "students", studentId), updatedData);
+          showNotification("Student updated successfully.", "success");
+          document.getElementById("editModal").style.display = "none";
+          loadStudents();
+        } catch (error) {
+          console.error("Error updating student:", error);
+          showNotification("Error updating student: " + error.message, "error");
+        }
+      });
+
+      /* --------------------- Navigation & Theme Toggle --------------------- */
       // Side Menu Controls
       const menuBtn = document.getElementById("menuBtn");
       const sideMenu = document.getElementById("sideMenu");
@@ -691,8 +1055,7 @@
           sideMenu.classList.remove("active");
         }
       });
-
-      // Menu Links - Section Switching and Page Navigation
+      // Menu Links - Show corresponding section
       const menuLinks = document.querySelectorAll(".menu-links a");
       menuLinks.forEach(link => {
         link.addEventListener("click", (e) => {
@@ -704,18 +1067,27 @@
               sec.style.display = (sec.id === targetId) ? "block" : "none";
             });
             sideMenu.classList.remove("active");
-            // If the Updates section is opened, load updates from Firebase
             if (targetId === "updates") {
               loadUpdates();
             }
+            if (targetId === "studentManagement") {
+              loadStudents();
+            }
           } else {
-            // Navigate to the external page
             window.location.href = targetHref;
           }
         });
       });
-
-      // Theme Toggle Functionality
+      // Logout functionality
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = "/teacherslogin";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      });
+      // Theme Toggle
       const themeToggle = document.getElementById("themeToggle");
       let isDark = true;
       themeToggle.addEventListener("click", () => {
@@ -734,7 +1106,22 @@
           ? '<i class="fas fa-moon"></i>'
           : '<i class="fas fa-sun"></i>';
       }
-    });
-  </script>
-</body>
+      /* --------------------- Auth & Initialization --------------------- */
+      onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          window.location.href = '/teacherslogin';
+        } else {
+          // Extract teacher name from email for welcome message
+          const name = user.email.split("@")[0];
+          const welcomeMessage = document.getElementById("welcomeMessage");
+          welcomeMessage.innerText = `Welcome, ${name}!`;
+          welcomeMessage.style.fontSize = "3rem";
+          welcomeMessage.style.animation = "fadeIn 1s ease-in-out";
+          populateStudentDropdowns();
+          generateAttendanceRows();
+          loadTeacherStats();
+        }
+      });
+    </script>
+  </body>
 </html>
