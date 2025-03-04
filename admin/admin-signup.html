@@ -226,6 +226,29 @@
             box-shadow: 0 10px 30px rgba(0, 180, 219, 0.4);
         }
 
+        /* Google Signup Button Styling */
+        .google-signup-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #db4437;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .google-signup-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        .google-signup-btn:hover {
+            background: #c33d2e;
+        }
+
         .error {
             color: #ff4d4d;
             margin-top: 1rem;
@@ -349,6 +372,12 @@
             </div>
             <button type="submit">Create Admin Account</button>
         </form>
+        <!-- Google Sign Up Option -->
+        <div class="google-signup">
+            <button type="button" id="google-signup" class="google-signup-btn">
+                <i class="fab fa-google"></i> Sign Up with Google
+            </button>
+        </div>
         <div class="error" id="error-message"></div>
     </div>
 
@@ -371,7 +400,12 @@
     <!-- Firebase and JavaScript -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            GoogleAuthProvider, 
+            signInWithPopup 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -388,6 +422,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Email/Password Signup Logic
         document.getElementById('admin-signup-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -413,6 +448,46 @@
                         text: 'Your admin account has been created.'
                     }).then(() => {
                         window.location.href = '/teacherlogin'; // Redirect to admin login page
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.message
+                    });
+                });
+        });
+
+        // Google Sign Up Logic
+        document.getElementById("google-signup").addEventListener("click", () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    // Optional: split displayName into firstname and surname
+                    const name = user.displayName || "";
+                    let firstname = "";
+                    let surname = "";
+                    if (name) {
+                        const parts = name.split(" ");
+                        firstname = parts[0];
+                        surname = parts.slice(1).join(" ") || "";
+                    }
+                    return setDoc(doc(db, "users", user.uid), {
+                        firstname: firstname,
+                        surname: surname,
+                        email: user.email,
+                        role: "admin"
+                    });
+                })
+                .then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Admin account created successfully!',
+                        text: 'Your admin account has been created using Google.'
+                    }).then(() => {
+                        window.location.href = '/teacherlogin';
                     });
                 })
                 .catch((error) => {
