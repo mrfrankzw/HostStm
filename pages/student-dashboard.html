@@ -960,6 +960,15 @@
           ? '<i class="fas fa-moon"></i>'
           : '<i class="fas fa-sun"></i>';
       }
+      // Handle Navigation for the "Send Report" Link
+const reportLink = document.querySelector('.menu-links a[href="/report"]');
+
+if (reportLink) {
+  reportLink.addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    window.location.href = "/report"; // Redirect to the report page
+  });
+}
 
       // Auth state observer
       onAuthStateChanged(auth, (user) => {
