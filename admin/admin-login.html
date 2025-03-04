@@ -211,6 +211,28 @@
       transform: scale(1.05);
       box-shadow: 0 10px 30px rgba(0, 180, 219, 0.4);
     }
+    /* Google Login Button Styling */
+    .google-login-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #db4437;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .google-login-btn i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    .google-login-btn:hover {
+      background: #c33d2e;
+    }
     .error {
       color: #ff4d4d;
       margin-top: 1rem;
@@ -261,84 +283,6 @@
     }
     .toggle-link a:hover {
       text-decoration: underline;
-    }
-    /* Google Login Button Styling */
-    .google-login-btn {
-      width: 100%;
-      padding: 0.75rem;
-      background: #db4437;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .google-login-btn i {
-      margin-right: 8px;
-      font-size: 1.2rem;
-    }
-    .google-login-btn:hover {
-      background: #c33d2e;
-    }
-    /* Footer */
-    footer {
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      padding: 1.5rem 5%;
-      text-align: center;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .social-icons {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .social-icons a {
-      color: var(--text-color);
-      font-size: 1.5rem;
-      transition: color 0.3s ease;
-    }
-    .social-icons a:hover {
-      color: var(--primary);
-    }
-    footer p {
-      font-size: 0.9rem;
-      color: var(--text-color);
-    }
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--glass);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(180deg);
-    }
-    .theme-toggle i {
-      font-size: 1.4rem;
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
     /* reCAPTCHA container (invisible) */
     #recaptcha-container {
@@ -551,10 +495,30 @@
         });
         return;
       }
-      // Set up reCAPTCHA verifier (invisible)
-      window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible'
-      }, auth);
+      // Show a loading alert while sending OTP
+      Swal.fire({
+        title: 'Sending OTP...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      // Initialize reCAPTCHA verifier once if not already initialized
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible',
+          callback: (response) => {
+            // reCAPTCHA solved, allow signInWithPhoneNumber.
+          },
+          'expired-callback': () => {
+            // Reset reCAPTCHA if expired.
+            window.recaptchaVerifier.reset();
+          }
+        }, auth);
+        window.recaptchaVerifier.render().then((widgetId) => {
+          window.recaptchaWidgetId = widgetId;
+        });
+      }
       signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
         .then((result) => {
           confirmationResult = result;
