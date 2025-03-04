@@ -24,6 +24,8 @@
     <!-- jsPDF Library and AutoTable Plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
       /* General Styles */
       :root {
@@ -591,7 +593,7 @@
       const db = getFirestore(appFirebase);
       const storage = getStorage(appFirebase);
 
-      // Utility: Show message in message box
+      // Utility: Show message in message box (in addition to SweetAlert2)
       function showMessage(message, type) {
         const messageBox = document.getElementById("messageBox");
         messageBox.textContent = message;
@@ -758,7 +760,7 @@
         doc.text("Address: Zengeza, Mubvumira Rd, Chitungwiza, Zimbabwe", 14, signatureY + 14);
         doc.text("Serial Number: " + serial, 14, signatureY + 21);
 
-        // Add comment based on average marks below signature info
+        // Add comment below signature info
         const commentY = signatureY + 30;
         doc.text("Good mark!", 14, commentY);
 
@@ -834,7 +836,14 @@
             lastUpdated: new Date()
           };
           await setDoc(studentRef, studentData, { merge: true });
-          showMessage("Profile updated successfully!", "success");
+          // Use SweetAlert2 for a prettier confirmation alert
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Profile updated successfully!',
+            timer: 2000,
+            showConfirmButton: false
+          });
           if (studentData.form && studentData.stream) {
             document.getElementById("currentGrade").textContent = `${studentData.form} - ${studentData.stream}`;
           } else {
