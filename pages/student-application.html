@@ -76,6 +76,21 @@
       margin-right: 10px;
       border-radius: 50%;
     }
+    /* Fixed Theme Toggle Button */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-color);
+      cursor: pointer;
+      z-index: 1001;
+    }
+    body.light-theme .theme-toggle {
+      color: var(--light-text);
+    }
     /* Container */
     .container {
       background: var(--glass);
@@ -167,6 +182,26 @@
       transform: scale(1.05);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
+    /* Download PDF Button (styled as a link) */
+    .download-btn {
+      display: inline-block;
+      padding: 0.75rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+    }
+    .download-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
     .message {
       margin-top: 1rem;
       text-align: center;
@@ -193,6 +228,11 @@
       color: var(--primary);
       z-index: 1000;
     }
+    body.light-theme footer {
+      background: var(--light-glass);
+      color: var(--light-text);
+      border-top: 1px solid #ccc;
+    }
     footer .social-icons {
       margin-top: 0.5rem;
     }
@@ -205,6 +245,12 @@
     }
     footer .social-icons a:hover {
       color: var(--secondary);
+    }
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      header, footer {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -317,11 +363,21 @@
           <input type="text" id="previousSchool" placeholder="Enter previous school name" required />
         </div>
       </div>
+      <!-- Updated Previous Results Section -->
       <div class="form-group">
-        <label for="previousResults">Previous Results</label>
+        <label for="previousResults">
+          Previous Results <br>
+          <small style="font-size: 0.8rem; color: var(--primary);">Enter grades (e.g., Maths A, English C) or upload an image of your results.</small>
+        </label>
         <div class="input-icon">
           <i class="fa fa-file-alt"></i>
-          <textarea id="previousResults" rows="3" placeholder="Enter previous results" required></textarea>
+          <textarea id="previousResults" rows="3" placeholder="Enter previous results (e.g., Maths A, English C)"></textarea>
+        </div>
+        <div class="input-icon" style="margin-top: 1rem;">
+          <label for="previousResultsFile" style="margin-bottom: 0.5rem; display: block; color: var(--primary);">
+            Or Upload Image:
+          </label>
+          <input type="file" id="previousResultsFile" accept="image/*" />
         </div>
       </div>
       <!-- Parent/Guardian Information -->
@@ -350,6 +406,12 @@
         <button type="submit">Submit Application</button>
       </div>
     </form>
+    <!-- PDF Download Button -->
+    <div class="form-group">
+      <a href="application-form.pdf" download class="download-btn">
+        <i class="fas fa-download"></i> Download Application Form (PDF)
+      </a>
+    </div>
     <div id="message" class="message"></div>
   </div>
 
@@ -390,8 +452,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Helper function to convert file to Base64
+    function toBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
     document.getElementById("applicationForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
+      // Gather form values
       const name = document.getElementById("name").value;
       const idNumber = document.getElementById("idNumber").value;
       const nationality = document.getElementById("nationality").value;
@@ -402,7 +476,35 @@
       const level = document.getElementById("level").value;
       const formValue = document.getElementById("form").value;
       const previousSchool = document.getElementById("previousSchool").value;
-      const previousResults = document.getElementById("previousResults").value;
+      
+      // Retrieve previous results as text and file (if any)
+      const previousResultsText = document.getElementById("previousResults").value.trim();
+      const previousResultsFileInput = document.getElementById("previousResultsFile");
+      let previousResultsImage = null;
+      
+      if (previousResultsFileInput.files.length > 0) {
+        try {
+          previousResultsImage = await toBase64(previousResultsFileInput.files[0]);
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'File Upload Error',
+            text: 'Error processing file: ' + error.message
+          });
+          return;
+        }
+      }
+      
+      // Ensure at least one form of previous results is provided
+      if (!previousResultsText && !previousResultsImage) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Validation Error',
+          text: 'Please provide previous results either as text or by uploading an image.'
+        });
+        return;
+      }
+      
       const parentName = document.getElementById("parentName").value;
       const parentPhone = document.getElementById("parentPhone").value;
       const parentEmail = document.getElementById("parentEmail").value;
@@ -419,7 +521,9 @@
           level,
           form: formValue,
           previousSchool,
-          previousResults,
+          // Store both text and image (if available)
+          previousResultsText,
+          previousResultsImage,
           parentName,
           parentPhone,
           parentEmail,
