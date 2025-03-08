@@ -303,6 +303,18 @@
           const data = docSnap.data();
           // Format timestamp if it exists (assumes Firestore Timestamp)
           const submittedOn = data.timestamp ? data.timestamp.toDate().toLocaleString() : "N/A";
+          
+          // Build the Previous Results display: text and/or image
+          let previousResultsHtml = "";
+          if (data.previousResultsText) {
+            previousResultsHtml += `<p class="field">Previous Results: ${data.previousResultsText}</p>`;
+          } else {
+            previousResultsHtml += `<p class="field">Previous Results: N/A</p>`;
+          }
+          if (data.previousResultsImage) {
+            previousResultsHtml += `<img src="${data.previousResultsImage}" alt="Previous Results Image" style="max-width:100%; height:auto; display:block; margin-top:5px;">`;
+          }
+
           html += `
             <div class="application-card">
               <h3>${data.name || "No Name"}</h3>
@@ -315,7 +327,7 @@
               <p class="field">Level: ${data.level || "N/A"}</p>
               <p class="field">Form: ${data.form || "N/A"}</p>
               <p class="field">Previous School: ${data.previousSchool || "N/A"}</p>
-              <p class="field">Previous Results: ${data.previousResults || "N/A"}</p>
+              ${previousResultsHtml}
               <p class="field">Parent Name: ${data.parentName || "N/A"}</p>
               <p class="field">Parent Phone: ${data.parentPhone || "N/A"}</p>
               <p class="field">Parent Email: ${data.parentEmail || "N/A"}</p>
