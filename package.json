@@ -1,5 +1,5 @@
 {
-  "name": "Schoo Website",
+  "name": "school-website",
   "version": "1.0.0",
   "description": "A Node.js server to serve static files and handle routing for your site.",
   "main": "server.js",
